@@ -3,6 +3,8 @@
  */
 package net.dmulloy2.util;
 
+import java.text.DecimalFormat;
+
 /**
  * Util for managing Numbers
  * 
@@ -125,5 +127,14 @@ public class NumberUtil
 	public static boolean isByte(Object object)
 	{
 		return toByte(object) != -1;
+	}
+
+	public static double roundNumDecimals(double d, int num)
+	{
+		StringBuilder format = new StringBuilder("#.");
+		for (int i = 0; i < num; i++)
+			format.append("#");
+		DecimalFormat f = new DecimalFormat(format.toString());
+		return Double.valueOf(f.format(d));
 	}
 }
