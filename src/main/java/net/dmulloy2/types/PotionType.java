@@ -3,13 +3,20 @@
  */
 package net.dmulloy2.types;
 
+import java.util.Collection;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  * @author dmulloy2
  */
 
 @Getter
+@AllArgsConstructor
 public enum PotionType
 {
 	FIRE_RESISTANCE("fireres"),
@@ -26,19 +33,32 @@ public enum PotionType
 	WEAKNESS("weak");
 
 	private final String name;
-	private PotionType(String name)
-	{
-		this.name = name;
-	}
 
-	public static org.bukkit.potion.PotionType toType(String string)
+	public static String toName(PotionEffectType effect)
 	{
-		for (PotionType type : PotionType.values())
+		for (PotionType e : PotionType.values())
 		{
-			if (type.name.equalsIgnoreCase(string))
-				return org.bukkit.potion.PotionType.valueOf(type.toString());
+			if (e.toString().equals(effect.getName()))
+				return e.name;
 		}
 
-		return null;
+		return "";
+	}
+
+	public static String toString(Collection<PotionEffect> effects)
+	{
+		StringBuilder result = new StringBuilder();
+		for (PotionEffect effect : effects)
+		{
+			result.append(PotionType.toName(effect.getType()) + ", ");
+		}
+
+		if (result.lastIndexOf(",") >= 0)
+		{
+			result.deleteCharAt(result.lastIndexOf(","));
+			result.deleteCharAt(result.lastIndexOf(" "));
+		}
+
+		return result.toString();
 	}
 }
