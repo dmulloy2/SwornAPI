@@ -4,6 +4,7 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.dmulloy2.types.StringJoiner;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -101,7 +103,7 @@ public class Util
 	 *        - Player name or UUID
 	 * @return Whether or not the player is banned
 	 */
-	public static boolean isBanned(String identifier)
+	public static boolean isBanned(@NonNull String identifier)
 	{
 		for (OfflinePlayer banned : Bukkit.getBannedPlayers())
 		{
@@ -121,6 +123,8 @@ public class Util
 	 */
 	public static int random(int x)
 	{
+		Validate.isTrue(x > 0, "x cannot be negative!");
+
 		Random rand = new Random();
 		return rand.nextInt(x);
 	}
@@ -136,7 +140,7 @@ public class Util
 	 *        - Data
 	 * @see {@link Player#playEffect(Location, Effect, Object)}
 	 */
-	public static <T> void playEffect(Effect effect, Location loc, T data)
+	public static <T> void playEffect(@NonNull Effect effect, @NonNull Location loc, T data)
 	{
 		for (Player player : Bukkit.getOnlinePlayers())
 		{
@@ -153,8 +157,11 @@ public class Util
 	 *        - Second location
 	 * @return Whether or not the two locations are identical
 	 */
-	public static boolean checkLocation(Location loc, Location loc2)
+	public static boolean checkLocation(@NonNull Location loc, @NonNull Location loc2)
 	{
+		if (loc.equals(loc2))
+			return true;
+
 		return loc.getBlockX() == loc2.getBlockX() 
 				&& loc.getBlockY() == loc2.getBlockY() 
 				&& loc.getBlockZ() == loc2.getBlockZ()
@@ -168,7 +175,7 @@ public class Util
 	 *        - {@link Location} to convert
 	 * @return String for debug purpouses
 	 */
-	public static String locationToString(Location loc)
+	public static String locationToString(@NonNull Location loc)
 	{
 		StringBuilder ret = new StringBuilder();
 		ret.append("World: " + loc.getWorld().getName());
@@ -181,29 +188,29 @@ public class Util
 	/**
 	 * Returns a useful Stack Trace for debugging purpouses
 	 * 
-	 * @param e
+	 * @param ex
 	 *        - Underlying {@link Throwable}
 	 * @param circumstance
 	 *        - Circumstance in which the Exception occured
 	 */
-	public static String getUsefulStack(Throwable e, String circumstance)
+	public static String getUsefulStack(@NonNull Throwable ex, String circumstance)
 	{
 		StringJoiner joiner = new StringJoiner("\n");
-		joiner.append("Encountered an exception while " + circumstance + ": " + e.getClass().getName() + ": " + e.getMessage());
+		joiner.append("Encountered an exception" + (circumstance != null ? " while " + circumstance : "") + ": " + ex.toString());
 		joiner.append("Affected classes:");
 
-		for (StackTraceElement ste : e.getStackTrace())
+		for (StackTraceElement ste : ex.getStackTrace())
 		{
 			if (ste.getClassName().contains("net.dmulloy2"))
 				joiner.append("\t" + ste.toString());
 		}
 
-		while (e.getCause() != null)
+		while (ex.getCause() != null)
 		{
-			e = e.getCause();
-			joiner.append("Caused by: " + e.getClass().getName() + ": " + e.getMessage());
+			ex = ex.getCause();
+			joiner.append("Caused by: " + ex.toString());
 			joiner.append("Affected classes:");
-			for (StackTraceElement ste : e.getStackTrace())
+			for (StackTraceElement ste : ex.getStackTrace())
 			{
 				if (ste.getClassName().contains("net.dmulloy2"))
 					joiner.append("\t" + ste.toString());
@@ -224,7 +231,7 @@ public class Util
 	 *        - Base {@link List}
 	 * @return a new list from the given list
 	 */
-	public static <T> List<T> newList(List<T> list)
+	public static <T> List<T> newList(@NonNull Collection<T> list)
 	{
 		return new ArrayList<T>(list);
 	}
@@ -237,14 +244,12 @@ public class Util
 	 * @return a new {@link List} from the given objects
 	 */
 	@SafeVarargs
-	public static <T> List<T> toList(T... objects)
+	public static <T> List<T> toList(@NonNull T... objects)
 	{
 		List<T> ret = new ArrayList<T>();
 
 		for (T t : objects)
-		{
 			ret.add(t);
-		}
 
 		return ret;
 	}
@@ -259,7 +264,7 @@ public class Util
 	 *        - Original map
 	 * @return Filtered map
 	 */
-	public static <K, V> Map<K, V> filterDuplicateEntries(Map<K,V> map, Map<K, V> original)
+	public static <K, V> Map<K, V> filterDuplicateEntries(@NonNull Map<K,V> map, @NonNull Map<K, V> original)
 	{
 		for (Entry<K, V> entry : new HashMap<K, V>(map).entrySet())
 		{
@@ -285,7 +290,7 @@ public class Util
 	 *        - List to remove duplicate entries from
 	 * @return The list, without duplicate entries
 	 */
-	public static <T> List<T> removeDuplicates(List<T> list)
+	public static <T> List<T> removeDuplicates(@NonNull List<T> list)
 	{
 		Map<T, Object> map = new LinkedHashMap<T, Object>();
 
@@ -305,7 +310,7 @@ public class Util
 	 * @return Whether or not the field is declared
 	 * @deprecated In favor of {@link ReflectionUtil#isDeclaredField(Class, String)}
 	 */
-	public static boolean isDeclaredField(Class<?> clazz, String name)
+	public static boolean isDeclaredField(@NonNull Class<?> clazz, @NonNull String name)
 	{
 		return ReflectionUtil.isDeclaredField(clazz, name);
 	}
@@ -319,7 +324,7 @@ public class Util
 	 * @return Boolean value from the given object. Defaults to
 	 *         <code>false</code>
 	 */
-	public static boolean toBoolean(Object object)
+	public static boolean toBoolean(@NonNull Object object)
 	{
 		if (object instanceof Boolean)
 		{
@@ -351,7 +356,7 @@ public class Util
 	 *        - Data to set
 	 * @deprecated {@link Block#setData(byte)} is deprecated
 	 */
-	public static void setData(Block block, MaterialData data)
+	public static void setData(@NonNull Block block, @NonNull MaterialData data)
 	{
 		block.setData(data.getData());
 		block.getState().update(true);
@@ -365,7 +370,7 @@ public class Util
 	 *        - BlockState to represent
 	 * @return The string representation
 	 */
-	public static String blockStateToString(BlockState state)
+	public static String blockStateToString(@NonNull BlockState state)
 	{
 		StringBuilder ret = new StringBuilder();
 
