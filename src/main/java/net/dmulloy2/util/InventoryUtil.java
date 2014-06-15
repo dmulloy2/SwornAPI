@@ -234,4 +234,72 @@ public class InventoryUtil
 
 		return -1;
 	}
+
+	public static int amount(Inventory inventory, Material type, short dat)
+	{
+		int ret = 0;
+		if (inventory != null)
+		{
+			ItemStack[] items = inventory.getContents();
+			for (int slot = 0; slot < items.length; slot++)
+			{
+				if (items[slot] != null)
+				{
+					Material mat = items[slot].getType();
+					short duration = items[slot].getDurability();
+					int amt = items[slot].getAmount();
+					if ((mat == type) && ((dat == duration) || (dat == -1)))
+					{
+						ret += amt;
+					}
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	public static void remove(Inventory inventory, Material type, short dat, int amt)
+	{
+		int start = amt;
+		if (inventory != null)
+		{
+			ItemStack[] items = inventory.getContents();
+			for (int slot = 0; slot < items.length; slot++)
+			{
+				if (items[slot] != null)
+				{
+					Material mat = items[slot].getType();
+					short duration = items[slot].getDurability();
+					int itmAmt = items[slot].getAmount();
+					if ((mat == type) && ((dat == duration) || (dat == -1)))
+					{
+						if (amt > 0)
+						{
+							if (itmAmt >= amt)
+							{
+								itmAmt -= amt;
+								amt = 0;
+							}
+							else
+							{
+								amt = start - itmAmt;
+								itmAmt = 0;
+							}
+							if (itmAmt > 0)
+							{
+								inventory.getItem(slot).setAmount(itmAmt);
+							}
+							else
+							{
+								inventory.setItem(slot, null);
+							}
+						}
+						if (amt <= 0)
+							return;
+					}
+				}
+			}
+		}
+	}
 }
