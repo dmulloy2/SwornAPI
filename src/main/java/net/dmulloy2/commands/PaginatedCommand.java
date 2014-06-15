@@ -81,6 +81,9 @@ public abstract class PaginatedCommand extends Command
 		List<String> lines = new ArrayList<String>();
 		lines.add(getHeader(index));
 		lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
+		String footer = getFooter();
+		if (! footer.isEmpty())
+			lines.add(footer);
 		return lines;
 	}
 
@@ -123,4 +126,9 @@ public abstract class PaginatedCommand extends Command
 	 * @return A string representation of the line
 	 */
 	public abstract String getLine(int index);
+
+	public String getFooter()
+	{
+		return "";
+	}
 }
