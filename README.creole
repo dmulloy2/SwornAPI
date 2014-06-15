@@ -1,0 +1,2 @@
+== SwornAPI
+** A common API for MineSworn and Shadowvolt plugins. **

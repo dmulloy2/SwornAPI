@@ -1,0 +1,65 @@
+/**
+ * (c) 2014 dmulloy2
+ */
+package net.dmulloy2.io;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import net.dmulloy2.util.Util;
+
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+
+/**
+ * @author dmulloy2
+ */
+
+public class FileSerialization
+{
+	public static <T extends ConfigurationSerializable> void save(T instance, File file)
+	{
+		try
+		{
+			if (file.exists())
+				file.delete();
+
+			file.createNewFile();
+
+			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+			for (Entry<String, Object> entry : instance.serialize().entrySet())
+			{
+				fc.set(entry.getKey(), entry.getValue());
+			}
+
+			fc.save(file);
+		}
+		catch (Exception ex)
+		{
+			System.err.println(Util.getUsefulStack(ex, "saving file " + file.getName()));
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends ConfigurationSerializable> T load(File file, Class<T> clazz)
+	{
+		try
+		{
+			if (! file.exists())
+				return null;
+
+			FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+			Map<String, Object> map = fc.getValues(true);
+
+			return (T) ConfigurationSerialization.deserializeObject(map, clazz);
+		}
+		catch (Exception ex)
+		{
+			System.err.println(Util.getUsefulStack(ex, "loading file " + file.getName()));
+			return null;
+		}
+	}
+}
