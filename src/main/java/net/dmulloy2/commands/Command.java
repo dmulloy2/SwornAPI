@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.IPermission;
 import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
@@ -213,14 +214,37 @@ public abstract class Command implements CommandExecutor
 	{
 		try
 		{
-			return Integer.valueOf(args[arg]);
+			return NumberUtil.toInt(args[arg]);
 		}
 		catch (NumberFormatException ex)
 		{
 			if (msg)
-				err("{0} is not a number.", args[arg]);
+				err("&c{0} &4is not a number.", args[arg]);
 			return -1;
 		}
+	}
+
+	protected double argAsDouble(int arg, boolean msg)
+	{
+		try
+		{
+			return NumberUtil.toDouble(args[arg]);
+		}
+		catch (NumberFormatException ex)
+		{
+			if (msg)
+				err("&c{0} &4is not a number.", args[arg]);
+			return -1;
+		}
+	}
+
+	protected boolean argAsBoolean(int arg)
+	{
+		try
+		{
+			return Util.toBoolean(args[arg]);
+		} catch (Throwable ex) { }
+		return false;
 	}
 
 	protected final void invalidArgs()
