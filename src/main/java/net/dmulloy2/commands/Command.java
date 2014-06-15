@@ -108,11 +108,16 @@ public abstract class Command implements CommandExecutor
 		return player != null;
 	}
 
-	// ---- Permissions
+	// ---- Permission Management
+
+	protected final boolean hasPermission(CommandSender sender, IPermission permission)
+	{
+		return plugin.getPermissionHandler().hasPermission(sender, permission);
+	}
 
 	protected final boolean hasPermission(IPermission permission)
 	{
-		return plugin.getPermissionHandler().hasPermission(sender, permission);
+		return hasPermission(sender, permission);
 	}
 
 	private final boolean hasPermission()
