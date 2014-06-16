@@ -6,6 +6,9 @@ package net.dmulloy2.types;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.NonNull;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -13,11 +16,14 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
 /**
+ * Represents a serializable vector
+ * 
  * @author dmulloy2
  */
 
+@Getter
 @SerializableAs("net.dmulloy2.SimpleVector")
-public final class SimpleVector implements ConfigurationSerializable
+public final class SimpleVector implements ConfigurationSerializable, Cloneable
 {
 	private int x, y, z;
 
@@ -26,6 +32,23 @@ public final class SimpleVector implements ConfigurationSerializable
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
+	}
+
+	public SimpleVector(int x, int y, int z)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	public SimpleVector(Vector vec)
+	{
+		this(vec.getBlockX(), vec.getBlockY(), vec.getBlockZ());
+	}
+
+	public SimpleVector(Location loc)
+	{
+		this(loc.toVector());
 	}
 
 	public SimpleVector(String s)
@@ -37,59 +60,37 @@ public final class SimpleVector implements ConfigurationSerializable
 		this.z = Integer.parseInt(ss[2]);
 	}
 
-	public SimpleVector(int x, int y, int z)
+	public SimpleVector(Map<String, Object> args)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this((String) args.get("c"));
 	}
 
-	public SimpleVector(Vector v)
-	{
-		this(v.getBlockX(), v.getBlockY(), v.getBlockZ());
-	}
+	// ---- Conversion
 
-	public SimpleVector(Location l)
-	{
-		this(l.toVector());
-	}
-
-	@Override
-	public String toString()
-	{
-		return x + "," + y + "," + z;
-	}
-
+	/**
+	 * Converts this SimpleVector into a Bukkit {@link Vector}
+	 */
 	public Vector toVector()
 	{
 		return new Vector(x, y, z);
 	}
 
-	public Location toLocation(World w)
+	/**
+	 * Converts this SimpleVector into a Bukkit {@link Location}
+	 * 
+	 * @param world
+	 *        - World
+	 */
+	public Location toLocation(World world)
 	{
-		return toVector().toLocation(w);
+		return toVector().toLocation(world);
 	}
 
-	@Override
-	public boolean equals(Object o)
-	{
-		if (o == null)
-			return false;
+	// ---- Serialization
 
-		if (getClass() != o.getClass())
-			return false;
-
-		final SimpleVector that = (SimpleVector) o;
-
-		if (this.x != that.x)
-			return false;
-		if (this.y != that.y)
-			return false;
-		if (this.z != that.z)
-			return false;
-		return true;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<String, Object> serialize()
 	{
@@ -100,23 +101,51 @@ public final class SimpleVector implements ConfigurationSerializable
 		return result;
 	}
 
-	public static SimpleVector deserialize(Map<String, Object> args)
+	// ---- Generic Methods
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString()
 	{
-		return new SimpleVector((String) args.get("c"));
+		return x + "," + y + "," + z;
 	}
 
-	public int getX()
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(@NonNull Object obj)
 	{
-		return x;
+		if (obj instanceof SimpleVector)
+		{
+			SimpleVector that = (SimpleVector) obj;
+			return this.x == that.x && this.y == that.y && this.z == that.z;
+		}
+
+		return false;
 	}
 
-	public int getY()
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode()
 	{
-		return y;
+		int hash = 40;
+		hash *= 1 + x;
+		hash *= 1 + y;
+		hash *= 1 + z;
+		return hash;
 	}
 
-	public int getZ()
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SimpleVector clone()
 	{
-		return z;
+		return new SimpleVector(x, y, z);
 	}
 }

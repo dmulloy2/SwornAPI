@@ -176,10 +176,10 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	public int hashCode()
 	{
 		int hash = 39;
-		hash *= x;
-		hash *= y;
-		hash *= z;
-		hash *= worldName.hashCode();
+		hash *= 1 + x;
+		hash *= 1 + y;
+		hash *= 1 + z;
+		hash *= 1 + worldName.hashCode();
 		return hash;
 	}
 
