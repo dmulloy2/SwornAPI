@@ -67,7 +67,7 @@ public final class TimeUtil
 		return dateFormat.format(date);
 	}
 
-	public static long parseTime(String t) throws Exception
+	public static long parseTime(String t) throws BadTimeException
 	{
 		try
 		{
