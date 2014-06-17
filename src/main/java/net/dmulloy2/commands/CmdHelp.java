@@ -7,7 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.TextComponent;
+import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
+
+import org.bukkit.entity.Player;
 
 /**
  * Generic help command.
@@ -15,8 +20,10 @@ import net.dmulloy2.util.FormatUtil;
  * @author dmulloy2
  */
 
-public class CmdHelp extends PaginatedCommand
+public class CmdHelp extends Command
 {
+	protected int linesPerPage, pageArgIndex;
+	
 	public CmdHelp(SwornPlugin plugin)
 	{
 		super(plugin);
@@ -29,21 +36,74 @@ public class CmdHelp extends PaginatedCommand
 	}
 
 	@Override
+	public void perform()
+	{
+		int index = 1;
+		if (args.length > pageArgIndex)
+		{
+			try
+			{
+				index = Integer.parseInt(args[pageArgIndex]);
+				if (index < 1 || index > getPageCount())
+					throw new IndexOutOfBoundsException();
+			}
+			catch (NumberFormatException ex)
+			{
+				err("&c{0} &4is not a number.", args[0]);
+				return;
+			}
+			catch (IndexOutOfBoundsException ex)
+			{
+				err("&4There is no page with the index &c{0}&4.", args[0]);
+				return;
+			}
+		}
+
+		for (BaseComponent[] components : getPage(index))
+		{
+			if (sender instanceof Player)
+				ChatUtil.sendMessage(player, components);
+			else
+				sendMessage(TextComponent.toLegacyText(components));
+		}
+	}
+
+	public int getPageCount()
+	{
+		return (getListSize() + linesPerPage - 1) / linesPerPage;
+	}
+
 	public int getListSize()
 	{
 		return buildHelpMenu().size();
 	}
 
-	@Override
-	public String getHeader(int index)
+	/**
+	 * Gets all of the page lines for the specified page index
+	 * 
+	 * @param index The page index
+	 * @return List of page lines
+	 */
+	public List<BaseComponent[]> getPage(int index)
 	{
-		return FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount());
+		List<BaseComponent[]> lines = new ArrayList<BaseComponent[]>();
+		lines.add(getHeader(index));
+		lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
+		BaseComponent[] footer = getFooter();
+		if (footer != null)
+			lines.add(footer);
+		return lines;
 	}
 
-	@Override
-	public List<String> getLines(int startIndex, int endIndex)
+	public BaseComponent[] getHeader(int index)
 	{
-		List<String> lines = new ArrayList<String>();
+		return TextComponent.fromLegacyText(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(),
+				index, getPageCount()));
+	}
+
+	public List<BaseComponent[]> getLines(int startIndex, int endIndex)
+	{
+		List<BaseComponent[]> lines = new ArrayList<BaseComponent[]>();
 		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
 		{
 			lines.add(buildHelpMenu().get(i));
@@ -52,30 +112,23 @@ public class CmdHelp extends PaginatedCommand
 		return lines;
 	}
 
-	@Override
-	public String getLine(int index)
+	public BaseComponent[] getFooter()
 	{
-		return null;
+		return TextComponent.fromLegacyText(FormatUtil.format("&eHover to see command information. Click to insert into chat."));
 	}
 
-	private final List<String> buildHelpMenu()
+	private final List<BaseComponent[]> buildHelpMenu()
 	{
-		List<String> ret = new ArrayList<String>();
+		List<BaseComponent[]> ret = new ArrayList<BaseComponent[]>();
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
 		{
-			if (plugin.getPermissionHandler().hasPermission(sender, cmd.permission))
-			{
-				ret.add(cmd.getUsageTemplate(true));
-			}
+			ret.add(cmd.getFancyUsageTemplate());
 		}
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredCommands())
 		{
-			if (plugin.getPermissionHandler().hasPermission(sender, cmd.permission))
-			{
-				ret.add(cmd.getUsageTemplate(true));
-			}
+			ret.add(cmd.getFancyUsageTemplate());
 		}
 
 		return ret;

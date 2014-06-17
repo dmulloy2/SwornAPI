@@ -8,11 +8,17 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ClickEvent;
+import net.dmulloy2.chat.ComponentBuilder;
+import net.dmulloy2.chat.HoverEvent;
+import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.IPermission;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandExecutor;
@@ -178,7 +184,7 @@ public abstract class Command implements CommandExecutor
 		return aliases;
 	}
 
-	public final String getUsageTemplate(final boolean displayHelp)
+	public final String getUsageTemplate(boolean displayHelp)
 	{
 		StringBuilder ret = new StringBuilder();
 		ret.append("&b/");
@@ -198,6 +204,43 @@ public abstract class Command implements CommandExecutor
 			ret.append(" &e" + description);
 
 		return FormatUtil.format(ret.toString());
+	}
+
+	public final BaseComponent[] getFancyUsageTemplate()
+	{
+		String prefix = "- /";
+
+		if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
+			prefix += plugin.getCommandHandler().getCommandPrefix() + " ";
+
+		prefix += name;
+
+		ComponentBuilder builder = new ComponentBuilder(prefix).color(ChatColor.AQUA);
+
+		StringBuilder hoverText = new StringBuilder();
+		hoverText.append(getUsageTemplate(false) + ":\n");
+		hoverText.append(FormatUtil.format(description) + "\n");
+		hoverText.append("\n");
+		hoverText.append(FormatUtil.format("&4Permission:") + "\n");
+		hoverText.append(FormatUtil.format("&c{0}", getPermissionString()));
+
+		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.toString()));
+		builder.event(hoverEvent);
+
+		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(getUsageTemplate(false)));
+		builder.event(clickEvent);
+
+		String usage = "";
+		for (String s : optionalArgs)
+			usage += String.format(" [%s]", s);
+
+		for (String s : requiredArgs)
+			usage += String.format(" <%s>", s);
+
+		if (! usage.isEmpty())
+			builder.append(usage).color(ChatColor.AQUA).event(hoverEvent).event(clickEvent);
+
+		return builder.create();
 	}
 
 	// ---- Argument Manipulation
