@@ -220,9 +220,12 @@ public abstract class Command implements CommandExecutor
 		StringBuilder hoverText = new StringBuilder();
 		hoverText.append(getUsageTemplate(false) + ":\n");
 		hoverText.append(FormatUtil.format(description) + "\n");
-		hoverText.append("\n");
-		hoverText.append(FormatUtil.format("&4Permission:") + "\n");
-		hoverText.append(FormatUtil.format("&c{0}", getPermissionString()));
+		if (permission != null)
+		{
+			hoverText.append("\n");
+			hoverText.append(FormatUtil.format("&4Permission:") + "\n");
+			hoverText.append(FormatUtil.format("&c{0}", getPermissionString()));
+		}
 
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.toString()));
 		builder.event(hoverEvent);
