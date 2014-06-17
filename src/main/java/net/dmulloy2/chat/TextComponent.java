@@ -57,53 +57,53 @@ public class TextComponent extends BaseComponent
 		for (int i = 0; i < message.length(); i++)
 		{
 			char c = message.charAt(i);
-			if (c == ChatColor.COLOR_CHAR)
-			{
-				i++;
-				c = message.charAt(i);
-				if (c >= 'A' && c <= 'Z')
-				{
-					c += 32;
-				}
-				ChatColor format = ChatColor.getByChar(c);
-				if (format == null)
-				{
-					continue;
-				}
-				if (builder.length() > 0)
-				{
-					TextComponent old = component;
-					component = new TextComponent(old);
-					old.setText(builder.toString());
-					builder = new StringBuilder();
-					components.add(old);
-				}
-				switch (format)
-				{
-					case BOLD:
-						component.setBold(true);
-						break;
-					case ITALIC:
-						component.setItalic(true);
-						break;
-					case UNDERLINE:
-						component.setUnderlined(true);
-						break;
-					case STRIKETHROUGH:
-						component.setStrikethrough(true);
-						break;
-					case MAGIC:
-						component.setObfuscated(true);
-						break;
-					case RESET:
-						format = ChatColor.WHITE;
-					default:
-						component = new TextComponent();
-						component.setColor(format);
-						break;
-				}
-				continue;
-			}
+//			if (c == ChatColor.COLOR_CHAR)
+//			{
+//				i++;
+//				c = message.charAt(i);
+//				if (c >= 'A' && c <= 'Z')
+//				{
+//					c += 32;
+//				}
+//				ChatColor format = ChatColor.getByChar(c);
+//				if (format == null)
+//				{
+//					continue;
+//				}
+//				if (builder.length() > 0)
+//				{
+//					TextComponent old = component;
+//					component = new TextComponent(old);
+//					old.setText(builder.toString());
+//					builder = new StringBuilder();
+//					components.add(old);
+//				}
+//				switch (format)
+//				{
+//					case BOLD:
+//						component.setBold(true);
+//						break;
+//					case ITALIC:
+//						component.setItalic(true);
+//						break;
+//					case UNDERLINE:
+//						component.setUnderlined(true);
+//						break;
+//					case STRIKETHROUGH:
+//						component.setStrikethrough(true);
+//						break;
+//					case MAGIC:
+//						component.setObfuscated(true);
+//						break;
+//					case RESET:
+//						format = ChatColor.WHITE;
+//					default:
+//						component = new TextComponent();
+//						component.setColor(format);
+//						break;
+//				}
+//				continue;
+//			}
 			int pos = message.indexOf(' ', i);
 			if (pos == - 1)
 			{

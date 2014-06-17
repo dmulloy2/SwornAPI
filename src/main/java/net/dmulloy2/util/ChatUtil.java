@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentSerializer;
-import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.exception.ReflectionException;
 
 import org.bukkit.entity.Player;
@@ -23,28 +22,14 @@ public class ChatUtil
 {
 	private ChatUtil() { }
 
-	public static void sendMessage(Player player, BaseComponent... message)
+	public static void sendMessage(Player player, BaseComponent... message) throws ReflectionException
 	{
-		try
-		{
-			sendChatPacket(player, ComponentSerializer.toString(message));
-		}
-		catch (ReflectionException ex)
-		{
-			player.sendMessage(TextComponent.toLegacyText(message));
-		}
+		sendChatPacket(player, ComponentSerializer.toString(message));
 	}
 
-	public static void sendMessage(Player player, BaseComponent message)
+	public static void sendMessage(Player player, BaseComponent message) throws ReflectionException
 	{
-		try
-		{
-			sendChatPacket(player, ComponentSerializer.toString(message));
-		}
-		catch (ReflectionException ex)
-		{
-			player.sendMessage(TextComponent.toLegacyText(message));
-		}
+		sendChatPacket(player, ComponentSerializer.toString(message));
 	}
 
 	private static void sendChatPacket(Player player, String jsonString) throws ReflectionException

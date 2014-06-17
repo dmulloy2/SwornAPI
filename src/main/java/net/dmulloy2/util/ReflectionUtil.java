@@ -33,7 +33,7 @@ public class ReflectionUtil
 	public static final Class<?> getNMSClass(String name)
 	{
 		String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-		String version = serverPackage.substring(name.lastIndexOf('.') + 1);
+		String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		name = "net.minecraft.server." + version + "." + name;
 
 		try
@@ -54,7 +54,7 @@ public class ReflectionUtil
 	public static final Class<?> getOBCClass(String name)
 	{
 		String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-		String version = serverPackage.substring(name.lastIndexOf('.') + 1);
+		String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		name = "org.bukkit.craftbukkit." + version + "." + name;
 
 		try

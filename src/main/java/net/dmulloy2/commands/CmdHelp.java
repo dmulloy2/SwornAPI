@@ -9,6 +9,7 @@ import java.util.List;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.TextComponent;
+import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 
@@ -60,12 +61,21 @@ public class CmdHelp extends Command
 		}
 
 		for (BaseComponent[] components : getPage(index))
+			sendFancyMessage(components);
+	}
+
+	private void sendFancyMessage(BaseComponent[] components)
+	{
+		if (sender instanceof Player)
 		{
-			if (sender instanceof Player)
+			try
+			{
 				ChatUtil.sendMessage(player, components);
-			else
-				sendMessage(TextComponent.toLegacyText(components));
+				return;
+			} catch (ReflectionException ex) { }
 		}
+
+		sender.sendMessage(TextComponent.toLegacyText(components));
 	}
 
 	public int getPageCount()

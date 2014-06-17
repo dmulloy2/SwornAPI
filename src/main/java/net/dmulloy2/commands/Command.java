@@ -215,16 +215,16 @@ public abstract class Command implements CommandExecutor
 
 		prefix += name;
 
-		ComponentBuilder builder = new ComponentBuilder(prefix).color(ChatColor.AQUA);
+		ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&b" + prefix));
 
 		StringBuilder hoverText = new StringBuilder();
 		hoverText.append(getUsageTemplate(false) + ":\n");
-		hoverText.append(FormatUtil.format(description) + "\n");
+		hoverText.append(FormatUtil.format("&e" + description) + "\n");
 		if (permission != null)
 		{
 			hoverText.append("\n");
 			hoverText.append(FormatUtil.format("&4Permission:") + "\n");
-			hoverText.append(FormatUtil.format("&c{0}", getPermissionString()));
+			hoverText.append(FormatUtil.format("&c" + getPermissionString()));
 		}
 
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.toString()));
@@ -241,7 +241,7 @@ public abstract class Command implements CommandExecutor
 			usage += String.format(" <%s>", s);
 
 		if (! usage.isEmpty())
-			builder.append(usage).color(ChatColor.AQUA).event(hoverEvent).event(clickEvent);
+			builder.append(FormatUtil.format("&3" + usage)).event(hoverEvent).event(clickEvent);
 
 		return builder.create();
 	}
