@@ -5,6 +5,7 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
@@ -12,6 +13,7 @@ import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.Util;
 
 import org.bukkit.entity.Player;
 
@@ -64,6 +66,8 @@ public class CmdHelp extends Command
 			sendFancyMessage(components);
 	}
 
+	private static boolean exceptionPrinted;
+
 	private void sendFancyMessage(BaseComponent[] components)
 	{
 		if (sender instanceof Player)
@@ -72,7 +76,15 @@ public class CmdHelp extends Command
 			{
 				ChatUtil.sendMessage(player, components);
 				return;
-			} catch (ReflectionException ex) { }
+			} 
+			catch (ReflectionException ex)
+			{
+				if (! exceptionPrinted)
+				{
+					exceptionPrinted = true;
+					plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "fancifying help"));
+				}
+			}
 		}
 
 		sender.sendMessage(TextComponent.toLegacyText(components));
