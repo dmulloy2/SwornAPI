@@ -39,7 +39,7 @@ public class ChatUtil
 			Class<?> iChatBaseComponentClass = ReflectionUtil.getNMSClass("IChatBaseComponent");
 			Class<?> packetPlayOutChatClass = ReflectionUtil.getNMSClass("PacketPlayOutChat");
 			Class<?> chatSerializer = ReflectionUtil.getNMSClass("ChatSerializer");
-			Method a = ReflectionUtil.getMethod(chatSerializer, "a");
+			Method a = ReflectionUtil.getMethod(chatSerializer, "a", String.class);
 			Object iChatBaseComponent = a.invoke(null, jsonString);
 			Constructor<?> constructor = packetPlayOutChatClass.getConstructor(iChatBaseComponentClass);
 			Object packetPlayOutChat = constructor.newInstance(iChatBaseComponent);
@@ -48,7 +48,7 @@ public class ChatUtil
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending chat packet to " + player.getName());
+			throw new ReflectionException("Sending chat packet to " + player.getName(), ex);
 		}
 	}
 }
