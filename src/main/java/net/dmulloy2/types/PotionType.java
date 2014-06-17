@@ -7,11 +7,14 @@ import java.util.Collection;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.dmulloy2.util.FormatUtil;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
+ * Represents various potion types with friendlier names.
+ * 
  * @author dmulloy2
  */
 
@@ -34,6 +37,12 @@ public enum PotionType
 
 	private final String name;
 
+	/**
+	 * Returns a friendlier name of a given {@link PotionEffectType}.
+	 * 
+	 * @param effect Potion effect
+	 * @return Friendlier name.
+	 */
 	public static String toName(PotionEffectType effect)
 	{
 		for (PotionType e : PotionType.values())
@@ -42,9 +51,15 @@ public enum PotionType
 				return e.name;
 		}
 
-		return "";
+		return FormatUtil.format(effect.getName());
 	}
 
+	/**
+	 * Returns a <code>String</code> representation of a {@link Collection} of
+	 * PotionEffects
+	 * 
+	 * @param effects Collection of potion effects.
+	 */
 	public static String toString(Collection<PotionEffect> effects)
 	{
 		StringBuilder result = new StringBuilder();

@@ -13,6 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
+ * Util for dealing with Java Reflection.
+ * 
  * @author dmulloy2
  */
 
@@ -25,8 +27,7 @@ public class ReflectionUtil
 	 * While this does cross versions, it's important to note that this class
 	 * may have been changed or removed.
 	 * 
-	 * @param name
-	 *        - Class Name
+	 * @param name - Class Name
 	 * @return NMS class, or null if none exists
 	 */
 	public static final Class<?> getNMSClass(String name)
@@ -47,8 +48,7 @@ public class ReflectionUtil
 	 * While this does cross versions, it's important to note that this class
 	 * may have been changed or removed.
 	 * 
-	 * @param name
-	 *        - Class Name
+	 * @param name - Class Name
 	 * @return OBC class, or null if none exists
 	 */
 	public static final Class<?> getOBCClass(String name)
@@ -67,10 +67,8 @@ public class ReflectionUtil
 	/**
 	 * Gets a {@link Field} in a given {@link Class} object.
 	 * 
-	 * @param clazz
-	 *        - Class object
-	 * @param name
-	 *        - Field nameame
+	 * @param clazz - Class object
+	 * @param name - Field nameame
 	 * @return The field, or null if none exists.
 	 */
 	public static final Field getField(Class<?> clazz, String name)
@@ -85,10 +83,8 @@ public class ReflectionUtil
 	/**
 	 * Checks if a field is declared in a given {@link Class}
 	 * 
-	 * @param clazz
-	 *        - Class object
-	 * @param name
-	 *        - Name of variable
+	 * @param clazz - Class object
+	 * @param name - Name of variable
 	 * @return Whether or not the field is declared
 	 */
 	public static final boolean isDeclaredField(Class<?> clazz, String name)
@@ -100,12 +96,9 @@ public class ReflectionUtil
 	 * Gets a {@link Method} in a given {@link Class} object with the specified
 	 * args.
 	 * 
-	 * @param clazz
-	 *        - Class object
-	 * @param name
-	 *        - Method name
-	 * @param args
-	 *        - Arguments
+	 * @param clazz - Class object
+	 * @param name - Method name
+	 * @param args - Arguments
 	 * @return The method, or null if none exists.
 	 */
 	public static final Method getMethod(Class<?> clazz, String name, Class<?>... args)
@@ -122,10 +115,8 @@ public class ReflectionUtil
 	/**
 	 * Gets a {@link Method} in a given {@link Class} object.
 	 * 
-	 * @param clazz
-	 *        - Class object
-	 * @param name
-	 *        - Method name
+	 * @param clazz - Class object
+	 * @param name - Method name
 	 * @return The method, or null if none exists.
 	 */
 	public static final Method getMethod(Class<?> clazz, String name)
@@ -143,8 +134,7 @@ public class ReflectionUtil
 	 * Gets the handle of a given object. This only works for classes that
 	 * declare the getHandle() method, like CraftPlayer.
 	 * 
-	 * @param object
-	 *        - Object to get the handle for
+	 * @param object - Object to get the handle for
 	 * @return The handle, or null if none exists
 	 */
 	public static final Object getHandle(Object object)
@@ -161,12 +151,9 @@ public class ReflectionUtil
 	/**
 	 * Sends a packet to a {@link Player}
 	 * 
-	 * @param player
-	 *        - Player to send the packet to
-	 * @param packet
-	 *        - Packet to send
-	 * @throws ReflectionException
-	 *         If something goes wrong
+	 * @param player - Player to send the packet to
+	 * @param packet - Packet to send
+	 * @throws ReflectionException If something goes wrong
 	 */
 	public static final void sendPacket(Player player, Object packet) throws ReflectionException
 	{

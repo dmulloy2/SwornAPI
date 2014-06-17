@@ -21,6 +21,9 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 /**
+ * Represents a commmand. This class provides useful methods for execution,
+ * permission and argument manipulation, and messaging.
+ * 
  * @author dmulloy2
  */
 
@@ -220,7 +223,7 @@ public abstract class Command implements CommandExecutor
 		{
 			if (msg)
 				err("&c{0} &4is not a number.", args[arg]);
-			return -1;
+			return - 1;
 		}
 	}
 
@@ -234,7 +237,7 @@ public abstract class Command implements CommandExecutor
 		{
 			if (msg)
 				err("&c{0} &4is not a number.", args[arg]);
-			return -1;
+			return - 1;
 		}
 	}
 

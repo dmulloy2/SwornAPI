@@ -20,10 +20,10 @@ public class ResourceHandler
 	private ResourceBundle messages;
 	public ResourceHandler(JavaPlugin plugin, ClassLoader classLoader)
 	{
-		try 
+		try
 		{
 			messages = ResourceBundle.getBundle("messages", Locale.getDefault(), new FileResourceLoader(classLoader, plugin));
-		} 
+		}
 		catch (MissingResourceException ex)
 		{
 			plugin.getLogger().log(Level.SEVERE, "Could not find resource bundle: messages.properties");

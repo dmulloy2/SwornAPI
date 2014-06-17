@@ -13,7 +13,7 @@ import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 
 /**
- * Util used for general formatting
+ * Util used for general formatting.
  * 
  * @author dmulloy2
  */
@@ -25,10 +25,8 @@ public class FormatUtil
 	/**
 	 * Formats a given string with its objects.
 	 * 
-	 * @param format
-	 *        - Base string
-	 * @param objects
-	 *        - Objects to format in
+	 * @param format Base string
+	 * @param objects Objects to format in
 	 * @return Formatted string
 	 * @see {@link MessageFormat#format(String, Object...)}
 	 */
@@ -49,8 +47,7 @@ public class FormatUtil
 	 * If the object or any of its superclasses (minus Object) do not implement
 	 * a toString() method, the object's simple name will be returned.
 	 * 
-	 * @param o
-	 *        - Object to get the user-friendly representation of
+	 * @param o Object to get the user-friendly representation of
 	 * @return A user-friendly representation of the given Object.
 	 */
 	public static String getFriendlyName(Object o)
@@ -72,8 +69,7 @@ public class FormatUtil
 	/**
 	 * Returns a user-friendly version of a given String.
 	 * 
-	 * @param string
-	 *        - String to get the user-friendly version of
+	 * @param string String to get the user-friendly version of
 	 * @return A user-friendly version of the given String.
 	 */
 	public static String getFriendlyName(String string)
@@ -86,8 +82,7 @@ public class FormatUtil
 	/**
 	 * Returns the proper article of a given string
 	 * 
-	 * @param string
-	 *        - String to get the article for
+	 * @param string String to get the article for
 	 * @return The proper article of a given string
 	 */
 	public static String getArticle(String string)
@@ -102,8 +97,7 @@ public class FormatUtil
 	/**
 	 * Returns the proper plural of a given string
 	 * 
-	 * @param string
-	 *        - String to get the plural for
+	 * @param string String to get the plural for
 	 * @return The proper plural of a given string
 	 */
 	public static String getPlural(String string, int amount)
@@ -119,12 +113,11 @@ public class FormatUtil
 	}
 
 	/**
-	 * Joins together multiple given strings with the given glue.
+	 * Joins together multiple given strings with the given glue using the
+	 * {@link StringJoiner} class.
 	 * 
-	 * @param glue
-	 *        - String to join the args together with
-	 * @param args
-	 *        - Strings to join together
+	 * @param glue String to join the args together with
+	 * @param args Strings to join together
 	 * @return Multiple strings joined together with the given glue.
 	 * @see {@link StringJoiner}
 	 */
@@ -136,10 +129,8 @@ public class FormatUtil
 	/**
 	 * Returns the given {@link File}'s name with the extension omitted.
 	 * 
-	 * @param file
-	 *        - {@link File}
-	 * @param extension
-	 *        - File extension
+	 * @param file {@link File}
+	 * @param extension File extension
 	 * @return The file's name with the extension omitted
 	 */
 	public static String trimFileExtension(File file, String extension)

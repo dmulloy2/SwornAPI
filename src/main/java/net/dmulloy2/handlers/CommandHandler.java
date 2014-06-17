@@ -17,6 +17,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 /**
+ * Handles commands. This supports both prefixed and non-prefixed commands.
+ * 
  * @author dmulloy2
  */
 
@@ -36,6 +38,11 @@ public class CommandHandler implements CommandExecutor
 		this.registeredCommands = new ArrayList<Command>();
 	}
 
+	/**
+	 * Registers a non-prefixed {@link Command}.
+	 * 
+	 * @param command Non-prefixed {@link Command} to register.
+	 */
 	public void registerCommand(Command command)
 	{
 		PluginCommand pluginCommand = plugin.getCommand(command.getName());
@@ -50,27 +57,48 @@ public class CommandHandler implements CommandExecutor
 		}
 	}
 
+	/**
+	 * Registers a prefixed {@link Command}. The commandPrefix must be set for
+	 * this method to work.
+	 * 
+	 * @param command Prefixed {@link Command} to register.
+	 */
 	public void registerPrefixedCommand(Command command)
 	{
 		if (commandPrefix != null)
 			registeredPrefixedCommands.add(command);
 	}
 
+	/**
+	 * @return A {@link List} of all registered non-prefixed commands.
+	 */
 	public List<Command> getRegisteredCommands()
 	{
 		return registeredCommands;
 	}
 
+	/**
+	 * @return A {@link List} of all registered prefixed commands.
+	 */
 	public List<Command> getRegisteredPrefixedCommands()
 	{
 		return registeredPrefixedCommands;
 	}
 
+	/**
+	 * @return The command prefix.
+	 */
 	public String getCommandPrefix()
 	{
 		return commandPrefix;
 	}
 
+	/**
+	 * Sets the command prefix. This method must be called before any prefixed
+	 * commands are registered.
+	 * 
+	 * @param commandPrefix Command prefix
+	 */
 	public void setCommandPrefix(String commandPrefix)
 	{
 		this.commandPrefix = commandPrefix;
@@ -79,11 +107,17 @@ public class CommandHandler implements CommandExecutor
 		plugin.getCommand(commandPrefix).setExecutor(this);
 	}
 
+	/**
+	 * @return whether or not the command prefix is used.
+	 */
 	public boolean usesCommandPrefix()
 	{
 		return commandPrefix != null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args)
 	{

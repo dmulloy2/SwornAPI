@@ -1,6 +1,6 @@
 /**
  * SwornAPI - a common API for MineSworn and Shadowvolt plugins.
- * Copyright (C) 2014 dmulloy2
+ * Copyright (C) - 2014 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,8 @@ import net.dmulloy2.handlers.PermissionHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
+ * Main SwornAPI class. Plugins utilizing this API should extend this class.
+ * 
  * @author dmulloy2
  */
 

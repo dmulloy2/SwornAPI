@@ -10,6 +10,8 @@ import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
 
 /**
+ * Generic help command.
+ * 
  * @author dmulloy2
  */
 

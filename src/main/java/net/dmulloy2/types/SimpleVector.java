@@ -16,7 +16,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.util.Vector;
 
 /**
- * Represents a serializable vector
+ * Represents a serializable vector.
  * 
  * @author dmulloy2
  */

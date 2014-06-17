@@ -4,13 +4,15 @@
 package net.dmulloy2.types;
 
 /**
- * Classes implementing this Interface will be reloaded when the reload command
- * is issued.
+ * Represents a reloadable class.
  * 
  * @author dmulloy2
  */
 
 public interface Reloadable
 {
+	/**
+	 * Reloads settings in this class.
+	 */
 	public void reload();
 }

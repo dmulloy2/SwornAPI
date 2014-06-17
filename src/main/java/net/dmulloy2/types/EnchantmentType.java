@@ -8,10 +8,13 @@ import java.util.Map.Entry;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.dmulloy2.util.FormatUtil;
 
 import org.bukkit.enchantments.Enchantment;
 
 /**
+ * Represents various enchantments with more friendly names.
+ * 
  * @author dmulloy2
  */
 
@@ -46,28 +49,48 @@ public enum EnchantmentType
 	
 	private String name;
 
+	/**
+	 * Returns a friendlier name of a given {@link Enchantment}.
+	 * 
+	 * @param enchant {@link Enchantment}
+	 * @return Friendlier name.
+	 */
 	public static String toName(Enchantment enchant)
 	{
 		for (EnchantmentType e : EnchantmentType.values())
 		{
 			if (e.toString().equals(enchant.getName()))
-				return e.name;
+				return e.getName();
 		}
 
-		return "";
+		return FormatUtil.getFriendlyName(enchant.getName());
 	}
 
+	/**
+	 * Attempts to get an {@link Enchantment} from a given string.
+	 * 
+	 * @param enchant Enchantment name
+	 * @return The enchantment, or null if none exists.
+	 */
 	public static Enchantment toEnchantment(String enchant)
 	{
+		enchant = enchant.toUpperCase();
+		
 		for (EnchantmentType e : EnchantmentType.values())
 		{
-			if (e.name.equalsIgnoreCase(enchant))
+			if (e.getName().equalsIgnoreCase(enchant) || e.name().equals(enchant))
 				return Enchantment.getByName(e.toString());
 		}
 
 		return null;
 	}
 
+	/**
+	 * Returns a <code>String</code> representation of a {@link Map} of
+	 * enchantments.
+	 * 
+	 * @param enchantments Enchantment map
+	 */
 	public static String toString(Map<Enchantment, Integer> enchantments)
 	{
 		StringJoiner joiner = new StringJoiner(", ");

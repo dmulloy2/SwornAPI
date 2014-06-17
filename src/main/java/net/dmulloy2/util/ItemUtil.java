@@ -14,7 +14,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Util that deals with Items
+ * Util that deals with Items.
  * 
  * @author dmulloy2
  */
@@ -28,8 +28,7 @@ public class ItemUtil
 	 * <p>
 	 * The basic format is "[Type/ID]:[Data], [Amount], [Enchantment:Level...]"
 	 * 
-	 * @param string
-	 *        - String to read
+	 * @param string String to read
 	 * @return ItemStack from given string
 	 */
 	public static ItemStack readItem(String string)
@@ -124,8 +123,7 @@ public class ItemUtil
 	/**
 	 * Returns the basic data of an ItemStack in string form
 	 * 
-	 * @param stack
-	 *        - ItemStack to "convert" to a string
+	 * @param stack ItemStack to "convert" to a string
 	 * @return ItemStack's data in string form
 	 */
 	public static String itemToString(ItemStack stack)
@@ -146,8 +144,7 @@ public class ItemUtil
 	/**
 	 * Returns an ItemStack's enchantments in string form
 	 * 
-	 * @param stack
-	 *        - ItemStack to get enchantments
+	 * @param stack ItemStack to get enchantments
 	 * @return ItemStack's enchantments in string form
 	 */
 	public static String getEnchantments(ItemStack stack)

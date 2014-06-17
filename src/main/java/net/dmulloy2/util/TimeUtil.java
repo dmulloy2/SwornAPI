@@ -10,7 +10,11 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.dmulloy2.exception.BadTimeException;
+
 /**
+ * Util for dealing with time.
+ * 
  * @author dmulloy2
  */
 
@@ -67,7 +71,7 @@ public final class TimeUtil
 	{
 		try
 		{
-			if (!t.matches("[0-9]+d[a-z]*"))
+			if (! t.matches("[0-9]+d[a-z]*"))
 				return Math.round(Double.parseDouble(t) * 60) * 1000;
 			else
 			{
@@ -108,7 +112,8 @@ public final class TimeUtil
 			}
 		}
 
-		throw new Exception("badtime");
+		// Message for backwards compatibility.
+		throw new BadTimeException("badtime");
 	}
 
 	// ---- Conversion Methods

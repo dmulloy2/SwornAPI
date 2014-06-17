@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 /**
- * Util dealing with Inventories
+ * Util dealing with Inventories.
  * 
  * @author dmulloy2
  */
@@ -25,8 +25,7 @@ public class InventoryUtil
 	/**
 	 * Returns whether or not a given inventory is empty
 	 * 
-	 * @param inventory
-	 *        - {@link Inventory} to check
+	 * @param inventory {@link Inventory} to check
 	 */
 	public static boolean isEmpty(Inventory inventory)
 	{
@@ -58,14 +57,12 @@ public class InventoryUtil
 	/**
 	 * Whether or not a Player's inventory has room for a given item
 	 * 
-	 * @param item
-	 *        - {@link ItemStack} to attempt to add
-	 * @param player
-	 *        - Player whose inventory is being checked
+	 * @param item {@link ItemStack} to attempt to add
+	 * @param player Player whose inventory is being checked
 	 */
 	public static boolean hasRoom(ItemStack item, Player player)
 	{
-		int maxStackSize = (item.getMaxStackSize() == -1) ? player.getInventory().getMaxStackSize() : item.getMaxStackSize();
+		int maxStackSize = (item.getMaxStackSize() == - 1) ? player.getInventory().getMaxStackSize() : item.getMaxStackSize();
 		int amount = item.getAmount();
 
 		for (ItemStack stack : player.getInventory().getContents())
@@ -88,10 +85,8 @@ public class InventoryUtil
 	/**
 	 * Gives a player an item
 	 * 
-	 * @param player
-	 *        - {@link Player} to give them item to
-	 * @param item
-	 *        - {@link ItemStack} to give the player
+	 * @param player {@link Player} to give them item to
+	 * @param item {@link ItemStack} to give the player
 	 * @return Leftovers, if any
 	 */
 	public static Map<Integer, ItemStack> giveItem(Player player, ItemStack item)
@@ -105,10 +100,8 @@ public class InventoryUtil
 	/**
 	 * Gives a player items
 	 * 
-	 * @param player
-	 *        - {@link Player} to give them item to
-	 * @param items
-	 *        - Items to give the player
+	 * @param player {@link Player} to give them item to
+	 * @param items Items to give the player
 	 * @return Leftovers, if any
 	 */
 	public static Map<Integer, ItemStack> giveItems(Player player, ItemStack... items)
@@ -163,12 +156,12 @@ public class InventoryUtil
 				int firstPartial = firstPartial(inventory, item, maxAmount);
 
 				// Drat! no partial stack
-				if (firstPartial == -1)
+				if (firstPartial == - 1)
 				{
 					// Find a free spot!
 					int firstFree = inventory.firstEmpty();
 
-					if (firstFree == -1)
+					if (firstFree == - 1)
 					{
 						// No space at all!
 						leftover.put(i, item);
@@ -222,7 +215,7 @@ public class InventoryUtil
 	private static int firstPartial(Inventory inventory, ItemStack item, int maxAmount)
 	{
 		if (item == null)
-			return -1;
+			return - 1;
 
 		ItemStack[] stacks = inventory.getContents();
 		for (int i = 0; i < stacks.length; i++)
@@ -232,7 +225,7 @@ public class InventoryUtil
 				return i;
 		}
 
-		return -1;
+		return - 1;
 	}
 
 	public static int amount(Inventory inventory, Material type, short dat)
@@ -248,7 +241,7 @@ public class InventoryUtil
 					Material mat = items[slot].getType();
 					short duration = items[slot].getDurability();
 					int amt = items[slot].getAmount();
-					if ((mat == type) && ((dat == duration) || (dat == -1)))
+					if ((mat == type) && ((dat == duration) || (dat == - 1)))
 					{
 						ret += amt;
 					}
@@ -272,7 +265,7 @@ public class InventoryUtil
 					Material mat = items[slot].getType();
 					short duration = items[slot].getDurability();
 					int itmAmt = items[slot].getAmount();
-					if ((mat == type) && ((dat == duration) || (dat == -1)))
+					if ((mat == type) && ((dat == duration) || (dat == - 1)))
 					{
 						if (amt > 0)
 						{
