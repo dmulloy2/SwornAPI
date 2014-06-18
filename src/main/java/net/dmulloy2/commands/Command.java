@@ -14,6 +14,7 @@ import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.chat.HoverEvent;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.IPermission;
+import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
@@ -224,7 +225,12 @@ public abstract class Command implements CommandExecutor
 
 		StringBuilder hoverText = new StringBuilder();
 		hoverText.append(getUsageTemplate(false) + ":\n");
-		hoverText.append(FormatUtil.format("&e" + description));
+
+		StringJoiner description = new StringJoiner("\n");
+		for (String s : getDescription())
+			description.append(FormatUtil.format("&e" + s));
+		hoverText.append(FormatUtil.format(description.toString()));
+
 		if (permission != null)
 		{
 			hoverText.append("\n\n");
