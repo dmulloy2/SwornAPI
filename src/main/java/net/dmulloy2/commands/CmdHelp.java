@@ -9,8 +9,10 @@ import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
@@ -26,7 +28,7 @@ import org.bukkit.entity.Player;
 public class CmdHelp extends Command
 {
 	protected int linesPerPage, pageArgIndex;
-	
+
 	public CmdHelp(SwornPlugin plugin)
 	{
 		super(plugin);
@@ -76,7 +78,7 @@ public class CmdHelp extends Command
 			{
 				ChatUtil.sendMessage(player, components);
 				return;
-			} 
+			}
 			catch (ReflectionException ex)
 			{
 				if (! exceptionPrinted)
@@ -100,12 +102,6 @@ public class CmdHelp extends Command
 		return buildHelpMenu().size();
 	}
 
-	/**
-	 * Gets all of the page lines for the specified page index
-	 * 
-	 * @param index The page index
-	 * @return List of page lines
-	 */
 	public List<BaseComponent[]> getPage(int index)
 	{
 		List<BaseComponent[]> lines = new ArrayList<BaseComponent[]>();
@@ -119,8 +115,12 @@ public class CmdHelp extends Command
 
 	public BaseComponent[] getHeader(int index)
 	{
-		return TextComponent.fromLegacyText(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(),
-				index, getPageCount()));
+		StringJoiner header = new StringJoiner("\n");
+		header.append(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount()));
+		for (String extra : getExtraHelp())
+			header.append(FormatUtil.format(extra));
+
+		return new ComponentBuilder(header.toString()).create();
 	}
 
 	public List<BaseComponent[]> getLines(int startIndex, int endIndex)

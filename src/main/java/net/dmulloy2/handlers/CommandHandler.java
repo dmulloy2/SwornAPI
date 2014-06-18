@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ComponentBuilder;
+import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.commands.CmdHelp;
 import net.dmulloy2.commands.Command;
+import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 
 /**
  * Handles commands. This supports both prefixed and non-prefixed commands.
@@ -138,8 +143,11 @@ public class CommandHandler implements CommandExecutor
 				}
 			}
 
-			sender.sendMessage(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try {1}", args[0],
-					helpCommand.getUsageTemplate(false)));
+			BaseComponent[] components = new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try "))
+				.addAll(helpCommand.getFancyUsageTemplate())
+				.create();
+
+			sendFancyMessage(sender, components);
 		}
 		else
 		{
@@ -147,5 +155,19 @@ public class CommandHandler implements CommandExecutor
 		}
 
 		return true;
+	}
+
+	private void sendFancyMessage(CommandSender sender, BaseComponent[] components)
+	{
+		if (sender instanceof Player)
+		{
+			try
+			{
+				ChatUtil.sendMessage((Player) sender, components);
+				return;
+			} catch (Throwable ex) { }
+		}
+
+		sender.sendMessage(TextComponent.toLegacyText(components));
 	}
 }

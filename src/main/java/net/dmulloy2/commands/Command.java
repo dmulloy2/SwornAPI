@@ -208,7 +208,12 @@ public abstract class Command implements CommandExecutor
 
 	public final BaseComponent[] getFancyUsageTemplate()
 	{
-		String prefix = "- /";
+		return getFancyUsageTemplate(false);
+	}
+
+	public final BaseComponent[] getFancyUsageTemplate(boolean list)
+	{
+		String prefix = (list ? "- " : "") + "/";
 
 		if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
 			prefix += plugin.getCommandHandler().getCommandPrefix() + " ";
@@ -219,12 +224,12 @@ public abstract class Command implements CommandExecutor
 
 		StringBuilder hoverText = new StringBuilder();
 		hoverText.append(getUsageTemplate(false) + ":\n");
-		hoverText.append(FormatUtil.format("&e" + description) + "\n");
+		hoverText.append(FormatUtil.format("&e" + description));
 		if (permission != null)
 		{
-			hoverText.append("\n");
-			hoverText.append(FormatUtil.format("&4Permission:") + "\n");
-			hoverText.append(FormatUtil.format("&c" + getPermissionString()));
+			hoverText.append("\n\n");
+			hoverText.append(ChatColor.DARK_RED + "Permission:\n");
+			hoverText.append(ChatColor.RESET + getPermissionString());
 		}
 
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.toString()));
@@ -244,6 +249,16 @@ public abstract class Command implements CommandExecutor
 			builder.append(FormatUtil.format("&3" + usage)).event(hoverEvent).event(clickEvent);
 
 		return builder.create();
+	}
+
+	protected List<String> getDescription()
+	{
+		return Util.toList(description);
+	}
+
+	protected List<String> getExtraHelp()
+	{
+		return new ArrayList<>();
 	}
 
 	// ---- Argument Manipulation

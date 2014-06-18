@@ -157,6 +157,14 @@ public class ComponentBuilder
 		return this;
 	}
 
+	public ComponentBuilder addAll(BaseComponent... components)
+	{
+		parts.add(current);
+		for (BaseComponent component : components)
+			parts.add(component);
+		return this;
+	}
+
 	/**
 	 * Returns the components needed to display the message created by this
 	 * builder.
