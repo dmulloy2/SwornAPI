@@ -145,12 +145,12 @@ public class CmdHelp extends Command
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
 		{
-			ret.add(cmd.getFancyUsageTemplate());
+			ret.add(cmd.getFancyUsageTemplate(true));
 		}
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredCommands())
 		{
-			ret.add(cmd.getFancyUsageTemplate());
+			ret.add(cmd.getFancyUsageTemplate(true));
 		}
 
 		return ret;
