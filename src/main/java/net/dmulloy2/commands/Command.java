@@ -214,21 +214,17 @@ public abstract class Command implements CommandExecutor
 
 	public final BaseComponent[] getFancyUsageTemplate(boolean list)
 	{
-		String prefix = (list ? "- " : "") + "/";
+		String prefix = list ? "- " : "";
+		String usageTemplate = getUsageTemplate(false);
 
-		if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
-			prefix += plugin.getCommandHandler().getCommandPrefix() + " ";
-
-		prefix += name;
-
-		ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&b" + prefix));
+		ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + usageTemplate);
 
 		StringBuilder hoverText = new StringBuilder();
 		hoverText.append(getUsageTemplate(false) + ":\n");
 
 		StringJoiner description = new StringJoiner("\n");
 		for (String s : getDescription())
-			description.append(FormatUtil.format("&e" + s));
+			description.append(ChatColor.YELLOW + s);
 		hoverText.append(FormatUtil.format(description.toString()));
 
 		if (permission != null)
@@ -243,16 +239,6 @@ public abstract class Command implements CommandExecutor
 
 		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(getUsageTemplate(false)));
 		builder.event(clickEvent);
-
-		String usage = "";
-		for (String s : optionalArgs)
-			usage += String.format(" [%s]", s);
-
-		for (String s : requiredArgs)
-			usage += String.format(" <%s>", s);
-
-		if (! usage.isEmpty())
-			builder.append(FormatUtil.format("&3" + usage)).event(hoverEvent).event(clickEvent);
 
 		return builder.create();
 	}
