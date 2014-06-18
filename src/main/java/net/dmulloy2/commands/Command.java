@@ -219,22 +219,25 @@ public abstract class Command implements CommandExecutor
 
 		ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + usageTemplate);
 
-		StringBuilder hoverText = new StringBuilder();
-		hoverText.append(getUsageTemplate(false) + ":\n");
+		StringBuilder hoverTextBuilder = new StringBuilder();
+		hoverTextBuilder.append(getUsageTemplate(false) + ":\n");
 
 		StringJoiner description = new StringJoiner("\n");
 		for (String s : getDescription())
 			description.append(ChatColor.YELLOW + s);
-		hoverText.append(FormatUtil.format(description.toString()));
+		hoverTextBuilder.append(FormatUtil.format(description.toString()));
 
 		if (permission != null)
 		{
-			hoverText.append("\n\n");
-			hoverText.append(ChatColor.DARK_RED + "Permission:\n");
-			hoverText.append(ChatColor.RESET + getPermissionString());
+			hoverTextBuilder.append("\n\n");
+			hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:\n");
+			hoverTextBuilder.append(ChatColor.RESET + getPermissionString());
 		}
 
-		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText.toString()));
+		String hoverText = hoverTextBuilder.toString();
+		hoverText = hoverText.replaceAll("rr", "");
+
+		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText));
 		builder.event(hoverEvent);
 
 		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(getUsageTemplate(false)));
