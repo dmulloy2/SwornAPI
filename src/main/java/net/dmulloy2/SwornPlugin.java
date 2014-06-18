@@ -17,6 +17,9 @@
  */
 package net.dmulloy2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
@@ -37,4 +40,9 @@ public abstract class SwornPlugin extends JavaPlugin
 	protected @Getter LogHandler logHandler;
 
 	protected @Getter String prefix;
+
+	public List<String> getExtraHelp()
+	{
+		return new ArrayList<>();
+	}
 }

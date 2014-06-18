@@ -117,7 +117,7 @@ public class CmdHelp extends Command
 	{
 		StringJoiner header = new StringJoiner("\n");
 		header.append(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount()));
-		for (String extra : getExtraHelp())
+		for (String extra : plugin.getExtraHelp())
 			header.append(FormatUtil.format(extra));
 
 		return new ComponentBuilder(header.toString()).create();

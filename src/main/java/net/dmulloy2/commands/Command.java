@@ -262,11 +262,6 @@ public abstract class Command implements CommandExecutor
 		return Util.toList(description);
 	}
 
-	protected List<String> getExtraHelp()
-	{
-		return new ArrayList<>();
-	}
-
 	// ---- Argument Manipulation
 
 	protected final boolean argMatchesAlias(String arg, String... aliases)
