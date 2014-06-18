@@ -33,7 +33,9 @@ final public class HoverEvent
 
 	public enum Action
 	{
-		SHOW_TEXT, SHOW_ACHIEVEMENT, SHOW_ITEM
+		SHOW_TEXT,
+		SHOW_ACHIEVEMENT,
+		SHOW_ITEM
 	}
 
 	@Override

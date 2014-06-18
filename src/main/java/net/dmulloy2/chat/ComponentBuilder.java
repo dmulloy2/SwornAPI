@@ -18,7 +18,11 @@ package net.dmulloy2.chat;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.util.ChatUtil;
+
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  * ComponentBuilder simplifies creating basic messages by allowing the use of a
@@ -40,19 +44,6 @@ public class ComponentBuilder
 	public ComponentBuilder(String text)
 	{
 		current = new TextComponent(text);
-	}
-
-	public ComponentBuilder(String text, BaseComponent... components)
-	{
-		for (BaseComponent component : components)
-			parts.add(component);
-
-		current = new TextComponent(text);
-	}
-
-	public ComponentBuilder(BaseComponent... components)
-	{
-		this("", components);
 	}
 
 	/**
@@ -176,5 +167,19 @@ public class ComponentBuilder
 	{
 		parts.add(current);
 		return parts.toArray(new BaseComponent[parts.size()]);
+	}
+
+	/**
+	 * Sends the resulting JSON-chat message to a given player.
+	 * 
+	 * @param player {@link Player} to send the message to
+	 * @return the created components
+	 * @throws ReflectionException If sending the message fails
+	 */
+	public BaseComponent[] send(Player player) throws ReflectionException
+	{
+		BaseComponent[] components = create();
+		ChatUtil.sendMessage(player, components);
+		return components;
 	}
 }

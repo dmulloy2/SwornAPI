@@ -27,6 +27,10 @@ import org.bukkit.craftbukkit.libs.com.google.gson.JsonPrimitive;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonSerializationContext;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonSerializer;
 
+/**
+ * @author md_5
+ */
+
 public class TextComponentSerializer extends BaseComponentSerializer implements JsonSerializer<TextComponent>,
 		JsonDeserializer<TextComponent>
 {
@@ -46,9 +50,8 @@ public class TextComponentSerializer extends BaseComponentSerializer implements 
 	{
 		List<BaseComponent> extra = src.getExtra();
 		if (! src.hasFormatting() && (extra == null || extra.size() == 0))
-		{
 			return new JsonPrimitive(src.getText());
-		}
+
 		JsonObject object = new JsonObject();
 		serialize(object, src, context);
 		object.addProperty("text", src.getText());

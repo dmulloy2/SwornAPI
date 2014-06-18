@@ -132,8 +132,10 @@ public class TextComponent extends BaseComponent
 				component = old;
 				continue;
 			}
+
 			builder.append(c);
 		}
+
 		if (builder.length() > 0)
 		{
 			component.setText(builder.toString());
@@ -189,26 +191,22 @@ public class TextComponent extends BaseComponent
 	protected void toLegacyText(StringBuilder builder)
 	{
 		builder.append(getColor());
+
 		if (isBold())
-		{
 			builder.append(ChatColor.BOLD);
-		}
+
 		if (isItalic())
-		{
 			builder.append(ChatColor.ITALIC);
-		}
+
 		if (isUnderlined())
-		{
 			builder.append(ChatColor.UNDERLINE);
-		}
+
 		if (isStrikethrough())
-		{
 			builder.append(ChatColor.STRIKETHROUGH);
-		}
+
 		if (isObfuscated())
-		{
 			builder.append(ChatColor.MAGIC);
-		}
+
 		builder.append(text);
 		super.toLegacyText(builder);
 	}

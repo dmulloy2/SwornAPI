@@ -25,6 +25,10 @@ import org.bukkit.craftbukkit.libs.com.google.gson.JsonSerializationContext;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * @author md_5
+ */
+
 public class BaseComponentSerializer
 {
 	protected void deserialize(JsonObject object, BaseComponent component, JsonDeserializationContext context)

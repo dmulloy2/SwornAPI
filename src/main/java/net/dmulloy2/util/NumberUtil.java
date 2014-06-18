@@ -26,12 +26,12 @@ public class NumberUtil
 		{
 			return Integer.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isInt(Object object)
 	{
-		return toInt(object) != - 1;
+		return toInt(object) != -1;
 	}
 
 	public static float toFloat(Object object)
@@ -45,12 +45,12 @@ public class NumberUtil
 		{
 			return Float.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isFloat(Object object)
 	{
-		return toFloat(object) != - 1;
+		return toFloat(object) != -1;
 	}
 
 	public static double toDouble(Object object)
@@ -64,12 +64,12 @@ public class NumberUtil
 		{
 			return Double.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isDouble(Object object)
 	{
-		return toDouble(object) != - 1;
+		return toDouble(object) != -1;
 	}
 
 	public static long toLong(Object object)
@@ -83,12 +83,12 @@ public class NumberUtil
 		{
 			return Long.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isLong(Object object)
 	{
-		return toLong(object) != - 1;
+		return toLong(object) != -1;
 	}
 
 	public static short toShort(Object object)
@@ -102,12 +102,12 @@ public class NumberUtil
 		{
 			return Short.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isShort(Object object)
 	{
-		return toShort(object) != - 1;
+		return toShort(object) != -1;
 	}
 
 	public static byte toByte(Object object)
@@ -121,12 +121,12 @@ public class NumberUtil
 		{
 			return Byte.valueOf(object.toString());
 		} catch (Throwable ex) { }
-		return - 1;
+		return -1;
 	}
 
 	public static boolean isByte(Object object)
 	{
-		return toByte(object) != - 1;
+		return toByte(object) != -1;
 	}
 
 	public static double roundNumDecimals(double d, int num)

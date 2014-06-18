@@ -106,11 +106,11 @@ public abstract class BaseComponent
 	}
 
 	/**
-	 * Converts the components to a string that uses the old formatting codes (
-	 * {@link net.md_5.bungee.api.ChatColor#COLOR_CHAR}
+	 * Converts the components to a string that uses the old formatting codes.
 	 *
 	 * @param components the components to convert
 	 * @return the string in the old format
+	 * @see ChatColor
 	 */
 	public static String toLegacyText(BaseComponent... components)
 	{
@@ -119,6 +119,7 @@ public abstract class BaseComponent
 		{
 			builder.append(msg.toLegacyText());
 		}
+
 		return builder.toString();
 	}
 
@@ -135,13 +136,14 @@ public abstract class BaseComponent
 		{
 			builder.append(msg.toPlainText());
 		}
+
 		return builder.toString();
 	}
 
 	/**
 	 * Returns the color of this component. This uses the parent's color if this
-	 * component doesn't have one. {@link net.md_5.bungee.api.ChatColor#WHITE}
-	 * is returned if no color is found.
+	 * component doesn't have one. {@link ChatColor#WHITE} is returned if no
+	 * color is found.
 	 *
 	 * @return the color of this component
 	 */
@@ -370,10 +372,10 @@ public abstract class BaseComponent
 	}
 
 	/**
-	 * Converts the component to a string that uses the old formatting codes (
-	 * {@link ChatColor})
+	 * Converts the component to a string that uses the old formatting codes.
 	 *
 	 * @return the string in the old format
+	 * @see ChatColor
 	 */
 	public String toLegacyText()
 	{

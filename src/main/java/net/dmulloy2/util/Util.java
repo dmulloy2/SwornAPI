@@ -320,10 +320,7 @@ public class Util
 		try
 		{
 			return Boolean.parseBoolean(object.toString());
-		}
-		catch (Exception e)
-		{
-		}
+		} catch (Throwable ex) { }
 		return false;
 	}
 

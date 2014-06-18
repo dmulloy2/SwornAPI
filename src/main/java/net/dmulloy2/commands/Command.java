@@ -259,42 +259,50 @@ public abstract class Command implements CommandExecutor
 		return false;
 	}
 
-	protected int argAsInt(int arg, boolean msg)
+	protected final int argAsInt(int arg, boolean msg)
 	{
-		try
-		{
-			return NumberUtil.toInt(args[arg]);
-		}
-		catch (NumberFormatException ex)
-		{
-			if (msg)
-				err("&c{0} &4is not a number.", args[arg]);
-			return - 1;
-		}
+		int ret = -1;
+		if (args.length >= arg)
+			ret = NumberUtil.toInt(args[arg]);
+
+		if (msg && ret == - 1)
+			err("&c{0} &4is not a number.", args[arg]);
+
+		return ret;
 	}
 
-	protected double argAsDouble(int arg, boolean msg)
+	protected final double argAsDouble(int arg, boolean msg)
 	{
-		try
-		{
-			return NumberUtil.toDouble(args[arg]);
-		}
-		catch (NumberFormatException ex)
-		{
-			if (msg)
-				err("&c{0} &4is not a number.", args[arg]);
-			return - 1;
-		}
+		double ret = -1.0D;
+		if (args.length >= arg)
+			ret = NumberUtil.toDouble(args[arg]);
+
+		if (msg && ret == -1.0D)
+			err("&c{0} &4is not a number.", args[arg]);
+
+		return ret;
 	}
 
-	protected boolean argAsBoolean(int arg)
+	protected final boolean argAsBoolean(int arg)
 	{
-		try
-		{
-			return Util.toBoolean(args[arg]);
-		} catch (Throwable ex) { }
-		return false;
+		return Util.toBoolean(args[arg]);
 	}
+
+	protected final String getFinalArg(int start)
+	{
+		StringBuilder ret = new StringBuilder();
+		for (int i = 0; i < args.length; i++)
+		{
+			if (i != start)
+				ret.append(" ");
+
+			ret.append(args[i]);
+		}
+
+		return ret.toString();
+	}
+
+	// ---- Utility
 
 	protected final void invalidArgs()
 	{

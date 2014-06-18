@@ -25,18 +25,22 @@ import org.bukkit.craftbukkit.libs.com.google.gson.JsonDeserializer;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonElement;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonParseException;
 
+/**
+ * @author md_5
+ */
+
 public class ComponentSerializer implements JsonDeserializer<BaseComponent>
 {
-
-	private final static Gson gson = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
-			.registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).create();
+	private final static Gson gson = new GsonBuilder()
+		.registerTypeAdapter(BaseComponent.class, new ComponentSerializer())
+		.registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).create();
 
 	public final static ThreadLocal<HashSet<BaseComponent>> serializedComponents = new ThreadLocal<>();
 
 	public static BaseComponent[] parse(String json)
 	{
-		if (json.startsWith("["))
-		{ // Array
+		if (json.startsWith("[")) // Array
+		{ 
 			return gson.fromJson(json, BaseComponent[].class);
 		}
 		return new BaseComponent[]
