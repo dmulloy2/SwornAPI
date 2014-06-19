@@ -9,10 +9,8 @@ import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
-import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
@@ -104,28 +102,34 @@ public class CmdHelp extends Command
 
 	public List<BaseComponent[]> getPage(int index)
 	{
-		List<BaseComponent[]> lines = new ArrayList<BaseComponent[]>();
-		lines.add(getHeader(index));
+		List<BaseComponent[]> lines = new ArrayList<>();
+
+		lines.addAll(getHeader(index));
 		lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
+
 		BaseComponent[] footer = getFooter();
 		if (footer != null)
 			lines.add(footer);
+
 		return lines;
 	}
 
-	public BaseComponent[] getHeader(int index)
+	public List<BaseComponent[]> getHeader(int index)
 	{
-		StringJoiner header = new StringJoiner("\n");
-		header.append(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount()));
-		for (String extra : plugin.getExtraHelp())
-			header.append(FormatUtil.format(extra));
+		List<BaseComponent[]> ret = new ArrayList<>();
 
-		return new ComponentBuilder(header.toString()).create();
+		ret.add(TextComponent.fromLegacyText(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(),
+				index, getPageCount())));
+		for (String extra : plugin.getExtraHelp())
+			ret.add(TextComponent.fromLegacyText(FormatUtil.format(extra)));
+
+		return ret;
 	}
 
 	public List<BaseComponent[]> getLines(int startIndex, int endIndex)
 	{
-		List<BaseComponent[]> lines = new ArrayList<BaseComponent[]>();
+		List<BaseComponent[]> lines = new ArrayList<>();
+
 		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
 		{
 			lines.add(buildHelpMenu().get(i));
