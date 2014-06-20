@@ -220,7 +220,7 @@ public abstract class Command implements CommandExecutor
 		ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + usageTemplate);
 
 		StringBuilder hoverTextBuilder = new StringBuilder();
-		hoverTextBuilder.append(getUsageTemplate(false) + ":\n");
+		hoverTextBuilder.append(usageTemplate + ":\n");
 
 		StringJoiner description = new StringJoiner("\n");
 		for (String s : getDescription())
@@ -230,17 +230,16 @@ public abstract class Command implements CommandExecutor
 		if (permission != null)
 		{
 			hoverTextBuilder.append("\n\n");
-			hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:\n");
-			hoverTextBuilder.append(ChatColor.RESET + getPermissionString());
+			hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:");
+			hoverTextBuilder.append("\n" + getPermissionString());
 		}
 
 		String hoverText = hoverTextBuilder.toString();
-		hoverText = hoverText.replaceAll("rr", "");
 
 		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText));
 		builder.event(hoverEvent);
 
-		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(getUsageTemplate(false)));
+		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(usageTemplate));
 		builder.event(clickEvent);
 
 		return builder.create();
