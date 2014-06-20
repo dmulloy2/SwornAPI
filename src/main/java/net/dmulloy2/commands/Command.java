@@ -160,17 +160,17 @@ public abstract class Command implements CommandExecutor
 
 	protected final void sendMessage(String message, Object... objects)
 	{
-		sender.sendMessage(FormatUtil.format("&e" + message, objects));
-	}
-
-	protected final void sendMessage(Player player, String message, Object... objects)
-	{
-		player.sendMessage(FormatUtil.format(message, objects));
+		sender.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, objects));
 	}
 
 	protected final void sendpMessage(Player player, String message, Object... objects)
 	{
 		sendMessage(player, plugin.getPrefix() + message, objects);
+	}
+
+	protected final void sendMessage(Player player, String message, Object... objects)
+	{
+		player.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, objects));
 	}
 
 	// ---- Help
