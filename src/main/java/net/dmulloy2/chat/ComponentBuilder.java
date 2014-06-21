@@ -18,6 +18,7 @@ package net.dmulloy2.chat;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
 import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.util.ChatUtil;
 
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player;
  * @author md_5
  */
 
+@Getter
 public class ComponentBuilder
 {
 	private TextComponent current;

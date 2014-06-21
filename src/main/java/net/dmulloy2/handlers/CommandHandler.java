@@ -143,11 +143,10 @@ public class CommandHandler implements CommandExecutor
 				}
 			}
 
-			BaseComponent[] components = new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try "))
-				.addAll(helpCommand.getFancyUsageTemplate())
-				.create();
+			List<BaseComponent> components = new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ",
+					commandName)).addAll(helpCommand.getFancyUsageTemplate()).getParts();
 
-			sendFancyMessage(sender, components);
+			sendFancyMessage(sender, components.toArray(new BaseComponent[components.size()]));
 		}
 		else
 		{
