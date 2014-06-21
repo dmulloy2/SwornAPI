@@ -7,6 +7,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 
+import net.dmulloy2.types.RainbowColors;
 import net.dmulloy2.types.StringJoiner;
 
 import org.apache.commons.lang.WordUtils;
@@ -37,7 +38,50 @@ public class FormatUtil
 			format = MessageFormat.format(format, objects);
 		} catch (Throwable ex) { }
 
-		return ChatColor.translateAlternateColorCodes('&', format);
+		return replaceColors(format);
+	}
+
+	/**
+	 * Replaces color codes in a given string. Includes rainbow.
+	 *
+	 * @param message Message to replace color codes in
+	 * @return Formatted chat message
+	 */
+	public static String replaceColors(String message)
+	{
+		// Rainbow
+		message = message.replaceAll("(&([zZ]))", "&z");
+		if (message.contains("&z"))
+		{
+			StringBuilder ret = new StringBuilder();
+			String[] ss = message.split("&z");
+			ret.append(ss[0]);
+			ss[0] = null;
+
+			for (String s : ss)
+			{
+				if (s != null)
+				{
+					int index = 0;
+					while (index < s.length() && s.charAt(index) != '&')
+					{
+						ret.append("&" + RainbowColors.getColor(index % RainbowColors.values().length));
+						ret.append(s.charAt(index));
+						index++;
+					}
+
+					if (index < s.length())
+					{
+						ret.append(s.substring(index));
+					}
+				}
+			}
+
+			message = ret.toString();
+		}
+
+		// Format the colors
+		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 
 	/**
