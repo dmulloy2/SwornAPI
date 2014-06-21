@@ -100,23 +100,18 @@ public abstract class Command implements CommandExecutor
 		{
 			perform();
 		}
-		catch (Throwable e)
+		catch (Throwable ex)
 		{
-			err("Encountered an exception executing this command: &c{0}&4: &c{1}", e.getClass().getName(), e.getMessage());
-			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(e, "executing command " + name));
+			err("Encountered an exception executing this command: &c{0}", ex.toString());
+			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "executing command " + name));
 		}
-
-		// Clear variables
-		this.sender = null;
-		this.args = null;
-		this.player = null;
 	}
 
 	public abstract void perform();
 
 	protected final boolean isPlayer()
 	{
-		return player != null;
+		return sender instanceof Player;
 	}
 
 	// ---- Permission Management
