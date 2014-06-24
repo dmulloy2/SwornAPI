@@ -398,9 +398,8 @@ public abstract class BaseComponent
 	@Override
 	public String toString()
 	{
-		return String
-				.format("BaseComponent{color=%s, bold=%b, italic=%b, underlined=%b, strikethrough=%b, obfuscated=%b, clickEvent=%s, hoverEvent=%s, extra=%s}",
-						getColor().name(), isBold(), isItalic(), isUnderlined(), isStrikethrough(), isObfuscated(), getClickEvent(),
-						getHoverEvent(), getExtra());
+		return String.format("BaseComponent{color=%s, bold=%b, italic=%b, underlined=%b, strikethrough=%b, obfuscated=%b, clickEvent=%s, hoverEvent=%s, extra=%s}",
+				getColor().name(), isBold(), isItalic(), isUnderlined(), isStrikethrough(), isObfuscated(), getClickEvent(),
+				getHoverEvent(), getExtra());
 	}
 }

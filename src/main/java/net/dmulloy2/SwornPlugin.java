@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import net.dmulloy2.commands.CmdHelp;
+import net.dmulloy2.commands.Command;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
@@ -44,5 +46,11 @@ public abstract class SwornPlugin extends JavaPlugin
 	public List<String> getExtraHelp()
 	{
 		return new ArrayList<>();
+	}
+
+	private final CmdHelp cmdHelp = new CmdHelp(this);
+	public Command getHelpCommand()
+	{
+		return cmdHelp;
 	}
 }

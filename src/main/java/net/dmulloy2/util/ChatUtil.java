@@ -3,13 +3,13 @@
  */
 package net.dmulloy2.util;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentSerializer;
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.reflection.WrappedChatPacket;
+import net.dmulloy2.reflection.WrappedChatSerializer;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -22,29 +22,29 @@ public class ChatUtil
 {
 	private ChatUtil() { }
 
-	public static void sendMessage(Player player, BaseComponent... message) throws ReflectionException
+	public static final void sendMessage(CommandSender sender, BaseComponent... message)
 	{
-		sendChatPacket(player, ComponentSerializer.toString(message));
+		if (sender instanceof Player)
+		{
+			try
+			{
+				sendChatPacket((Player) sender, ComponentSerializer.toString(message));
+				return;
+			} catch (Throwable ex) { }
+		}
+
+		sender.sendMessage(BaseComponent.toLegacyText(message));
 	}
 
-	public static void sendMessage(Player player, BaseComponent message) throws ReflectionException
-	{
-		sendChatPacket(player, ComponentSerializer.toString(message));
-	}
-
-	private static void sendChatPacket(Player player, String jsonString) throws ReflectionException
+	private static final void sendChatPacket(Player player, String jsonString) throws ReflectionException
 	{
 		try
 		{
-			Class<?> iChatBaseComponentClass = ReflectionUtil.getNMSClass("IChatBaseComponent");
-			Class<?> packetPlayOutChatClass = ReflectionUtil.getNMSClass("PacketPlayOutChat");
-			Class<?> chatSerializer = ReflectionUtil.getNMSClass("ChatSerializer");
-			Method a = ReflectionUtil.getMethod(chatSerializer, "a", String.class);
-			Object iChatBaseComponent = a.invoke(null, jsonString);
-			Constructor<?> constructor = packetPlayOutChatClass.getConstructor(iChatBaseComponentClass);
-			Object packetPlayOutChat = constructor.newInstance(iChatBaseComponent);
+			WrappedChatSerializer serializer = new WrappedChatSerializer();
+			Object chatComponent = serializer.a(jsonString);
 
-			ReflectionUtil.sendPacket(player, packetPlayOutChat);
+			WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
+			packet.send(player);
 		}
 		catch (Throwable ex)
 		{

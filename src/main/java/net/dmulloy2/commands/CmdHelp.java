@@ -5,17 +5,12 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.TextComponent;
-import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
-import net.dmulloy2.util.Util;
-
-import org.bukkit.entity.Player;
 
 /**
  * Generic help command.
@@ -63,31 +58,7 @@ public class CmdHelp extends Command
 		}
 
 		for (BaseComponent[] components : getPage(index))
-			sendFancyMessage(components);
-	}
-
-	private static boolean exceptionPrinted;
-
-	private void sendFancyMessage(BaseComponent[] components)
-	{
-		if (sender instanceof Player)
-		{
-			try
-			{
-				ChatUtil.sendMessage(player, components);
-				return;
-			}
-			catch (ReflectionException ex)
-			{
-				if (! exceptionPrinted)
-				{
-					exceptionPrinted = true;
-					plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "fancifying help"));
-				}
-			}
-		}
-
-		sender.sendMessage(TextComponent.toLegacyText(components));
+			ChatUtil.sendMessage(sender, components);
 	}
 
 	public int getPageCount()
@@ -149,12 +120,14 @@ public class CmdHelp extends Command
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
 		{
-			ret.add(cmd.getFancyUsageTemplate(true));
+			if (cmd.hasPermission(sender, cmd.permission))
+				ret.add(cmd.getFancyUsageTemplate(true));
 		}
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredCommands())
 		{
-			ret.add(cmd.getFancyUsageTemplate(true));
+			if (cmd.hasPermission(sender, cmd.permission))
+				ret.add(cmd.getFancyUsageTemplate(true));
 		}
 
 		return ret;
