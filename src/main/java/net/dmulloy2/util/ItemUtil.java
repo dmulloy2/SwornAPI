@@ -12,6 +12,8 @@ import net.dmulloy2.types.EnchantmentType;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionType;
 
 /**
  * Util that deals with Items.
@@ -117,6 +119,80 @@ public class ItemUtil
 
 			return ret;
 		} catch (Throwable ex) { }
+		return null;
+	}
+
+	/**
+	 * Reads a potion from configuration
+	 *
+	 * @param string - String to read
+	 * @return ItemStack from string (will be a potion)
+	 */
+	public static ItemStack readPotion(String string)
+	{
+		try
+		{
+			string = string.replaceAll(" ", "");
+			string = string.substring(string.indexOf(":") + 1);
+
+			String[] split = string.split(",");
+			if (split.length == 3)
+			{
+				// Get the type
+				PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
+				if (type != null)
+				{
+					// Get the amount
+					int amount = NumberUtil.toInt(split[1]);
+					if (amount != -1)
+					{
+						// Get the level
+						int level = NumberUtil.toInt(split[2]);
+						if (level != -1)
+						{
+							// Build potion / stack
+							Potion potion = new Potion(1);
+							potion.setType(type);
+							potion.setLevel(level);
+							potion.setSplash(false);
+							ItemStack ret = potion.toItemStack(amount);
+							return ret;
+						}
+					}
+				}
+			}
+			else if (split.length == 4)
+			{
+				// Get the type
+				PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
+				if (type != null)
+				{
+					// Get the amount
+					int amount = NumberUtil.toInt(split[1]);
+					if (amount != -1)
+					{
+						// Get the level
+						int level = NumberUtil.toInt(split[2]);
+						if (level != -1)
+						{
+							// Is splash
+							boolean splash = Util.toBoolean(split[3]);
+
+							// Build potion / stack
+							Potion potion = new Potion(1);
+							potion.setType(type);
+							potion.setLevel(level);
+							potion.setSplash(splash);
+							ItemStack ret = potion.toItemStack(amount);
+							return ret;
+						}
+					}
+				}
+			}
+		}
+		catch (Throwable ex)
+		{
+		}
 		return null;
 	}
 

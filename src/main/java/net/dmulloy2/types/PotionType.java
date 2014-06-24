@@ -54,6 +54,18 @@ public enum PotionType
 		return FormatUtil.format(effect.getName());
 	}
 
+
+	public static org.bukkit.potion.PotionType toType(String string)
+	{
+		for (PotionType type : PotionType.values())
+		{
+			if (type.name.equalsIgnoreCase(string))
+				return org.bukkit.potion.PotionType.valueOf(type.toString());
+		}
+
+		return null;
+	}
+
 	/**
 	 * Returns a <code>String</code> representation of a {@link Collection} of
 	 * PotionEffects
