@@ -13,6 +13,8 @@ public abstract class IntegrationHandler implements Reloadable
 {
 	public abstract void setup();
 
+	public abstract boolean isEnabled();
+
 	@Override
 	public void reload()
 	{
