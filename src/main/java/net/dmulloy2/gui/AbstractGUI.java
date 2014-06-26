@@ -3,9 +3,11 @@
  */
 package net.dmulloy2.gui;
 
+import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -18,9 +20,11 @@ import org.bukkit.inventory.Inventory;
 public abstract class AbstractGUI
 {
 	private final Player player;
-	public AbstractGUI(Player player)
+	private final SwornPlugin plugin;
+	public AbstractGUI(SwornPlugin plugin, Player player)
 	{
 		this.player = player;
+		this.plugin = plugin;
 		this.setup();
 	}
 
@@ -39,6 +43,23 @@ public abstract class AbstractGUI
 	public abstract String getTitle();
 
 	public abstract void stock(Inventory inventory);
+
+	// ---- Messaging
+
+	protected final void err(String msg, Object... args)
+	{
+		sendMessage("&cError: &4" + FormatUtil.format(msg, args));
+	}
+
+	protected final void sendpMessage(String message, Object... objects)
+	{
+		sendMessage(plugin.getPrefix() + message, objects);
+	}
+
+	protected final void sendMessage(String message, Object... objects)
+	{
+		player.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, objects));
+	}
 
 	// ---- Events
 	

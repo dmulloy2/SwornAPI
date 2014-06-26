@@ -28,6 +28,7 @@ import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
 import net.dmulloy2.types.LazyLocation;
 import net.dmulloy2.types.SimpleVector;
+import net.dmulloy2.util.FormatUtil;
 
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,7 +45,10 @@ public abstract class SwornPlugin extends JavaPlugin
 	protected @Getter CommandHandler commandHandler;
 	protected @Getter LogHandler logHandler;
 
-	protected @Getter String prefix;
+	public String getPrefix()
+	{
+		return FormatUtil.format("&e");
+	}
 
 	public List<String> getExtraHelp()
 	{
