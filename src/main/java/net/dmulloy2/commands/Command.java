@@ -240,7 +240,7 @@ public abstract class Command implements CommandExecutor
 		return builder.create();
 	}
 
-	protected List<String> getDescription()
+	public List<String> getDescription()
 	{
 		return Util.toList(description);
 	}
