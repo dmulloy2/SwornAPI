@@ -26,11 +26,8 @@ import net.dmulloy2.commands.Command;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
-import net.dmulloy2.types.LazyLocation;
-import net.dmulloy2.types.SimpleVector;
 import net.dmulloy2.util.FormatUtil;
 
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -61,14 +58,12 @@ public abstract class SwornPlugin extends JavaPlugin
 		return cmdHelp;
 	}
 
-	private static boolean registered = false;
+	/**
+	 * @deprecated Moved to {@link SwornAPI#checkRegistrations()}
+	 */
+	@Deprecated
 	public static final void checkRegistrations()
 	{
-		if (! registered)
-		{
-			ConfigurationSerialization.registerClass(LazyLocation.class);
-			ConfigurationSerialization.registerClass(SimpleVector.class);
-			registered = true;
-		}
+		SwornAPI.checkRegistrations();
 	}
 }
