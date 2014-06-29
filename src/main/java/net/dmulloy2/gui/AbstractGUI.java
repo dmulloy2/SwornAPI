@@ -19,8 +19,9 @@ import org.bukkit.inventory.Inventory;
 
 public abstract class AbstractGUI
 {
-	private final Player player;
-	private final SwornPlugin plugin;
+	protected final Player player;
+	protected final SwornPlugin plugin;
+
 	public AbstractGUI(SwornPlugin plugin, Player player)
 	{
 		this.player = player;
