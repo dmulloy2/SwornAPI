@@ -20,16 +20,15 @@ import org.bukkit.inventory.Inventory;
 public abstract class AbstractGUI
 {
 	protected final Player player;
-	private final SwornPlugin plugin;	
+	protected final SwornPlugin plugin;	
 
 	public AbstractGUI(SwornPlugin plugin, Player player)
 	{
 		this.player = player;
 		this.plugin = plugin;
-		this.setup();
 	}
 
-	private final void setup()
+	protected final void setup()
 	{
 		Inventory inventory = Bukkit.createInventory(player, getSize(), FormatUtil.format(getTitle()));
 		stock(inventory);
