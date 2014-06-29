@@ -20,7 +20,7 @@ import org.bukkit.inventory.Inventory;
 public abstract class AbstractGUI
 {
 	protected final Player player;
-	protected final SwornPlugin plugin;
+	private final SwornPlugin plugin;	
 
 	public AbstractGUI(SwornPlugin plugin, Player player)
 	{
