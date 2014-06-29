@@ -189,7 +189,7 @@ public class Util
 		for (StackTraceElement ste : ex.getStackTrace())
 		{
 			if (ste.getClassName().contains("net.dmulloy2"))
-				joiner.append("\t" + ste.toString());
+				joiner.append("\t" + ste.toString() + " [" + ste.getFileName() + "]");
 		}
 
 		while (ex.getCause() != null)
@@ -200,7 +200,7 @@ public class Util
 			for (StackTraceElement ste : ex.getStackTrace())
 			{
 				if (ste.getClassName().contains("net.dmulloy2"))
-					joiner.append("\t" + ste.toString());
+					joiner.append("\t" + ste.toString() + " [" + ste.getFileName() + "]");
 			}
 		}
 
