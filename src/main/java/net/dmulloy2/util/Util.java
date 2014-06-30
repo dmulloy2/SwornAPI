@@ -95,6 +95,23 @@ public class Util
 	}
 
 	/**
+	 * Gets an transient List of all online players
+	 * 
+	 * @return Online players
+	 */
+	public static List<Player> getOnlinePlayers()
+	{
+		List<Player> ret = new ArrayList<>();
+
+		for (Player player : Bukkit.getOnlinePlayers())
+		{
+			ret.add(player);
+		}
+
+		return ret;
+	}
+
+	/**
 	 * Whether or not a player is banned.
 	 * 
 	 * @param identifier Player name or UUID
@@ -354,7 +371,7 @@ public class Util
 		if (state instanceof Sign)
 		{
 			Sign sign = (Sign) state;
-			ret.append("Sign { lines = " + sign.getLines() + " }");
+			ret.append("Sign { lines = " + arrayToString(sign.getLines()) + " }");
 		}
 		else if (state instanceof CommandBlock)
 		{
@@ -387,5 +404,22 @@ public class Util
 		}
 
 		return ret.toString();
+	}
+
+	/**
+	 * Returns a <code>String</code> representation of an Array, since Arrays do
+	 * not define a <code>toString()</code> method.
+	 *
+	 * @param array Array to represent
+	 * @return The string representation
+	 */
+	public static String arrayToString(Object[] array)
+	{
+		StringJoiner joiner = new StringJoiner(", ");
+
+		for (Object obj : array)
+			joiner.append(obj.toString());
+
+		return "[" + joiner.toString() + "]";
 	}
 }
