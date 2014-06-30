@@ -158,6 +158,11 @@ public abstract class Command implements CommandExecutor
 		sender.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, objects));
 	}
 
+	protected final void err(Player player, String msg, Object... args)
+	{
+		sendMessage(player, "&cError: &4" + FormatUtil.format(msg, args));
+	}
+
 	protected final void sendpMessage(Player player, String message, Object... objects)
 	{
 		sendMessage(player, plugin.getPrefix() + message, objects);
