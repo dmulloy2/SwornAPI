@@ -153,7 +153,7 @@ public class Util
 	 */
 	public static <T> void playEffect(@NonNull Effect effect, @NonNull Location loc, T data)
 	{
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (Player player : getOnlinePlayers())
 		{
 			player.playEffect(loc, effect, data);
 		}
@@ -171,8 +171,10 @@ public class Util
 		if (loc.equals(loc2))
 			return true;
 
-		return loc.getBlockX() == loc2.getBlockX() && loc.getBlockY() == loc2.getBlockY() && loc.getBlockZ() == loc2.getBlockZ()
-				&& loc.getWorld().equals(loc2.getWorld());
+		return loc.getBlockX() == loc2.getBlockX()
+				&& loc.getBlockY() == loc2.getBlockY()
+				&& loc.getBlockZ() == loc2.getBlockZ()
+				&& loc.getWorld().getUID().equals(loc2.getWorld().getUID());
 	}
 
 	/**
