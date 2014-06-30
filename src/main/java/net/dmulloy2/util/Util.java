@@ -207,8 +207,13 @@ public class Util
 
 		for (StackTraceElement ste : ex.getStackTrace())
 		{
-			if (ste.getClassName().contains("net.dmulloy2"))
-				joiner.append("\t" + ste.toString() + " [" + ste.getFileName() + "]");
+			if (ste.getClassName().contains("dmulloy2"))
+			{
+				StringBuilder line = new StringBuilder();
+				line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
+				if (ste.getFileName() != null)
+					line.append(" [" + ste.getFileName() + "]");
+			}
 		}
 
 		while (ex.getCause() != null)
@@ -218,8 +223,13 @@ public class Util
 			joiner.append("Affected classes:");
 			for (StackTraceElement ste : ex.getStackTrace())
 			{
-				if (ste.getClassName().contains("net.dmulloy2"))
-					joiner.append("\t" + ste.toString() + " [" + ste.getFileName() + "]");
+				if (ste.getClassName().contains("dmulloy2"))
+				{
+					StringBuilder line = new StringBuilder();
+					line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
+					if (ste.getFileName() != null)
+						line.append(" [" + ste.getFileName() + "]");
+				}
 			}
 		}
 
