@@ -3,6 +3,7 @@
  */
 package net.dmulloy2.util;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -211,8 +212,8 @@ public class Util
 			{
 				StringBuilder line = new StringBuilder();
 				line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-				if (ste.getFileName() != null)
-					line.append(" [" + ste.getFileName() + "]");
+				if (getWorkingJarName() != null)
+					line.append(" [" + getWorkingJarName() + "]");
 			}
 		}
 
@@ -227,13 +228,29 @@ public class Util
 				{
 					StringBuilder line = new StringBuilder();
 					line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-					if (ste.getFileName() != null)
-						line.append(" [" + ste.getFileName() + "]");
+					if (getWorkingJarName() != null)
+						line.append(" [" + getWorkingJarName() + "]");
 				}
 			}
 		}
 
 		return joiner.toString();
+	}
+
+	/**
+	 * Gets the current working jar's name
+	 * 
+	 * @return The name, or "Unknown" if it cannot be found
+	 */
+	public static final String getWorkingJarName()
+	{
+		try
+		{
+			String path = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			path = URLDecoder.decode(path, "UTF-8");
+			return path.substring(path.lastIndexOf("/") + 1);
+		} catch (Throwable ex) { }
+		return null;
 	}
 
 	/**
