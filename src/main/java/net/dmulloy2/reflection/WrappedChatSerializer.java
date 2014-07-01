@@ -25,7 +25,7 @@ public class WrappedChatSerializer extends AbstractWrapper
 			this.constructor = null;
 			this.nmsHandle = null;
 
-			this.a = ReflectionUtil.getMethod(nmsClass, "a");
+			this.a = ReflectionUtil.getMethod(nmsClass, "a", String.class);
 		}
 		catch (Throwable ex)
 		{
