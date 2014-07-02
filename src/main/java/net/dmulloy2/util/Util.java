@@ -208,14 +208,11 @@ public class Util
 
 		for (StackTraceElement ste : ex.getStackTrace())
 		{
-			if (ste.getClassName().contains("dmulloy2"))
-			{
-				StringBuilder line = new StringBuilder();
-				line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-				if (getWorkingJarName() != null)
-					line.append(" [" + getWorkingJarName() + "]");
-				joiner.append(line.toString());
-			}
+			StringBuilder line = new StringBuilder();
+			line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
+			if (getWorkingJarName() != null)
+				line.append(" [" + getWorkingJarName() + "]");
+			joiner.append(line.toString());
 		}
 
 		while (ex.getCause() != null)
@@ -225,14 +222,11 @@ public class Util
 			joiner.append("Affected classes:");
 			for (StackTraceElement ste : ex.getStackTrace())
 			{
-				if (ste.getClassName().contains("dmulloy2"))
-				{
-					StringBuilder line = new StringBuilder();
-					line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-					if (getWorkingJarName() != null)
-						line.append(" [" + getWorkingJarName() + "]");
-					joiner.append(line.toString());
-				}
+				StringBuilder line = new StringBuilder();
+				line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
+				if (getWorkingJarName() != null)
+					line.append(" [" + getWorkingJarName() + "]");
+				joiner.append(line.toString());
 			}
 		}
 
