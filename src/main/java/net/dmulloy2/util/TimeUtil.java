@@ -23,7 +23,7 @@ public class TimeUtil
 	private TimeUtil() { }
 
 	/**
-	 * Returns the formatted time difference between two times
+	 * Returns the formatted time difference between two times.
 	 *
 	 * @param time1 First time in milliseconds
 	 * @param time2 Second time in milliseconds
@@ -31,20 +31,23 @@ public class TimeUtil
 	 */
 	public static final String formatTimeDifference(long time1, long time2)
 	{
-		return formatTime(Math.abs(time2 - time1));
+		return formatTime(getTimeDifference(time1, time2));
 	}
 
 	/**
-	 * @deprecated This is just simple subtraction
+	 * Returns the absolute difference between two times.
+	 *
+	 * @param time1 First time in milliseconds
+	 * @param time2 Second time in milliseconds
+	 * @return Absolute time difference
 	 */
-	@Deprecated
 	public static final long getTimeDifference(long time1, long time2)
 	{
-		return time2 - time1;
+		return Math.abs(time2 - time1);
 	}
 
 	/**
-	 * Formats a given time
+	 * Formats a given time.
 	 *
 	 * @param time Time in milliseconds
 	 * @return Formatted time
@@ -69,13 +72,16 @@ public class TimeUtil
 	}
 
 	/**
-	 * Gets the current long date in a given time zone
+	 * Gets the current long date in a given time zone.
 	 *
 	 * @param timeZone Time zone, defaults to GMT
 	 * @return The current long date
 	 */
 	public static final String getLongDateCurr(String timeZone)
 	{
+		if (timeZone == null || timeZone.isEmpty())
+			timeZone = "GMT";
+
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy HH:mm");
 		Date date = new Date();
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -83,7 +89,7 @@ public class TimeUtil
 	}
 
 	/**
-	 * Gets the current long date in GMT
+	 * Gets the current long date in GMT.
 	 *
 	 * @see {@link TimeUtil#getLongDateCurr(String)}
 	 */
@@ -92,8 +98,18 @@ public class TimeUtil
 		return getLongDateCurr("GMT");
 	}
 
+	/**
+	 * Gets the current short date in a given time zone.
+	 *
+	 * @param time Time in milliseconds
+	 * @param timeZone Time zone, defaults to GMT
+	 * @return The current short date
+	 */
 	public static final String getSimpleDate(long time, String timeZone)
 	{
+		if (timeZone == null || timeZone.isEmpty())
+			timeZone = "GMT";
+
 		DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
 		Date date = new Date(time);
 		dateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -101,7 +117,7 @@ public class TimeUtil
 	}
 
 	/**
-	 * Gets the simple date of a given time in GMT
+	 * Gets the simple date of a given time in GMT.
 	 *
 	 * @param time Time in milliseconds
 	 * @see {@link TimeUtil#getSimpleDate(long, String)}
@@ -112,7 +128,7 @@ public class TimeUtil
 	}
 
 	/**
-	 * Parses a given time
+	 * Parses a given time.
 	 *
 	 * @param time Time
 	 * @return The parsed time
@@ -161,6 +177,10 @@ public class TimeUtil
 			{
 				return Integer.parseInt(m.group(1)) * 1000;
 			}
+		}
+		catch (Throwable ex)
+		{
+			throw new BadTimeException("Failed to parse time", ex);
 		}
 
 		// Message for backwards compatibility.
