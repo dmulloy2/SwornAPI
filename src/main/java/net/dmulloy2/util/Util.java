@@ -211,7 +211,7 @@ public class Util
 			StringBuilder line = new StringBuilder();
 			line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
 
-			String jar = getWorkingJar(ste.getClass());
+			String jar = getWorkingJar(ste.getClassName());
 			if (jar != null)
 				line.append(" [" + jar + "]");
 
@@ -228,7 +228,7 @@ public class Util
 				StringBuilder line = new StringBuilder();
 				line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
 
-				String jar = getWorkingJar(ste.getClass());
+				String jar = getWorkingJar(ste.getClassName());
 				if (jar != null)
 					line.append(" [" + jar + "]");
 
