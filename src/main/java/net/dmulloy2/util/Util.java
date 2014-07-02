@@ -209,9 +209,12 @@ public class Util
 		for (StackTraceElement ste : ex.getStackTrace())
 		{
 			StringBuilder line = new StringBuilder();
-			line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-			if (getWorkingJarName() != null)
-				line.append(" [" + getWorkingJarName() + "]");
+			line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+
+			String jar = getWorkingJar(ste.getClass());
+			if (jar != null)
+				line.append(" [" + jar + "]");
+
 			joiner.append(line.toString());
 		}
 
@@ -223,9 +226,12 @@ public class Util
 			for (StackTraceElement ste : ex.getStackTrace())
 			{
 				StringBuilder line = new StringBuilder();
-				line.append("\t" + ste.getClassName() + "." + ste.getMethodName() + " (Line " + ste.getLineNumber() + ")");
-				if (getWorkingJarName() != null)
-					line.append(" [" + getWorkingJarName() + "]");
+				line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+
+				String jar = getWorkingJar(ste.getClass());
+				if (jar != null)
+					line.append(" [" + jar + "]");
+
 				joiner.append(line.toString());
 			}
 		}
@@ -234,15 +240,27 @@ public class Util
 	}
 
 	/**
-	 * Gets the current working jar's name
-	 *
-	 * @return The name, or "Unknown" if it cannot be found
+	 * @see {@link Util#getWorkingJar(Class)
 	 */
-	public static final String getWorkingJarName()
+	public static final String getWorkingJar(String clazzName)
 	{
 		try
 		{
-			String path = Util.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			return getWorkingJar(Class.forName(clazzName));
+		} catch (Throwable ex) { }
+		return null;
+	}
+
+	/**
+	 * Gets the working jar of a given class
+	 *
+	 * @return The name, null if not found
+	 */
+	public static final String getWorkingJar(Class<?> clazz)
+	{
+		try
+		{
+			String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
 			path = URLDecoder.decode(path, "UTF-8");
 			return path.substring(path.lastIndexOf("/") + 1);
 		} catch (Throwable ex) { }
