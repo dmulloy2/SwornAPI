@@ -6,7 +6,6 @@ package net.dmulloy2.util;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,7 +278,7 @@ public class Util
 	 */
 	public static <T> List<T> newList(@NonNull Collection<T> list)
 	{
-		return new ArrayList<T>(list);
+		return new ArrayList<>(list);
 	}
 
 	/**
@@ -291,7 +290,7 @@ public class Util
 	@SafeVarargs
 	public static <T> List<T> toList(@NonNull T... objects)
 	{
-		List<T> ret = new ArrayList<T>();
+		List<T> ret = new ArrayList<>();
 
 		for (T t : objects)
 			ret.add(t);
@@ -309,7 +308,7 @@ public class Util
 	 */
 	public static <K, V> Map<K, V> filterDuplicateEntries(@NonNull Map<K, V> map, @NonNull Map<K, V> original)
 	{
-		for (Entry<K, V> entry : new HashMap<K, V>(map).entrySet())
+		for (Entry<K, V> entry : new LinkedHashMap<>(map).entrySet())
 		{
 			K key = entry.getKey();
 			if (original.containsKey(key))
@@ -326,6 +325,8 @@ public class Util
 		return map;
 	}
 
+	private static final Object NULL = new Object();
+
 	/**
 	 * Removes duplicate entries from a {@link List}. Retains order.
 	 *
@@ -334,12 +335,12 @@ public class Util
 	 */
 	public static <T> List<T> removeDuplicates(@NonNull List<T> list)
 	{
-		Map<T, Object> map = new LinkedHashMap<T, Object>();
+		Map<T, Object> map = new LinkedHashMap<>();
 
 		for (T element : list)
-			map.put(element, new Object());
+			map.put(element, NULL);
 
-		return new ArrayList<T>(map.keySet());
+		return new ArrayList<>(map.keySet());
 	}
 
 	/**
