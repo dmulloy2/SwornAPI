@@ -143,7 +143,7 @@ public class ReflectionUtil
 
 		try
 		{
-			return  getHandle.invoke(object, new Object[0]);
+			return getHandle.invoke(object, new Object[0]);
 		} catch (Throwable ex) { }
 		return null;
 	}
