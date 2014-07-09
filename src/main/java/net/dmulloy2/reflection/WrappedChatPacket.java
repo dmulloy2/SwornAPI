@@ -10,11 +10,12 @@ import net.dmulloy2.util.ReflectionUtil;
  * @author dmulloy2
  */
 
+// TODO: Keep up to date with MC versions. 1.7.10
 public class WrappedChatPacket extends WrappedPacket
 {
 	private static final String NMS_CLASS_NAME = "PacketPlayOutChat";
 	private static final Class<?> chatComponentClass = ReflectionUtil.getNMSClass("IChatBaseComponent");
-	
+
 	public WrappedChatPacket(Object chatComponent) throws ReflectionException
 	{
 		try
@@ -25,7 +26,7 @@ public class WrappedChatPacket extends WrappedPacket
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Constructing wrapped packet", ex);
+			throw new ReflectionException("Constructing wrapped chat packet", ex);
 		}
 	}
 }
