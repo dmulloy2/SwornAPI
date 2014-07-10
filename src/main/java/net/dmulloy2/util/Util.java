@@ -3,6 +3,7 @@
  */
 package net.dmulloy2.util;
 
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,20 +96,21 @@ public class Util
 	}
 
 	/**
-	 * Gets an transient List of all online players
+	 * Gets a list of online {@link Player}s. This also provides backwards
+	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
 	 *
-	 * @return Online players
+	 * @return A list of online Players
 	 */
 	public static List<Player> getOnlinePlayers()
 	{
-		List<Player> ret = new ArrayList<>();
-
-		for (Player player : Bukkit.getOnlinePlayers())
+		try
 		{
-			ret.add(player);
-		}
-
-		return ret;
+			// Provide backwards compatibility
+			Method getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
+			if (getOnlinePlayers.getReturnType() != Collection.class)
+				return toList((Player[]) getOnlinePlayers.invoke(null));
+		} catch (Throwable ex) { }
+		return newList(Bukkit.getOnlinePlayers());
 	}
 
 	/**
@@ -276,7 +278,7 @@ public class Util
 	 * @param list Base {@link List}
 	 * @return a new list from the given list
 	 */
-	public static <T> List<T> newList(@NonNull Collection<T> list)
+	public static <T> List<T> newList(@NonNull Collection<? extends T> list)
 	{
 		return new ArrayList<>(list);
 	}
