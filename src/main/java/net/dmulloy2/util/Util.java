@@ -131,7 +131,7 @@ public class Util
 	}
 
 	/**
-	 * Returns a random integer out of x.
+	 * Returns a random integer out of <code>x</code>.
 	 *
 	 * @param x Integer the random should be out of
 	 * @return A random integer out of x.
@@ -146,11 +146,11 @@ public class Util
 	}
 
 	/**
-	 * Plays an effect to all online players
+	 * Plays an effect to all online players.
 	 *
 	 * @param effect Effect type to play
 	 * @param loc Location where the effect should be played
-	 * @param data Data
+	 * @param data Effect data, can be null
 	 * @see {@link Player#playEffect(Location, Effect, Object)}
 	 */
 	public static <T> void playEffect(@NonNull Effect effect, @NonNull Location loc, T data)
@@ -162,11 +162,12 @@ public class Util
 	}
 
 	/**
-	 * Returns whether or not two locations are identical
+	 * Whether or not two locations are similar. This does not take pitch or yaw
+	 * into account.
 	 *
 	 * @param loc1 First location
 	 * @param loc2 Second location
-	 * @return Whether or not the two locations are identical
+	 * @return Whether or not the two locations are similar
 	 */
 	public static boolean checkLocation(@NonNull Location loc, @NonNull Location loc2)
 	{
@@ -269,18 +270,16 @@ public class Util
 	}
 
 	/**
-	 * Constructs a new list from an existing {@link List}
-	 * <p>
-	 * This fixes concurrency for some reason
-	 * <p>
-	 * Should not be used to edit the base List
+	 * Constructs a new {@link List} from an existing {@link Collection}. This
+	 * helps with concurrency problems. Changes to the returned list will not be
+	 * reflected in the original collection.
 	 *
-	 * @param list Base {@link List}
-	 * @return a new list from the given list
+	 * @param coll Base Collection
+	 * @return The List
 	 */
-	public static <T> List<T> newList(@NonNull Collection<? extends T> list)
+	public static <T> List<T> newList(@NonNull Collection<? extends T> coll)
 	{
-		return new ArrayList<>(list);
+		return new ArrayList<>(coll);
 	}
 
 	/**
