@@ -34,8 +34,8 @@ public class WrappedChatSerializer extends AbstractWrapper
 		}
 	}
 
-	public Object a(String jsonString) throws ReflectionException
+	public final Object serialize(String json) throws ReflectionException
 	{
-		return invokeMethod(a, jsonString);
+		return invokeMethod(a, json);
 	}
 }

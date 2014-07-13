@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 import lombok.Data;
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.util.ReflectionUtil;
 
 /**
  * @author dmulloy2
@@ -32,6 +33,20 @@ public abstract class AbstractWrapper
 		catch (Throwable ex)
 		{
 			throw new ReflectionException("invokeMethod(" + method + ", " + args + ")", ex);
+		}
+	}
+
+	protected final Object getField(String name) throws ReflectionException
+	{
+		try
+		{
+			Field field = ReflectionUtil.getField(nmsClass, name);
+			field.setAccessible(true);
+			return field.get(nmsHandle);
+		}
+		catch (Throwable ex)
+		{
+			throw new ReflectionException("getField(" + name + ")");
 		}
 	}
 

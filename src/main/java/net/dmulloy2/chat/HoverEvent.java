@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2012, md_5. All rights reserved.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -20,16 +20,21 @@ import lombok.Getter;
 
 /**
  * Represents an action performed when hovering.
- * 
+ *
  * @author md_5
  */
 
 @Getter
 @AllArgsConstructor
-final public class HoverEvent
+public final class HoverEvent
 {
 	private final Action action;
 	private final BaseComponent[] value;
+
+	public HoverEvent(Action action, String value)
+	{
+		this(action, TextComponent.fromLegacyText(value));
+	}
 
 	public enum Action
 	{

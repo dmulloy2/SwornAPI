@@ -9,18 +9,20 @@ import java.util.List;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.TextComponent;
+import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 
 /**
  * Generic help command.
- * 
+ *
  * @author dmulloy2
  */
 
 public class CmdHelp extends Command
 {
-	protected int linesPerPage, pageArgIndex;
+	private static final int linesPerPage = 6;
+	private static final int pageArgIndex = 0;
 
 	public CmdHelp(SwornPlugin plugin)
 	{
@@ -28,8 +30,7 @@ public class CmdHelp extends Command
 		this.name = "help";
 		this.optionalArgs.add("page");
 		this.description = "Shows " + plugin.getName() + " help";
-		this.linesPerPage = 6;
-
+		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;
 	}
 
@@ -120,13 +121,13 @@ public class CmdHelp extends Command
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
 		{
-			if (cmd.hasPermission(sender, cmd.permission))
+			if (cmd.isVisibleTo(sender))
 				ret.add(cmd.getFancyUsageTemplate(true));
 		}
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredCommands())
 		{
-			if (cmd.hasPermission(sender, cmd.permission))
+			if (cmd.isVisibleTo(sender))
 				ret.add(cmd.getFancyUsageTemplate(true));
 		}
 

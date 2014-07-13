@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2012, md_5. All rights reserved.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,15 +28,14 @@ import org.bukkit.entity.Player;
 /**
  * ComponentBuilder simplifies creating basic messages by allowing the use of a
  * chainable builder.
- * 
+ *
  * @author md_5
  */
 
 @Getter
 public class ComponentBuilder
 {
-	private TextComponent current;
-	private List<BaseComponent> parts = new ArrayList<>();
+	private final List<BaseComponent> parts;
 
 	/**
 	 * Creates a ComponentBuilder with the given text as the first part.
@@ -45,21 +44,21 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder(String text)
 	{
-		current = new TextComponent(text);
+		parts = new ArrayList<>();
+		parts.add(new TextComponent(text));
 	}
 
 	/**
 	 * Appends the text to the builder and makes it the current target for
-	 * formatting. The text will have all the formatting from the previous part.
+	 * formatting. The text will have none of the formatting from the previous
+	 * part.
 	 *
 	 * @param text the text to append
 	 * @return this ComponentBuilder for chaining
 	 */
 	public ComponentBuilder append(String text)
 	{
-		parts.add(current);
-		current = new TextComponent(current);
-		current.setText(text);
+		parts.add(new TextComponent(text));
 		return this;
 	}
 
@@ -71,7 +70,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder color(ChatColor color)
 	{
-		current.setColor(color);
+		getCurrent().setColor(color);
 		return this;
 	}
 
@@ -83,7 +82,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder bold(boolean bold)
 	{
-		current.setBold(bold);
+		getCurrent().setBold(bold);
 		return this;
 	}
 
@@ -95,7 +94,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder italic(boolean italic)
 	{
-		current.setItalic(italic);
+		getCurrent().setItalic(italic);
 		return this;
 	}
 
@@ -107,7 +106,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder underlined(boolean underlined)
 	{
-		current.setUnderlined(underlined);
+		getCurrent().setUnderlined(underlined);
 		return this;
 	}
 
@@ -119,7 +118,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder strikethrough(boolean strikethrough)
 	{
-		current.setStrikethrough(strikethrough);
+		getCurrent().setStrikethrough(strikethrough);
 		return this;
 	}
 
@@ -131,7 +130,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder obfuscated(boolean obfuscated)
 	{
-		current.setObfuscated(obfuscated);
+		getCurrent().setObfuscated(obfuscated);
 		return this;
 	}
 
@@ -143,7 +142,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder event(ClickEvent clickEvent)
 	{
-		current.setClickEvent(clickEvent);
+		getCurrent().setClickEvent(clickEvent);
 		return this;
 	}
 
@@ -155,16 +154,31 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder event(HoverEvent hoverEvent)
 	{
-		current.setHoverEvent(hoverEvent);
+		getCurrent().setHoverEvent(hoverEvent);
 		return this;
 	}
 
+	/**
+	 * Adds existing components to this builder.
+	 *
+	 * @param components components to add
+	 * @return this ComponentBuilder for chaining
+	 */
 	public ComponentBuilder addAll(BaseComponent... components)
 	{
-		parts.add(current);
 		for (BaseComponent component : components)
 			parts.add(component);
 		return this;
+	}
+
+	/**
+	 * Returns the current BaseComponent
+	 *
+	 * @return the current BaseComponent
+	 */
+	public BaseComponent getCurrent()
+	{
+		return parts.get(parts.size() - 1);
 	}
 
 	/**
@@ -175,13 +189,12 @@ public class ComponentBuilder
 	 */
 	public BaseComponent[] create()
 	{
-		parts.add(current);
 		return parts.toArray(new BaseComponent[parts.size()]);
 	}
 
 	/**
 	 * Sends the resulting JSON-chat message to a given player.
-	 * 
+	 *
 	 * @param player {@link Player} to send the message to
 	 * @return the created components
 	 * @throws ReflectionException If sending the message fails

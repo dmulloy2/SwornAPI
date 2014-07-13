@@ -3,9 +3,11 @@
  */
 package net.dmulloy2.gui;
 
+import lombok.NonNull;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,9 +22,9 @@ import org.bukkit.inventory.Inventory;
 public abstract class AbstractGUI
 {
 	protected final Player player;
-	protected final SwornPlugin plugin;	
+	protected final SwornPlugin plugin;
 
-	public AbstractGUI(SwornPlugin plugin, Player player)
+	public AbstractGUI(@NonNull SwornPlugin plugin, @NonNull Player player)
 	{
 		this.player = player;
 		this.plugin = plugin;
@@ -30,14 +32,28 @@ public abstract class AbstractGUI
 
 	protected final void setup()
 	{
-		Inventory inventory = Bukkit.createInventory(player, getSize(), FormatUtil.format(getTitle()));
+		// Size checks
+		int size = getSize();
+		Validate.isTrue(size > 0, "Inventory size must not be negative!");
+		Validate.isTrue(size < 54, "Inventory size is too large!");
+		Validate.isTrue(size % 9 == 0, "Inventory size must be a multiple of 9!");
+
+		// Truncate title
+		String title = FormatUtil.format(getTitle());
+		if (title.length() > 36)
+		{
+			title = title.substring(0, 35);
+			title = title + "\u2026";
+		}
+
+		Inventory inventory = Bukkit.createInventory(player, size, title);
 		stock(inventory);
 
 		player.openInventory(inventory);
 	}
-	
+
 	// ---- Required Methods
-	
+
 	public abstract int getSize();
 
 	public abstract String getTitle();
@@ -62,7 +78,7 @@ public abstract class AbstractGUI
 	}
 
 	// ---- Events
-	
+
 	public void onInventoryClick(InventoryClickEvent event) { }
 
 	public void onInventoryClose(InventoryCloseEvent event) { }

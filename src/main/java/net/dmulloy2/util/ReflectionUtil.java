@@ -154,8 +154,9 @@ public class ReflectionUtil
 	 * @param player Player to send the packet to
 	 * @param packet Packet to send
 	 * @throws ReflectionException If something goes wrong
+	 * @deprecated Replaced with more reliable wrappers
 	 */
-	// TODO: Keep up to date with MC versions. 1.7.10
+	@Deprecated
 	public static final void sendPacket(Player player, Object packet) throws ReflectionException
 	{
 		try

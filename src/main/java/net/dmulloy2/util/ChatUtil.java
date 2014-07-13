@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Util for dealing with JSON-based chat.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -36,12 +36,12 @@ public class ChatUtil
 		sender.sendMessage(BaseComponent.toLegacyText(message));
 	}
 
-	private static final void sendChatPacket(Player player, String jsonString) throws ReflectionException
+	private static final void sendChatPacket(Player player, String json) throws ReflectionException
 	{
 		try
 		{
 			WrappedChatSerializer serializer = new WrappedChatSerializer();
-			Object chatComponent = serializer.a(jsonString);
+			Object chatComponent = serializer.serialize(json);
 
 			WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
 			packet.send(player);
