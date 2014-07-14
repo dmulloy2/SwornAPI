@@ -189,7 +189,7 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	@Override
 	public String toString()
 	{
-		return "ArenaLocation { x = " + x + ", y = " + y + ", z = " + z + ", worldName = " + worldName + " }";
+		return "LazyLocation { x = " + x + ", y = " + y + ", z = " + z + ", worldName = " + worldName + " }";
 	}
 
 	/**
