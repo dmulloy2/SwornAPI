@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2012, md_5. All rights reserved.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -17,6 +17,7 @@ package net.dmulloy2.chat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ import org.bukkit.ChatColor;
 
 /**
  * Represents a text component.
- * 
+ *
  * @author md_5
  */
 
@@ -39,6 +40,66 @@ import org.bukkit.ChatColor;
 @NoArgsConstructor
 public class TextComponent extends BaseComponent
 {
+	/**
+	 * The text of the component that will be displayed to the client
+	 */
+	private String text;
+
+	/**
+	 * Creates a TextComponent with formatting and text from the passed
+	 * component
+	 *
+	 * @param textComponent the component to copy from
+	 */
+	public TextComponent(TextComponent textComponent)
+	{
+		super(textComponent);
+		setText(textComponent.getText());
+	}
+
+	/**
+	 * Creates a TextComponent with blank text and the extras set to the passed
+	 * array
+	 *
+	 * @param extras the extras to set
+	 */
+	public TextComponent(BaseComponent... extras)
+	{
+		setText("");
+		setExtra(Arrays.asList(extras));
+	}
+
+	@Override
+	protected void toPlainText(StringBuilder builder)
+	{
+		builder.append(text);
+		super.toPlainText(builder);
+	}
+
+	@Override
+	protected void toLegacyText(StringBuilder builder)
+	{
+		builder.append(getColor());
+
+		if (isBold())
+			builder.append(ChatColor.BOLD);
+
+		if (isItalic())
+			builder.append(ChatColor.ITALIC);
+
+		if (isUnderlined())
+			builder.append(ChatColor.UNDERLINE);
+
+		if (isStrikethrough())
+			builder.append(ChatColor.STRIKETHROUGH);
+
+		if (isObfuscated())
+			builder.append(ChatColor.MAGIC);
+
+		builder.append(text);
+		super.toLegacyText(builder);
+	}
+
 	private static final Pattern url = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
 	/**
@@ -109,9 +170,8 @@ public class TextComponent extends BaseComponent
 			{
 				pos = message.length();
 			}
-			if (matcher.region(i, pos).find())
-			{ // Web link handling
-
+			if (matcher.region(i, pos).find()) // Web link handling
+			{
 				if (builder.length() > 0)
 				{
 					TextComponent old = component;
@@ -151,64 +211,14 @@ public class TextComponent extends BaseComponent
 		return components.toArray(new BaseComponent[components.size()]);
 	}
 
-	/**
-	 * The text of the component that will be displayed to the client
-	 */
-	private String text;
-
-	/**
-	 * Creates a TextComponent with formatting and text from the passed
-	 * component
-	 *
-	 * @param textComponent the component to copy from
-	 */
-	public TextComponent(TextComponent textComponent)
+	public static List<BaseComponent[]> fromLegacyList(List<String> list)
 	{
-		super(textComponent);
-		setText(textComponent.getText());
-	}
+		List<BaseComponent[]> ret = new ArrayList<>();
 
-	/**
-	 * Creates a TextComponent with blank text and the extras set to the passed
-	 * array
-	 *
-	 * @param extras the extras to set
-	 */
-	public TextComponent(BaseComponent... extras)
-	{
-		setText("");
-		setExtra(Arrays.asList(extras));
-	}
+		for (String legacy : list)
+			ret.add(fromLegacyText(legacy));
 
-	@Override
-	protected void toPlainText(StringBuilder builder)
-	{
-		builder.append(text);
-		super.toPlainText(builder);
-	}
-
-	@Override
-	protected void toLegacyText(StringBuilder builder)
-	{
-		builder.append(getColor());
-
-		if (isBold())
-			builder.append(ChatColor.BOLD);
-
-		if (isItalic())
-			builder.append(ChatColor.ITALIC);
-
-		if (isUnderlined())
-			builder.append(ChatColor.UNDERLINE);
-
-		if (isStrikethrough())
-			builder.append(ChatColor.STRIKETHROUGH);
-
-		if (isObfuscated())
-			builder.append(ChatColor.MAGIC);
-
-		builder.append(text);
-		super.toLegacyText(builder);
+		return ret;
 	}
 
 	@Override

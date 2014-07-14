@@ -51,11 +51,12 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	protected boolean mustBePlayer;
 	protected List<String> requiredArgs;
 	protected List<String> optionalArgs;
 	protected List<String> aliases;
 
+	protected boolean hasSubCommands;
+	protected boolean mustBePlayer;
 	protected boolean usesPrefix;
 
 	public Command(SwornPlugin plugin)
@@ -300,6 +301,47 @@ public abstract class Command implements CommandExecutor
 	public List<String> getDescription()
 	{
 		return Util.toList(description);
+	}
+
+	// ---- Sub Commands
+
+	public final boolean hasSubCommands()
+	{
+		return hasSubCommands;
+	}
+
+	public List<? extends Command> getSubCommands()
+	{
+		return null;
+	}
+
+	public final List<String> getSubCommandHelp(boolean displayHelp)
+	{
+		List<String> ret = new ArrayList<>();
+
+		for (Command cmd : getSubCommands())
+		{
+			ret.add(cmd.getUsageTemplate(displayHelp));
+		}
+
+		return ret;
+	}
+
+	public final List<BaseComponent[]> getFancySubCommandHelp()
+	{
+		return getFancySubCommandHelp(false);
+	}
+
+	public final List<BaseComponent[]> getFancySubCommandHelp(boolean list)
+	{
+		List<BaseComponent[]> ret = new ArrayList<>();
+
+		for (Command cmd : getSubCommands())
+		{
+			ret.add(cmd.getFancyUsageTemplate(list));
+		}
+
+		return ret;
 	}
 
 	// ---- Argument Manipulation
