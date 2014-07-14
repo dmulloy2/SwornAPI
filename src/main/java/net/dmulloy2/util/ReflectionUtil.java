@@ -75,7 +75,7 @@ public class ReflectionUtil
 	{
 		try
 		{
-			return clazz.getDeclaredField(name);
+			return clazz.getField(name);
 		} catch (Throwable ex) { }
 		return null;
 	}

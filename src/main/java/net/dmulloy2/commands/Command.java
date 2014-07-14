@@ -347,7 +347,7 @@ public abstract class Command implements CommandExecutor
 	protected final String getFinalArg(int start)
 	{
 		StringBuilder ret = new StringBuilder();
-		for (int i = 0; i < args.length; i++)
+		for (int i = start; i < args.length; i++)
 		{
 			if (i != start)
 				ret.append(" ");
