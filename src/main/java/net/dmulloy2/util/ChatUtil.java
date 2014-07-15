@@ -22,6 +22,14 @@ public class ChatUtil
 {
 	private ChatUtil() { }
 
+	/**
+	 * Sends a message to a {@link CommandSender}. This method attempts to send
+	 * a JSON chat message if the sender is a player. If message sending fails,
+	 * a legacy message will be sent.
+	 *
+	 * @param sender CommandSender to send the message to
+	 * @param message Message to send
+	 */
 	public static final void sendMessage(CommandSender sender, BaseComponent... message)
 	{
 		if (sender instanceof Player)

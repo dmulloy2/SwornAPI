@@ -6,6 +6,7 @@ package net.dmulloy2.util;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -345,21 +346,6 @@ public class Util
 	}
 
 	/**
-	 * Checks if a field is declared in a given {@link Class}
-	 *
-	 * @param clazz Class object
-	 * @param name Name of variable
-	 * @return Whether or not the field is declared
-	 * @deprecated In favor of
-	 *             {@link ReflectionUtil#isDeclaredField(Class, String)}
-	 */
-	@Deprecated
-	public static boolean isDeclaredField(@NonNull Class<?> clazz, @NonNull String name)
-	{
-		return ReflectionUtil.isDeclaredField(clazz, name);
-	}
-
-	/**
 	 * Parses a given {@link Object} (preferably a {@link String}) and returns a
 	 * boolean value.
 	 *
@@ -380,11 +366,7 @@ public class Util
 			return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
 		}
 
-		try
-		{
-			return Boolean.parseBoolean(object.toString());
-		} catch (Throwable ex) { }
-		return false;
+		return Boolean.parseBoolean(object.toString());
 	}
 
 	/**
@@ -418,7 +400,7 @@ public class Util
 		if (state instanceof Sign)
 		{
 			Sign sign = (Sign) state;
-			ret.append("Sign { lines = " + arrayToString(sign.getLines()) + " }");
+			ret.append("Sign { lines = " + Arrays.toString(sign.getLines()) + " }");
 		}
 		else if (state instanceof CommandBlock)
 		{
@@ -459,14 +441,25 @@ public class Util
 	 *
 	 * @param array Array to represent
 	 * @return The string representation
+	 * @deprecated Use {@link Arrays#toString(Object[])
 	 */
+	@Deprecated
 	public static String arrayToString(Object[] array)
 	{
-		StringJoiner joiner = new StringJoiner(", ");
+		return Arrays.toString(array);
+	}
 
-		for (Object obj : array)
-			joiner.append(obj.toString());
-
-		return "[" + joiner.toString() + "]";
+	/**
+	 * Concatenates two arrays of the same type.
+	 *
+	 * @param first First array
+	 * @param second Second array
+	 * @return Concatenated array
+	 */
+	public static <T> T[] concat(@NonNull T[] first, @NonNull T[] second)
+	{
+		T[] ret = Arrays.copyOf(first, first.length + second.length);
+        System.arraycopy(second, 0, ret, first.length, second.length);
+        return ret;
 	}
 }

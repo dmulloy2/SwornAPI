@@ -9,7 +9,7 @@ import org.bukkit.Bukkit;
 
 /**
  * Util dealing with the loss of item id's.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -19,7 +19,7 @@ public class MaterialUtil
 
 	/**
 	 * Returns the {@link org.bukkit.Material} from a given string
-	 * 
+	 *
 	 * @param string String to get the Material from
 	 * @return The {@link org.bukkit.Material} from a given string
 	 */
@@ -62,7 +62,7 @@ public class MaterialUtil
 
 	/**
 	 * Returns the {@link org.bukkit.Material} from a given integer
-	 * 
+	 *
 	 * @param id Integer to get the Material from
 	 * @return The {@link org.bukkit.Material} from a given integer
 	 */
@@ -79,7 +79,7 @@ public class MaterialUtil
 
 	/**
 	 * Gets the type id for a Bukkit Material
-	 * 
+	 *
 	 * @param mat Bukkit material
 	 * @return Item ID (if applicable)
 	 */
@@ -91,12 +91,12 @@ public class MaterialUtil
 			return mat.getId();
 		}
 
-		return - 1; // Result not found
+		return -1; // Result not found
 	}
 
 	/**
 	 * Gets the friendly name of a material
-	 * 
+	 *
 	 * @param s Material name
 	 * @return Friendly name
 	 */
@@ -113,7 +113,7 @@ public class MaterialUtil
 
 	/**
 	 * Gets the friendly name of a material
-	 * 
+	 *
 	 * @param id Item ID
 	 * @return Friendly name
 	 */
