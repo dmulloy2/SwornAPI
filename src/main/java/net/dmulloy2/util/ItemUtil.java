@@ -3,21 +3,26 @@
  */
 package net.dmulloy2.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import net.dmulloy2.types.EnchantmentType;
+import net.dmulloy2.types.StringJoiner;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
 /**
  * Util that deals with Items.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -26,12 +31,12 @@ public class ItemUtil
 	private ItemUtil() { }
 
 	/**
-	 * Reads an ItemStack from configuration
+	 * Reads an ItemStack from configuration.
 	 * <p>
-	 * The basic format is "[Type/ID]:[Data], [Amount], [Enchantment:Level...]"
-	 * 
+	 * The basic format is "[Type/ID]:[Data], [Amount], [Enchantment:Level...], [Meta]"
+	 *
 	 * @param string String to read
-	 * @return ItemStack from given string
+	 * @return ItemStack from given string, or null if parsing fails
 	 */
 	public static ItemStack readItem(String string)
 	{
@@ -42,16 +47,48 @@ public class ItemUtil
 			int amt = 0;
 			short dat = 0;
 
-			Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
+			Map<Enchantment, Integer> enchantments = new HashMap<>();
 
+			// Calculate lore first
+			String name = "";
+			List<String> lore = null;
+
+			try
+			{
+				// Name
+				String nameKey = "name:";
+				if (string.contains(nameKey))
+				{
+					name = string.substring(string.indexOf(nameKey) + nameKey.length());
+					int commaIndex = name.indexOf(",");
+					if (commaIndex != -1)
+						name = name.substring(0, commaIndex);
+					name = name.replaceAll("_", " ");
+					name = FormatUtil.format(name);
+				}
+
+				// Lore
+				String loreKey = "lore:";
+				if (string.contains(loreKey))
+				{
+					String str = string.substring(string.indexOf(loreKey) + loreKey.length());
+					str = str.replaceAll("_", " ");
+
+					lore = new ArrayList<>();
+					for (String split : str.split("\\|"))
+						lore.add(FormatUtil.format(split));
+				}
+			} catch (Throwable ex) { }
+
+			// Remove any spaces
 			string = string.replaceAll(" ", "");
+
 			if (string.contains(","))
 			{
 				String s = string.substring(0, string.indexOf(","));
 				if (s.contains(":"))
 				{
 					mat = MaterialUtil.getMaterial(s.substring(0, s.indexOf(":")));
-
 					dat = Short.parseShort(s.substring(s.indexOf(":") + 1));
 				}
 				else
@@ -65,7 +102,6 @@ public class ItemUtil
 					amt = Integer.parseInt(s.substring(0, s.indexOf(",")));
 
 					s = s.substring(s.indexOf(",") + 1);
-
 					if (! s.isEmpty())
 					{
 						if (s.contains(","))
@@ -76,7 +112,7 @@ public class ItemUtil
 								if (ench.contains(":"))
 								{
 									Enchantment enchant = EnchantmentType.toEnchantment(ench.substring(0, ench.indexOf(":")));
-									int level = Integer.parseInt(ench.substring(ench.indexOf(":") + 1));
+									int level = NumberUtil.toInt(ench.substring(ench.indexOf(":") + 1));
 
 									if (enchant != null && level > 0)
 									{
@@ -90,7 +126,7 @@ public class ItemUtil
 							if (s.contains(":"))
 							{
 								Enchantment enchant = EnchantmentType.toEnchantment(s.substring(0, s.indexOf(":")));
-								int level = Integer.parseInt(s.substring(s.indexOf(":") + 1));
+								int level = NumberUtil.toInt(s.substring(s.indexOf(":") + 1));
 
 								if (enchant != null && level > 0)
 								{
@@ -106,16 +142,19 @@ public class ItemUtil
 				}
 			}
 
-			ItemStack ret = null;
-			if (mat != null && amt > 0)
-			{
-				ret = new ItemStack(mat, amt, dat);
-			}
+			if (mat == null || amt <= 0)
+				return null;
 
-			if (ret != null && ! enchantments.isEmpty())
-			{
-				ret.addUnsafeEnchantments(enchantments);
-			}
+			ItemStack ret = new ItemStack(mat, amt, dat);
+			ret.addUnsafeEnchantments(enchantments);
+
+			// ItemMeta
+			ItemMeta meta = ret.getItemMeta();
+			if (! name.isEmpty())
+				meta.setDisplayName(name);
+			if (lore != null)
+				meta.setLore(lore);
+			ret.setItemMeta(meta);
 
 			return ret;
 		} catch (Throwable ex) { }
@@ -189,19 +228,66 @@ public class ItemUtil
 					}
 				}
 			}
-		}
-		catch (Throwable ex)
-		{
-		}
+		} catch (Throwable ex) { }
 		return null;
 	}
 
 	/**
+	 * Serializes a given ItemStack in the same format as
+	 * {@link ItemUtil#readItem(String)}.
+	 *
+	 * @param stack Stack to serialize
+	 * @return Serialized string
+	 */
+	public static String serialize(ItemStack stack)
+	{
+		StringBuilder ret = new StringBuilder();
+		ret.append(stack.getType());
+		if (stack.getDurability() > 0)
+			ret.append(":" + stack.getDurability());
+		ret.append(", " + stack.getAmount());
+
+		if (! stack.getEnchantments().isEmpty())
+		{
+			StringJoiner joiner = new StringJoiner(", ");
+			for (Entry<Enchantment, Integer> ench : stack.getEnchantments().entrySet())
+				joiner.append(EnchantmentType.toName(ench.getKey()) + ":" + ench.getValue());
+			ret.append(", " + joiner.toString());
+		}
+
+		ItemMeta meta = stack.getItemMeta();
+		if (meta.hasDisplayName())
+		{
+			String name = meta.getDisplayName();
+			name = name.replaceAll(ChatColor.COLOR_CHAR + "", "&");
+			name = name.replaceAll(" ", "_");
+			ret.append(", name:" + name);
+		}
+
+		if (meta.hasLore())
+		{
+			StringJoiner lore = new StringJoiner("|");
+			for (String line : meta.getLore())
+			{
+				line = line.replaceAll(ChatColor.COLOR_CHAR + "", "&");
+				line = line.replaceAll(" ", "_");
+				lore.append(line);
+			}
+
+			ret.append(", lore:" + lore.toString());
+		}
+
+		return ret.toString();
+	}
+
+	/**
 	 * Returns the basic data of an ItemStack in string form
-	 * 
+	 *
 	 * @param stack ItemStack to "convert" to a string
 	 * @return ItemStack's data in string form
+	 * @deprecated ItemStack defines a pretty useful toString() method
 	 */
+	@Deprecated
 	public static String itemToString(ItemStack stack)
 	{
 		StringBuilder ret = new StringBuilder();
@@ -210,16 +296,15 @@ public class ItemUtil
 		ret.append(" Amount: " + stack.getAmount());
 		ret.append(" Enchants:");
 		for (Entry<Enchantment, Integer> enchantment : stack.getEnchantments().entrySet())
-		{
 			ret.append(" " + EnchantmentType.toName(enchantment.getKey()) + ": " + enchantment.getValue());
-		}
+		ret.append(" ItemMeta: " + stack.getItemMeta());
 
 		return ret.toString();
 	}
 
 	/**
 	 * Returns an ItemStack's enchantments in string form
-	 * 
+	 *
 	 * @param stack ItemStack to get enchantments
 	 * @return ItemStack's enchantments in string form
 	 */
@@ -230,9 +315,7 @@ public class ItemUtil
 		{
 			ret.append("(");
 			for (Entry<Enchantment, Integer> enchantment : stack.getEnchantments().entrySet())
-			{
 				ret.append(EnchantmentType.toName(enchantment.getKey()) + ": " + enchantment.getValue() + ", ");
-			}
 			ret.delete(ret.lastIndexOf(","), ret.lastIndexOf(" "));
 			ret.append(")");
 		}
