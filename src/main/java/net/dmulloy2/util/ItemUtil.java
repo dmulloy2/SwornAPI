@@ -4,7 +4,7 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,10 +13,13 @@ import net.dmulloy2.types.EnchantmentType;
 import net.dmulloy2.types.StringJoiner;
 
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
@@ -31,205 +34,236 @@ public class ItemUtil
 	private ItemUtil() { }
 
 	/**
-	 * Reads an ItemStack from configuration.
+	 * Parses an ItemStack from configuration. This provides limited meta
+	 * support. This should be surrounded in a try-catch block to deal with
+	 * unparsable items.
 	 * <p>
-	 * The basic format is "[Type/ID]:[Data], [Amount], [Enchantment:Level...], [Meta]"
+	 * The basic format is "<code>[Type]:[Data], [Amount],
+	 *  [Enchantment:Level...], [Meta]</code>"
 	 *
-	 * @param string String to read
-	 * @return ItemStack from given string, or null if parsing fails
+	 * @param string String to parse
+	 * @return ItemStack from given string, unless parsing fails
+	 * @throws NullPointerException if the material is null
+	 * @throws IllegalArgumentException if the amount is less than 1
+	 * @throws IndexOutOfBoundsException if the string is in an improper format
 	 */
 	public static ItemStack readItem(String string)
 	{
-		try
+		if (string.startsWith("potion:"))
+			return readPotion(string);
+
+		Material material = null;
+		int amount = -1;
+		short data = 0;
+
+		// Meta
+		final String meta = string;
+		Map<Enchantment, Integer> enchantments = new LinkedHashMap<>();
+
+		string = string.replaceAll(" ", "");
+		if (string.contains(","))
 		{
-			Material mat = null;
-
-			int amt = 0;
-			short dat = 0;
-
-			Map<Enchantment, Integer> enchantments = new HashMap<>();
-
-			// Calculate lore first
-			String name = "";
-			List<String> lore = null;
-
-			try
+			String str = string.substring(0, string.indexOf(","));
+			if (str.contains(":"))
 			{
-				// Name
-				String nameKey = "name:";
-				if (string.contains(nameKey))
-				{
-					name = string.substring(string.indexOf(nameKey) + nameKey.length());
-					int commaIndex = name.indexOf(",");
-					if (commaIndex != -1)
-						name = name.substring(0, commaIndex);
-					name = name.replaceAll("_", " ");
-					name = FormatUtil.format(name);
-				}
+				String[] split = str.split(":");
+				material = MaterialUtil.getMaterial(split[0]);
+				if (material == null)
+					throw new NullPointerException("Null material \"" + split[0] + "\"");
 
-				// Lore
-				String loreKey = "lore:";
-				if (string.contains(loreKey))
-				{
-					String str = string.substring(string.indexOf(loreKey) + loreKey.length());
-					str = str.replaceAll("_", " ");
-
-					lore = new ArrayList<>();
-					for (String split : str.split("\\|"))
-						lore.add(FormatUtil.format(split));
-				}
-			} catch (Throwable ex) { }
-
-			// Remove any spaces
-			string = string.replaceAll(" ", "");
-
-			if (string.contains(","))
+				data = NumberUtil.toShort(split[1]);
+			}
+			else
 			{
-				String s = string.substring(0, string.indexOf(","));
-				if (s.contains(":"))
-				{
-					mat = MaterialUtil.getMaterial(s.substring(0, s.indexOf(":")));
-					dat = Short.parseShort(s.substring(s.indexOf(":") + 1));
-				}
-				else
-				{
-					mat = MaterialUtil.getMaterial(s);
-				}
+				material = MaterialUtil.getMaterial(str);
+				if (material == null)
+					throw new NullPointerException("Null material \"" + str + "\"");
+			}
 
-				s = string.substring(string.indexOf(",") + 1);
-				if (s.contains(","))
-				{
-					amt = Integer.parseInt(s.substring(0, s.indexOf(",")));
+			str = string.substring(string.indexOf(",") + 1);
+			if (str.contains(","))
+			{
+				amount = NumberUtil.toInt(str.substring(0, str.indexOf(",")));
+				if (amount <= 0)
+					throw new IllegalArgumentException("Illegal amount: " + str.substring(0, str.indexOf(",")));
 
-					s = s.substring(s.indexOf(",") + 1);
-					if (! s.isEmpty())
+				str = str.substring(str.indexOf(",") + 1);
+				if (! str.isEmpty())
+				{
+					String[] split = str.split(",");
+					for (String ench : split)
 					{
-						if (s.contains(","))
+						if (ench.contains(":"))
 						{
-							String[] split = s.split(",");
-							for (String ench : split)
-							{
-								if (ench.contains(":"))
-								{
-									Enchantment enchant = EnchantmentType.toEnchantment(ench.substring(0, ench.indexOf(":")));
-									int level = NumberUtil.toInt(ench.substring(ench.indexOf(":") + 1));
+							Enchantment enchant = EnchantmentType.toEnchantment(ench.substring(0, ench.indexOf(":")));
+							int level = NumberUtil.toInt(ench.substring(ench.indexOf(":") + 1));
 
-									if (enchant != null && level > 0)
-									{
-										enchantments.put(enchant, level);
-									}
-								}
-							}
-						}
-						else
-						{
-							if (s.contains(":"))
+							if (enchant != null && level > 0)
 							{
-								Enchantment enchant = EnchantmentType.toEnchantment(s.substring(0, s.indexOf(":")));
-								int level = NumberUtil.toInt(s.substring(s.indexOf(":") + 1));
-
-								if (enchant != null && level > 0)
-								{
-									enchantments.put(enchant, level);
-								}
+								enchantments.put(enchant, level);
 							}
 						}
 					}
 				}
-				else
-				{
-					amt = Integer.parseInt(s);
-				}
 			}
+			else
+			{
+				amount = NumberUtil.toInt(str);
+				if (amount <= 0)
+					throw new IllegalArgumentException("Illegal amount: " + str);
+			}
+		}
 
-			if (mat == null || amt <= 0)
-				return null;
+		ItemStack ret = new ItemStack(material, amount, data);
+		ret.addUnsafeEnchantments(enchantments);
 
-			ItemStack ret = new ItemStack(mat, amt, dat);
-			ret.addUnsafeEnchantments(enchantments);
-
-			// ItemMeta
-			ItemMeta meta = ret.getItemMeta();
-			if (! name.isEmpty())
-				meta.setDisplayName(name);
-			if (lore != null)
-				meta.setLore(lore);
-			ret.setItemMeta(meta);
-
-			return ret;
-		} catch (Throwable ex) { }
-		return null;
+		// Parse meta
+		parseItemMeta(ret, meta);
+		return ret;
 	}
 
 	/**
-	 * Reads a potion from configuration
+	 * Parses a potion from configuration.
 	 *
-	 * @param string - String to read
-	 * @return ItemStack from string (will be a potion)
+	 * @param string String to read
+	 * @return ItemStack from string, or null if parsing fails
 	 */
 	public static ItemStack readPotion(String string)
 	{
+		// Meta
+		final String meta = string;
+		ItemStack ret = null;
+
+		// Normalize string
+		string = string.replaceAll(" ", "");
+		string = string.substring(string.indexOf(":") + 1);
+
+		String[] split = string.split(",");
+		if (split.length == 3)
+		{
+			// Get the type
+			PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
+			if (type != null)
+			{
+				// Get the amount
+				int amount = NumberUtil.toInt(split[1]);
+				if (amount != -1)
+				{
+					// Get the level
+					int level = NumberUtil.toInt(split[2]);
+					if (level != -1)
+					{
+						// Build potion / stack
+						Potion potion = new Potion(1);
+						potion.setType(type);
+						potion.setLevel(level);
+						potion.setSplash(false);
+						ret = potion.toItemStack(amount);
+					}
+				}
+			}
+		}
+		else if (split.length == 4)
+		{
+			// Get the type
+			PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
+			if (type != null)
+			{
+				// Get the amount
+				int amount = NumberUtil.toInt(split[1]);
+				if (amount != -1)
+				{
+					// Get the level
+					int level = NumberUtil.toInt(split[2]);
+					if (level != -1)
+					{
+						// Is splash
+						boolean splash = Util.toBoolean(split[3]);
+
+						// Build potion / stack
+						Potion potion = new Potion(1);
+						potion.setType(type);
+						potion.setLevel(level);
+						potion.setSplash(splash);
+						ret = potion.toItemStack(amount);
+					}
+				}
+			}
+		}
+
+		if (ret == null)
+			return null;
+
+		// Parse meta
+		parseItemMeta(ret, meta);
+		return ret;
+	}
+
+	private static void parseItemMeta(ItemStack item, String string)
+	{
 		try
 		{
-			string = string.replaceAll(" ", "");
-			string = string.substring(string.indexOf(":") + 1);
+			ItemMeta meta = item.getItemMeta();
 
-			String[] split = string.split(",");
-			if (split.length == 3)
+			// Name
+			String nameKey = "name:";
+			if (string.contains(nameKey))
 			{
-				// Get the type
-				PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
-				if (type != null)
+				String name = string.substring(string.indexOf(nameKey) + nameKey.length());
+				int commaIndex = name.indexOf(",");
+				if (commaIndex != -1)
+					name = name.substring(0, commaIndex);
+				name = name.replaceAll("_", " ");
+				name = FormatUtil.format(name);
+				meta.setDisplayName(name);
+			}
+
+			// Lore
+			String loreKey = "lore:";
+			if (string.contains(loreKey))
+			{
+				String str = string.substring(string.indexOf(loreKey) + loreKey.length());
+				int commaIndex = str.indexOf(",");
+				if (commaIndex != -1)
+					str.substring(0, commaIndex);
+				str = str.replaceAll("_", " ");
+
+				List<String> lore = new ArrayList<>();
+				for (String split : str.split("\\|"))
+					lore.add(FormatUtil.format(split));
+				meta.setLore(lore);
+			}
+
+			// Leather armor
+			if (meta instanceof LeatherArmorMeta)
+			{
+				String colorKey = "color:";
+				if (string.contains(colorKey))
 				{
-					// Get the amount
-					int amount = NumberUtil.toInt(split[1]);
-					if (amount != -1)
-					{
-						// Get the level
-						int level = NumberUtil.toInt(split[2]);
-						if (level != -1)
-						{
-							// Build potion / stack
-							Potion potion = new Potion(1);
-							potion.setType(type);
-							potion.setLevel(level);
-							potion.setSplash(false);
-							ItemStack ret = potion.toItemStack(amount);
-							return ret;
-						}
-					}
+					String str = string.substring(string.indexOf(colorKey) + colorKey.length());
+					int commaIndex = str.indexOf(",");
+					if (commaIndex != -1)
+						str.substring(0, commaIndex);
+
+					DyeColor dyeColor = DyeColor.valueOf(str.toUpperCase());
+					((LeatherArmorMeta) meta).setColor(dyeColor.getColor());
 				}
 			}
-			else if (split.length == 4)
-			{
-				// Get the type
-				PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
-				if (type != null)
-				{
-					// Get the amount
-					int amount = NumberUtil.toInt(split[1]);
-					if (amount != -1)
-					{
-						// Get the level
-						int level = NumberUtil.toInt(split[2]);
-						if (level != -1)
-						{
-							// Is splash
-							boolean splash = Util.toBoolean(split[3]);
 
-							// Build potion / stack
-							Potion potion = new Potion(1);
-							potion.setType(type);
-							potion.setLevel(level);
-							potion.setSplash(splash);
-							ItemStack ret = potion.toItemStack(amount);
-							return ret;
-						}
-					}
+			// Skulls
+			if (meta instanceof SkullMeta)
+			{
+				String ownerKey = "owner:";
+				if (string.contains(ownerKey))
+				{
+					String owner = string.substring(string.indexOf(ownerKey) + ownerKey.length());
+					((SkullMeta) meta).setOwner(owner);
 				}
 			}
+
+			// TODO: Firework and Book support
+			item.setItemMeta(meta);
 		} catch (Throwable ex) { }
-		return null;
 	}
 
 	/**
