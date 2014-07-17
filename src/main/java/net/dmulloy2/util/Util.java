@@ -211,14 +211,18 @@ public class Util
 
 		for (StackTraceElement ste : ex.getStackTrace())
 		{
-			StringBuilder line = new StringBuilder();
-			line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+			String className = ste.getClassName();
+			if (! className.contains("net.minecraft"))
+			{
+				StringBuilder line = new StringBuilder();
+				line.append("  " + className + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
 
-			String jar = getWorkingJar(ste.getClassName());
-			if (jar != null)
-				line.append(" [" + jar + "]");
+				String jar = getWorkingJar(className);
+				if (jar != null)
+					line.append(" [" + jar + "]");
 
-			joiner.append(line.toString());
+				joiner.append(line.toString());
+			}
 		}
 
 		while (ex.getCause() != null)
@@ -228,14 +232,18 @@ public class Util
 			joiner.append("Affected classes:");
 			for (StackTraceElement ste : ex.getStackTrace())
 			{
-				StringBuilder line = new StringBuilder();
-				line.append("  " + ste.getClassName() + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+				String className = ste.getClassName();
+				if (! className.contains("net.minecraft"))
+				{
+					StringBuilder line = new StringBuilder();
+					line.append("  " + className + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
 
-				String jar = getWorkingJar(ste.getClassName());
-				if (jar != null)
-					line.append(" [" + jar + "]");
+					String jar = getWorkingJar(className);
+					if (jar != null)
+						line.append(" [" + jar + "]");
 
-				joiner.append(line.toString());
+					joiner.append(line.toString());
+				}
 			}
 		}
 
