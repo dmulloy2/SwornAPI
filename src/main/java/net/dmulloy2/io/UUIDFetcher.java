@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import net.dmulloy2.util.Util;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -90,5 +92,14 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	private static String buildBody(List<String> names)
 	{
 		return JSONValue.toJSONString(names);
+	}
+
+	public static UUID getUUID(String name) throws Exception
+	{
+		if (name.length() == 36)
+			return UUID.fromString(name);
+
+		UUIDFetcher fetcher = new UUIDFetcher(Util.toList(name));
+		return fetcher.call().get(name);
 	}
 }
