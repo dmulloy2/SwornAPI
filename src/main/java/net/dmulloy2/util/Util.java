@@ -8,6 +8,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,8 @@ public class Util
 	{
 		for (Player player : getOnlinePlayers())
 		{
-			player.playEffect(loc, effect, data);
+			if (player.getWorld().getUID().equals(loc.getWorld().getUID()))
+				player.playEffect(loc, effect, data);
 		}
 	}
 
@@ -215,7 +217,11 @@ public class Util
 			if (! className.contains("net.minecraft"))
 			{
 				StringBuilder line = new StringBuilder();
-				line.append("  " + className + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+				line.append("  " + className + "." + ste.getMethodName());
+				if (ste.getLineNumber() > 0)
+					line.append("(Line " + ste.getLineNumber() + ")");
+				else
+					line.append("(Native Method)");
 
 				String jar = getWorkingJar(className);
 				if (jar != null)
@@ -236,7 +242,11 @@ public class Util
 				if (! className.contains("net.minecraft"))
 				{
 					StringBuilder line = new StringBuilder();
-					line.append("  " + className + "." + ste.getMethodName() + "(Line " + ste.getLineNumber() + ")");
+					line.append("  " + className + "." + ste.getMethodName());
+					if (ste.getLineNumber() > 0)
+						line.append("(Line " + ste.getLineNumber() + ")");
+					else
+						line.append("(Native Method)");
 
 					String jar = getWorkingJar(className);
 					if (jar != null)
@@ -333,6 +343,24 @@ public class Util
 		}
 
 		return map;
+	}
+
+	/**
+	 * Gets the key mapped to a given value in a given map.
+	 *
+	 * @param map Map containing the value
+	 * @param value Value to get the key for
+	 * @return The key, or null if not found
+	 */
+	public static <K, V> K getKey(@NonNull Map<K, V> map, @NonNull V value)
+	{
+		for (Entry<K, V> entry : new HashMap<>(map).entrySet())
+		{
+			if (entry.getValue().equals(value))
+				return entry.getKey();
+		}
+
+		return null;
 	}
 
 	private static final Object NULL = new Object();
@@ -452,7 +480,7 @@ public class Util
 	 * @deprecated Use {@link Arrays#toString(Object[])
 	 */
 	@Deprecated
-	public static String arrayToString(Object[] array)
+	public static String arrayToString(@NonNull Object[] array)
 	{
 		return Arrays.toString(array);
 	}
@@ -470,4 +498,22 @@ public class Util
         System.arraycopy(second, 0, ret, first.length, second.length);
         return ret;
 	}
+
+	/**
+	 * Whether or not an Enum type exists with a given name in a given class.
+	 *
+	 * @param clazz Enum class
+	 * @param name Type name
+	 * @return True if the type exists, false if not
+	 */
+	@SuppressWarnings("all")
+	public static boolean isEnumType(@NonNull Class<? extends Enum> clazz, @NonNull String name)
+	{
+        try
+        {
+            Enum.valueOf(clazz, name.toUpperCase());
+            return true;
+        } catch (Throwable ex) { }
+        return false;
+    }
 }
