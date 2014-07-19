@@ -29,12 +29,13 @@ import com.google.common.collect.ImmutableList;
 public class UUIDFetcher implements Callable<Map<String, UUID>>
 {
 	private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
-	private final JSONParser jsonParser = new JSONParser();
-	private final List<List<String>> namesList;
+	private static final JSONParser jsonParser = new JSONParser();
 
+	private final List<List<String>> namesList;
 	public UUIDFetcher(List<String> names)
 	{
 		ImmutableList.Builder<List<String>> builder = ImmutableList.builder();
+
 		int namesCopied = 0;
 		while (namesCopied < names.size())
 		{
@@ -69,7 +70,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return uuidMap;
 	}
 
-	private static void writeBody(HttpURLConnection connection, String body) throws Exception
+	private static final void writeBody(HttpURLConnection connection, String body) throws Exception
 	{
 		DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
 		writer.write(body.getBytes());
@@ -77,7 +78,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		writer.close();
 	}
 
-	private static HttpURLConnection createConnection() throws Exception
+	private static final HttpURLConnection createConnection() throws Exception
 	{
 		URL url = new URL(PROFILE_URL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -89,12 +90,12 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return connection;
 	}
 
-	private static String buildBody(List<String> names)
+	private static final String buildBody(List<String> names)
 	{
 		return JSONValue.toJSONString(names);
 	}
 
-	public static UUID getUUID(String name) throws Exception
+	public static final UUID getUUID(String name) throws Exception
 	{
 		if (name.length() == 36)
 			return UUID.fromString(name);
