@@ -311,15 +311,18 @@ public class ItemUtil
 			ret.append(", lore:" + lore.toString());
 		}
 
+		// TODO: More meta support
+
 		return ret.toString();
 	}
 
 	/**
-	 * Returns the basic data of an ItemStack in string form
+	 * Returns the basic data of an ItemStack in string form.
 	 *
 	 * @param stack ItemStack to "convert" to a string
 	 * @return ItemStack's data in string form
 	 * @deprecated ItemStack defines a pretty useful toString() method
+	 * @see {@link ItemStack#toString()}
 	 */
 	@Deprecated
 	public static String itemToString(ItemStack stack)
@@ -337,10 +340,10 @@ public class ItemUtil
 	}
 
 	/**
-	 * Returns an ItemStack's enchantments in string form
+	 * Returns an ItemStack's enchantments in string form.
 	 *
 	 * @param stack ItemStack to get enchantments
-	 * @return ItemStack's enchantments in string form
+	 * @return The item's enchantments in string form
 	 */
 	public static String getEnchantments(ItemStack stack)
 	{

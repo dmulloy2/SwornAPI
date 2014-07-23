@@ -27,7 +27,7 @@ public class MaterialUtil
 	{
 		if (NumberUtil.isInt(string))
 		{
-			return getMaterial(Integer.parseInt(string));
+			return getMaterial(NumberUtil.toInt(string));
 		}
 		else
 		{

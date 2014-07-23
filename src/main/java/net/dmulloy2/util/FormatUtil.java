@@ -6,6 +6,8 @@ package net.dmulloy2.util;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 
 import net.dmulloy2.types.RainbowColors;
 import net.dmulloy2.types.StringJoiner;
@@ -123,6 +125,8 @@ public class FormatUtil
 		return WordUtils.capitalize(ret);
 	}
 
+	private static final List<String> vowels = Arrays.asList("a", "e", "i", "o", "u");
+
 	/**
 	 * Returns the proper article of a given string
 	 *
@@ -132,8 +136,11 @@ public class FormatUtil
 	public static String getArticle(String string)
 	{
 		string = string.toLowerCase();
-		if (string.startsWith("a") || string.startsWith("e") || string.startsWith("i") || string.startsWith("o") || string.startsWith("u"))
-			return "an";
+		for (String vowel : vowels)
+		{
+			if (string.startsWith(vowel))
+				return "an";
+		}
 
 		return "a";
 	}

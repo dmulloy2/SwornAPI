@@ -6,6 +6,9 @@ package net.dmulloy2.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.NonNull;
+
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -23,11 +26,12 @@ public class InventoryUtil
 	private InventoryUtil() { }
 
 	/**
-	 * Returns whether or not a given inventory is empty
+	 * Returns whether or not a given {@link Inventory} is empty.
 	 *
-	 * @param inventory {@link Inventory} to check
+	 * @param inventory Inventory to check
+	 * @return True if the inventory is empty, false if not
 	 */
-	public static boolean isEmpty(Inventory inventory)
+	public static boolean isEmpty(@NonNull Inventory inventory)
 	{
 		for (ItemStack stack : inventory.getContents())
 		{
@@ -37,35 +41,42 @@ public class InventoryUtil
 
 		if (inventory instanceof PlayerInventory)
 		{
-			PlayerInventory pInventory = (PlayerInventory) inventory;
-			if (pInventory.getHelmet() != null)
-				return false;
-
-			if (pInventory.getChestplate() != null)
-				return false;
-
-			if (pInventory.getLeggings() != null)
-				return false;
-
-			if (pInventory.getBoots() != null)
-				return false;
+			for (ItemStack armor : ((PlayerInventory) inventory).getArmorContents())
+			{
+				if (armor != null && armor.getType() != Material.AIR)
+					return false;
+			}
 		}
 
 		return true;
 	}
 
 	/**
-	 * Whether or not a Player's inventory has room for a given item
+	 * Returns whether or not a {@link Player}'s inventory has room for an item.
 	 *
-	 * @param item {@link ItemStack} to attempt to add
+	 * @param item {@link ItemStack} to check
 	 * @param player Player whose inventory is being checked
+	 * @return True if there is room, false if not
 	 */
-	public static boolean hasRoom(ItemStack item, Player player)
+	public static boolean hasRoom(@NonNull ItemStack item, @NonNull Player player)
 	{
 		int maxStackSize = (item.getMaxStackSize() == -1) ? player.getInventory().getMaxStackSize() : item.getMaxStackSize();
+		return hasRoom(item, player.getInventory(), maxStackSize);
+	}
+
+	/**
+	 * Returns whether or not an {@link Inventory} has room for an item.
+	 *
+	 * @param item {@link ItemStack} to check
+	 * @param inventory Inventory being checked
+	 * @param maxStackSize Maximum stack size
+	 * @return True if there is room, false if not
+	 */
+	public static boolean hasRoom(@NonNull ItemStack item, @NonNull Inventory inventory, int maxStackSize)
+	{
 		int amount = item.getAmount();
 
-		for (ItemStack stack : player.getInventory().getContents())
+		for (ItemStack stack : inventory.getContents())
 		{
 			if (stack == null || stack.getType() == Material.AIR)
 				amount -= maxStackSize;
@@ -82,30 +93,114 @@ public class InventoryUtil
 	}
 
 	/**
-	 * Gives a player an item
+	 * Gives a {@link Player} an item.
 	 *
 	 * @param player {@link Player} to give them item to
 	 * @param item {@link ItemStack} to give the player
 	 * @return Leftovers, if any
 	 */
-	public static Map<Integer, ItemStack> giveItem(Player player, ItemStack item)
+	public static Map<Integer, ItemStack> giveItem(@NonNull Player player, @NonNull ItemStack item)
 	{
-		if (hasRoom(item, player))
-			return addItems(player.getInventory(), item);
-
-		return null;
+		return addItems(player.getInventory(), item);
 	}
 
 	/**
-	 * Gives a player items
+	 * Gives a {@link Player} items.
 	 *
 	 * @param player {@link Player} to give them item to
-	 * @param items Items to give the player
+	 * @param items {@link ItemStack}s to give the player
 	 * @return Leftovers, if any
 	 */
-	public static Map<Integer, ItemStack> giveItems(Player player, ItemStack... items)
+	public static Map<Integer, ItemStack> giveItems(@NonNull Player player, @NonNull ItemStack... items)
 	{
 		return addItems(player.getInventory(), items);
+	}
+
+	/**
+	 * Gets the amount of {@link ItemStack}s in an inventory with a given type
+	 * and data.
+	 *
+	 * @param inventory Inventory containing the items
+	 * @param type Material of the item
+	 * @param dat Item data
+	 * @return The amount of items
+	 */
+	public static int amount(@NonNull Inventory inventory, @NonNull Material type, short dat)
+	{
+		int ret = 0;
+		ItemStack[] items = inventory.getContents();
+		for (int slot = 0; slot < items.length; slot++)
+		{
+			ItemStack item = items[slot];
+			if (item != null && item.getType() != Material.AIR)
+			{
+				Material mat = item.getType();
+				short duration = item.getDurability();
+				int amt = item.getAmount();
+				if (mat == type)
+				{
+					if (dat == -1 || dat == duration)
+						ret += amt;
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Removes items from an inventory.
+	 *
+	 * @param inventory Inventory to remove items from
+	 * @param type Type of the items
+	 * @param dat Data of the items
+	 * @param amt Amount to remove
+	 * @throws IllegalArgumentException if {@code amt} is less than 0
+	 */
+	public static void remove(@NonNull Inventory inventory, @NonNull Material type, short dat, int amt)
+	{
+		Validate.isTrue(amt > 0, "amt cannot be less than 0!");
+
+		int start = amt;
+		if (inventory != null)
+		{
+			ItemStack[] items = inventory.getContents();
+			for (int slot = 0; slot < items.length; slot++)
+			{
+				if (items[slot] != null)
+				{
+					Material mat = items[slot].getType();
+					short duration = items[slot].getDurability();
+					int itmAmt = items[slot].getAmount();
+					if ((mat == type) && ((dat == duration) || (dat == - 1)))
+					{
+						if (amt > 0)
+						{
+							if (itmAmt >= amt)
+							{
+								itmAmt -= amt;
+								amt = 0;
+							}
+							else
+							{
+								amt = start - itmAmt;
+								itmAmt = 0;
+							}
+							if (itmAmt > 0)
+							{
+								inventory.getItem(slot).setAmount(itmAmt);
+							}
+							else
+							{
+								inventory.setItem(slot, null);
+							}
+						}
+						if (amt <= 0)
+							return;
+					}
+				}
+			}
+		}
 	}
 
 	// ---- Internal Methods
@@ -225,73 +320,5 @@ public class InventoryUtil
 		}
 
 		return - 1;
-	}
-
-	public static int amount(Inventory inventory, Material type, short dat)
-	{
-		int ret = 0;
-		if (inventory != null)
-		{
-			ItemStack[] items = inventory.getContents();
-			for (int slot = 0; slot < items.length; slot++)
-			{
-				if (items[slot] != null)
-				{
-					Material mat = items[slot].getType();
-					short duration = items[slot].getDurability();
-					int amt = items[slot].getAmount();
-					if ((mat == type) && ((dat == duration) || (dat == - 1)))
-					{
-						ret += amt;
-					}
-				}
-			}
-		}
-
-		return ret;
-	}
-
-	public static void remove(Inventory inventory, Material type, short dat, int amt)
-	{
-		int start = amt;
-		if (inventory != null)
-		{
-			ItemStack[] items = inventory.getContents();
-			for (int slot = 0; slot < items.length; slot++)
-			{
-				if (items[slot] != null)
-				{
-					Material mat = items[slot].getType();
-					short duration = items[slot].getDurability();
-					int itmAmt = items[slot].getAmount();
-					if ((mat == type) && ((dat == duration) || (dat == - 1)))
-					{
-						if (amt > 0)
-						{
-							if (itmAmt >= amt)
-							{
-								itmAmt -= amt;
-								amt = 0;
-							}
-							else
-							{
-								amt = start - itmAmt;
-								itmAmt = 0;
-							}
-							if (itmAmt > 0)
-							{
-								inventory.getItem(slot).setAmount(itmAmt);
-							}
-							else
-							{
-								inventory.setItem(slot, null);
-							}
-						}
-						if (amt <= 0)
-							return;
-					}
-				}
-			}
-		}
 	}
 }

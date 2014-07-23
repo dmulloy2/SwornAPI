@@ -119,7 +119,7 @@ public class Util
 	 * Whether or not a player is banned.
 	 *
 	 * @param identifier Player name or UUID
-	 * @return Whether or not the player is banned.
+	 * @return True if the player is banned, false if not
 	 */
 	public static boolean isBanned(@NonNull String identifier)
 	{
@@ -168,9 +168,9 @@ public class Util
 	 * Whether or not two locations are similar. This does not take pitch or yaw
 	 * into account.
 	 *
-	 * @param loc1 First location
+	 * @param loc First location
 	 * @param loc2 Second location
-	 * @return Whether or not the two locations are similar
+	 * @return True if the locations are similar, false if not
 	 */
 	public static boolean checkLocation(@NonNull Location loc, @NonNull Location loc2)
 	{
@@ -184,7 +184,7 @@ public class Util
 	}
 
 	/**
-	 * Turns a {@link Location} into a string for debug purpouses
+	 * Turns a {@link Location} into a string for debug purpouses.
 	 *
 	 * @param loc {@link Location} to convert
 	 * @return String for debug purpouses
@@ -200,7 +200,7 @@ public class Util
 	}
 
 	/**
-	 * Returns a useful Stack Trace for debugging purpouses
+	 * Returns a useful Stack Trace for debugging purpouses.
 	 *
 	 * @param ex Underlying {@link Throwable}
 	 * @param circumstance Circumstance in which the Exception occured
@@ -273,7 +273,7 @@ public class Util
 	}
 
 	/**
-	 * Gets the working jar of a given class
+	 * Gets the working jar of a given class.
 	 *
 	 * @return The name, null if not found
 	 */
@@ -291,7 +291,10 @@ public class Util
 	/**
 	 * Constructs a new {@link List} from an existing {@link Collection}. This
 	 * helps with concurrency problems. Changes to the returned list will not be
-	 * reflected in the original collection.
+	 * reflected in the original collection. The use of this method is generally
+	 * not performance-effective.
+	 * <p>
+	 * TODO: Find a better solution.
 	 *
 	 * @param coll Base Collection
 	 * @return The List
@@ -302,7 +305,7 @@ public class Util
 	}
 
 	/**
-	 * Constructs a new {@link List} paramaterized with <code>T</code>
+	 * Constructs a new {@link List} paramaterized with <code>T</code>.
 	 *
 	 * @param objects Array of <code>T</code> to create the list with
 	 * @return a new {@link List} from the given objects
@@ -472,13 +475,14 @@ public class Util
 	}
 
 	/**
-	 * Returns a <code>String</code> representation of an Array, since Arrays do
-	 * not define a <code>toString()</code> method.
+	 * Returns a <code>String</code> representation of an Array. This performs
+	 * the same function as <code>Arrays.toString(Object[])</code> and is
+	 * deprecated for that reason.
 	 *
 	 * @param array Array to represent
 	 * @return The string representation
 	 * @deprecated Use {@link Arrays#toString(Object[])
-	 */
+	 */
 	@Deprecated
 	public static String arrayToString(@NonNull Object[] array)
 	{
@@ -506,8 +510,7 @@ public class Util
 	 * @param name Type name
 	 * @return True if the type exists, false if not
 	 */
-	@SuppressWarnings("all")
-	public static boolean isEnumType(@NonNull Class<? extends Enum> clazz, @NonNull String name)
+	public static <T extends Enum<T>> boolean isEnumType(@NonNull Class<T> clazz, @NonNull String name)
 	{
         try
         {
