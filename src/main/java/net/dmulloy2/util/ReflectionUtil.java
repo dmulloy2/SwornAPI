@@ -22,6 +22,8 @@ public class ReflectionUtil
 {
 	private ReflectionUtil() { }
 
+	private static String VERSION;
+
 	/**
 	 * Attempts to get the NMS (net.minecraft.server) class with this name.
 	 * While this does cross versions, it's important to note that this class
@@ -32,9 +34,14 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getNMSClass(String name)
 	{
-		String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-		String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-		name = "net.minecraft.server." + version + "." + name;
+		if (VERSION == null)
+		{
+			// Lazy-load VERSION
+			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
+			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+		}
+
+		name = "net.minecraft.server." + VERSION + "." + name;
 
 		try
 		{
@@ -53,9 +60,14 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getOBCClass(String name)
 	{
-		String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-		String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-		name = "org.bukkit.craftbukkit." + version + "." + name;
+		if (VERSION == null)
+		{
+			// Lazy-load VERSION
+			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
+			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+		}
+
+		name = "org.bukkit.craftbukkit." + VERSION + "." + name;
 
 		try
 		{
