@@ -3,6 +3,7 @@
  */
 package net.dmulloy2.util;
 
+import java.io.Closeable;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -519,4 +520,17 @@ public class Util
         } catch (Throwable ex) { }
         return false;
     }
+
+	/**
+	 * Quietly closes a {@link Closeable} object.
+	 *
+	 * @param close Object to close
+	 */
+	public static void closeQuietly(Closeable close)
+	{
+		try
+		{
+			close.close();
+		} catch (Throwable ex) { }
+	}
 }
