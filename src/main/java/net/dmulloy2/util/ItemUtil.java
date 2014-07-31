@@ -113,6 +113,14 @@ public class ItemUtil
 					throw new IllegalArgumentException("Illegal amount: " + str);
 			}
 		}
+		else
+		{
+			// They must've just specified a material or id
+			material = MaterialUtil.getMaterial(string);
+			if (material == null)
+				throw new NullPointerException("Null material \"" + string + "\"");
+			amount = 1;
+		}
 
 		ItemStack ret = new ItemStack(material, amount, data);
 		ret.addUnsafeEnchantments(enchantments);
