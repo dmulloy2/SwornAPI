@@ -22,16 +22,16 @@ public enum RainbowColors
 	PINK("d", 5),
 	PURPLE("5", 6);
 
-	private static RainbowColors[] byId = new RainbowColors[7];
+	private static RainbowColors[] byId = new RainbowColors[values().length];
 
-	private String v;
+	private String value;
 	private int id;
 
 	public static String getColor(final int id)
 	{
 		if (byId.length > id)
 		{
-			return byId[id].getV();
+			return byId[id].getValue();
 		}
 
 		return null;
@@ -39,12 +39,9 @@ public enum RainbowColors
 
 	static
 	{
-		for (RainbowColors r : values())
+		for (RainbowColors color : values())
 		{
-			if (byId.length > r.id)
-			{
-				byId[r.id] = r;
-			}
+			byId[color.id] = color;
 		}
 	}
 }
