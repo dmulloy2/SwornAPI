@@ -112,6 +112,11 @@ public class MyMaterial
 		return material;
 	}
 
+	public final String serialize()
+	{
+		return material.name() + (! ignoreData ? ":" + data : "");
+	}
+
 	// ---- Generic Methods
 
 	/**
