@@ -163,6 +163,8 @@ public class MyMaterial
 	 */
 	public static MyMaterial fromString(String string)
 	{
+		string = string.replaceAll(" ", "");
+
 		try
 		{
 			if (string.contains(":"))
