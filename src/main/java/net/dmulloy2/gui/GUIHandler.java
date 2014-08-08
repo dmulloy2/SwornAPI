@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import lombok.Getter;
-import lombok.NonNull;
 import net.dmulloy2.SwornPlugin;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,8 +33,9 @@ public class GUIHandler implements Listener
 	 *
 	 * @param plugin Plugin to register events for
 	 */
-	public static void registerEvents(@NonNull SwornPlugin plugin)
+	public static void registerEvents(SwornPlugin plugin)
 	{
+		Validate.notNull(plugin, "plugin cannot be null!");
 		plugin.getServer().getPluginManager().registerEvents(instance, plugin);
 	}
 
@@ -44,8 +45,10 @@ public class GUIHandler implements Listener
 	 * @param player Player to open GUI for
 	 * @param gui GUI to open
 	 */
-	public static void openGUI(@NonNull Player player, @NonNull AbstractGUI gui)
+	public static void openGUI(Player player, AbstractGUI gui)
 	{
+		Validate.notNull(player, "player cannot be null!");
+		Validate.notNull(gui, "gui cannot be null!");
 		openGUI.put(player.getUniqueId(), gui);
 	}
 
@@ -55,8 +58,9 @@ public class GUIHandler implements Listener
 	 * @param player Player in question
 	 * @return Whether or not they are viewing a GUI
 	 */
-	public static boolean isBrowsingGUI(@NonNull Player player)
+	public static boolean isBrowsingGUI(Player player)
 	{
+		Validate.notNull(player, "player cannot be null!");
 		return openGUI.containsKey(player.getUniqueId());
 	}
 
@@ -65,9 +69,10 @@ public class GUIHandler implements Listener
 	 *
 	 * @param player Player to remove
 	 */
-	public static void removeBrowsing(@NonNull Player player)
+	public static void removeBrowsing(Player player)
 	{
-		openGUI.remove(player.getUniqueId());
+		if (player != null)
+			openGUI.remove(player.getUniqueId());
 	}
 
 	/**
@@ -76,8 +81,9 @@ public class GUIHandler implements Listener
 	 * @param player Player viewing a GUI
 	 * @return The GUI, or null if none is found
 	 */
-	public static AbstractGUI getGUI(@NonNull Player player)
+	public static AbstractGUI getGUI(Player player)
 	{
+		Validate.notNull(player, "player cannot be null!");
 		return openGUI.get(player.getUniqueId());
 	}
 
@@ -91,7 +97,7 @@ public class GUIHandler implements Listener
 			if (GUIHandler.isBrowsingGUI(player))
 			{
 				AbstractGUI gui = GUIHandler.getGUI(player);
-				gui.onInventoryClick(event);
+				gui.onInventoryClick(player, event);
 			}
 		}
 	}
@@ -106,7 +112,7 @@ public class GUIHandler implements Listener
 			if (GUIHandler.isBrowsingGUI(player))
 			{
 				AbstractGUI gui = GUIHandler.getGUI(player);
-				gui.onInventoryClose(event);
+				gui.onInventoryClose(player, event);
 				removeBrowsing(player);
 			}
 		}

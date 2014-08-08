@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 
 import net.dmulloy2.util.Util;
 
+import org.apache.commons.lang.Validate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -34,6 +35,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	private final List<List<String>> namesList;
 	public UUIDFetcher(List<String> names)
 	{
+		Validate.notNull(names, "names cannot be null!");
 		ImmutableList.Builder<List<String>> builder = ImmutableList.builder();
 
 		int namesCopied = 0;
@@ -97,6 +99,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 	public static final UUID getUUID(String name) throws Exception
 	{
+		Validate.notNull(name, "name cannot be null!");
 		if (name.length() == 36)
 			return UUID.fromString(name);
 

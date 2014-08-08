@@ -30,7 +30,7 @@ public class WrappedChatSerializer extends AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Constructing chat serializer", ex);
+			throw ReflectionException.fromThrowable("Constructing chat serializer", ex);
 		}
 	}
 

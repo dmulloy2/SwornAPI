@@ -27,7 +27,7 @@ public enum RainbowColors
 	private String value;
 	private int id;
 
-	public static String getColor(final int id)
+	public static String getColor(int id)
 	{
 		if (byId.length > id)
 		{

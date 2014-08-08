@@ -32,7 +32,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("invokeMethod(" + method + ", " + args + ")", ex);
+			throw ReflectionException.fromThrowable("invokeMethod(" + method + ", " + args + ")", ex);
 		}
 	}
 
@@ -46,7 +46,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("getField(" + name + ")");
+			throw ReflectionException.fromThrowable("getField(" + name + ")", ex);
 		}
 	}
 
@@ -59,7 +59,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("setField(" + field + ", " + value + ")", ex);
+			throw ReflectionException.fromThrowable("setField(" + field + ", " + value + ")", ex);
 		}
 	}
 }

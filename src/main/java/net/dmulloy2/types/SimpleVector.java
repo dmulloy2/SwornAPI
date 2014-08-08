@@ -7,8 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lombok.Getter;
-import lombok.NonNull;
+import net.dmulloy2.util.NumberUtil;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -17,7 +18,7 @@ import org.bukkit.util.Vector;
 
 /**
  * Represents a serializable vector.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -53,11 +54,12 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 
 	public SimpleVector(String s)
 	{
-		String[] ss = s.split(",");
+		Validate.notEmpty(s, "s cannot be null or empty!");
 
-		this.x = Integer.parseInt(ss[0]);
-		this.y = Integer.parseInt(ss[1]);
-		this.z = Integer.parseInt(ss[2]);
+		String[] ss = s.split(",");
+		this.x = NumberUtil.toInt(ss[0]);
+		this.y = NumberUtil.toInt(ss[1]);
+		this.z = NumberUtil.toInt(ss[2]);
 	}
 
 	public SimpleVector(Map<String, Object> args)
@@ -77,9 +79,8 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 
 	/**
 	 * Converts this SimpleVector into a Bukkit {@link Location}
-	 * 
-	 * @param world
-	 *        - World
+	 *
+	 * @param world World
 	 */
 	public Location toLocation(World world)
 	{
@@ -94,10 +95,8 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 	@Override
 	public Map<String, Object> serialize()
 	{
-		Map<String, Object> result = new LinkedHashMap<String, Object>();
-
+		Map<String, Object> result = new LinkedHashMap<>();
 		result.put("c", toString());
-
 		return result;
 	}
 
@@ -116,7 +115,7 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean equals(@NonNull Object obj)
+	public boolean equals(Object obj)
 	{
 		if (obj instanceof SimpleVector)
 		{

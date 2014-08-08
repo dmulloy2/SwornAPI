@@ -72,7 +72,7 @@ public class MyMaterial
 	 * Whether or not a given {@link ItemStack} matches this MyMaterial.
 	 *
 	 * @param item ItemStack to check
-	 * @return Whether or not they match
+	 * @return True if they match, false if not
 	 */
 	public final boolean matches(ItemStack item)
 	{
@@ -96,7 +96,9 @@ public class MyMaterial
 	// ---- Getters
 
 	/**
-	 * @return The friendly name of the underlying Material
+	 * Gets the friendly name of the underlying material.
+	 *
+	 * @return Friendly name of the underlying Material
 	 */
 	public final String getName()
 	{
@@ -104,14 +106,13 @@ public class MyMaterial
 	}
 
 	/**
-	 * @deprecated Replaced with {@link MyMaterial#getMaterial()}
+	 * Serializes this MyMaterial. This is essentially the opposite of
+	 * {@link #fromString(String)}
+	 * <p>
+	 * Format: {@code <Material>[:Data]}
+	 *
+	 * @return This MyMaterial, serialized
 	 */
-	@Deprecated
-	public final Material getType()
-	{
-		return material;
-	}
-
 	public final String serialize()
 	{
 		return material.name() + (! ignoreData ? ":" + data : "");

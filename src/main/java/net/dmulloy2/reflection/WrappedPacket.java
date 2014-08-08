@@ -30,7 +30,7 @@ public abstract class WrappedPacket extends AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending packet to " + player.getName(), ex);
+			throw ReflectionException.fromThrowable("Sending packet to " + player.getName(), ex);
 		}
 	}
 
@@ -46,7 +46,7 @@ public abstract class WrappedPacket extends AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending packet from " + player.getName() + " to the server", ex);
+			throw ReflectionException.fromThrowable("Sending packet from " + player.getName() + " to the server", ex);
 		}
 	}
 }

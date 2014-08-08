@@ -54,8 +54,10 @@ public class Util
 	 * @see {@link Bukkit#getPlayer(UUID)}
 	 * @see {@link Bukkit#matchPlayer(String)}
 	 */
-	public static Player matchPlayer(@NonNull String identifier)
+	public static Player matchPlayer(String identifier)
 	{
+		Validate.notNull(identifier, "identifier cannot be null!");
+
 		// Get by UUID first
 		if (identifier.length() == 36)
 			return Bukkit.getPlayer(UUID.fromString(identifier));
@@ -75,13 +77,15 @@ public class Util
 	 *
 	 * @param identifier Player name or UUID
 	 * @return OfflinePlayer from the given name or UUID, null if none exists
-	 * @see {@link Util#matchPlayer(String)}
+	 * @see {@link #matchPlayer(String)}
 	 * @see {@link Bukkit#getOfflinePlayer(UUID)}
 	 * @see {@link Bukkit#getOfflinePlayer(String)}
 	 */
 	@SuppressWarnings("deprecation") // Bukkit#getOfflinePlayer(String)
-	public static OfflinePlayer matchOfflinePlayer(@NonNull String identifier)
+	public static OfflinePlayer matchOfflinePlayer(String identifier)
 	{
+		Validate.notNull(identifier, "identifier cannot be null!");
+
 		// Check online players first
 		Player player = matchPlayer(identifier);
 		if (player != null)
@@ -122,8 +126,9 @@ public class Util
 	 * @param identifier Player name or UUID
 	 * @return True if the player is banned, false if not
 	 */
-	public static boolean isBanned(@NonNull String identifier)
+	public static boolean isBanned(String identifier)
 	{
+		Validate.notNull(identifier, "identifier cannot be null!");
 		for (OfflinePlayer banned : Bukkit.getBannedPlayers())
 		{
 			if (banned.getUniqueId().toString().equals(identifier) || banned.getName().equalsIgnoreCase(identifier))
@@ -156,8 +161,11 @@ public class Util
 	 * @param data Effect data, can be null
 	 * @see {@link Player#playEffect(Location, Effect, Object)}
 	 */
-	public static <T> void playEffect(@NonNull Effect effect, @NonNull Location loc, T data)
+	public static <T> void playEffect(Effect effect, Location loc, T data)
 	{
+		Validate.notNull(effect, "effect cannot be null!");
+		Validate.notNull(loc, "loc cannot be null!");
+
 		for (Player player : getOnlinePlayers())
 		{
 			if (player.getWorld().getUID().equals(loc.getWorld().getUID()))
@@ -173,8 +181,11 @@ public class Util
 	 * @param loc2 Second location
 	 * @return True if the locations are similar, false if not
 	 */
-	public static boolean checkLocation(@NonNull Location loc, @NonNull Location loc2)
+	public static boolean checkLocation(Location loc, Location loc2)
 	{
+		Validate.notNull(loc, "loc cannot be null!");
+		Validate.notNull(loc2, "loc2 cannot be null!");
+
 		if (loc.equals(loc2))
 			return true;
 
@@ -190,8 +201,10 @@ public class Util
 	 * @param loc {@link Location} to convert
 	 * @return String for debug purpouses
 	 */
-	public static String locationToString(@NonNull Location loc)
+	public static String locationToString(Location loc)
 	{
+		Validate.notNull(loc, "loc cannot be null!");
+
 		StringBuilder ret = new StringBuilder();
 		ret.append("World: " + loc.getWorld().getName());
 		ret.append(" X: " + loc.getBlockX());
@@ -208,6 +221,8 @@ public class Util
 	 */
 	public static String getUsefulStack(@NonNull Throwable ex, String circumstance)
 	{
+		Validate.notNull(ex, "ex cannot be null!");
+
 		StringJoiner joiner = new StringJoiner("\n");
 		joiner.append("Encountered an exception" + (circumstance != null ? " while " + circumstance : "") + ": " + ex.toString());
 		joiner.append("Affected classes:");
@@ -300,8 +315,9 @@ public class Util
 	 * @param coll Base Collection
 	 * @return The List
 	 */
-	public static <T> List<T> newList(@NonNull Collection<? extends T> coll)
+	public static <T> List<T> newList(Collection<? extends T> coll)
 	{
+		Validate.notNull(coll, "coll cannot be null!");
 		return new ArrayList<>(coll);
 	}
 
@@ -312,8 +328,10 @@ public class Util
 	 * @return a new {@link List} from the given objects
 	 */
 	@SafeVarargs
-	public static <T> List<T> toList(@NonNull T... objects)
+	public static <T> List<T> toList(T... objects)
 	{
+		Validate.notNull(objects, "objects cannot be null!");
+
 		List<T> ret = new ArrayList<>();
 
 		for (T t : objects)
@@ -330,8 +348,11 @@ public class Util
 	 * @param original Original map
 	 * @return Filtered map
 	 */
-	public static <K, V> Map<K, V> filterDuplicateEntries(@NonNull Map<K, V> map, @NonNull Map<K, V> original)
+	public static <K, V> Map<K, V> filterDuplicateEntries(Map<K, V> map, Map<K, V> original)
 	{
+		Validate.notNull(map, "map cannot be null!");
+		Validate.notNull(original, "original cannot be null!");
+
 		for (Entry<K, V> entry : new LinkedHashMap<>(map).entrySet())
 		{
 			K key = entry.getKey();
@@ -356,8 +377,11 @@ public class Util
 	 * @param value Value to get the key for
 	 * @return The key, or null if not found
 	 */
-	public static <K, V> K getKey(@NonNull Map<K, V> map, @NonNull V value)
+	public static <K, V> K getKey(Map<K, V> map, V value)
 	{
+		Validate.notNull(map, "map cannot be null!");
+		Validate.notNull(value, "value cannot be null!");
+
 		for (Entry<K, V> entry : new HashMap<>(map).entrySet())
 		{
 			if (entry.getValue().equals(value))
@@ -375,8 +399,10 @@ public class Util
 	 * @param list List to remove duplicate entries from
 	 * @return The list, without duplicate entries
 	 */
-	public static <T> List<T> removeDuplicates(@NonNull List<T> list)
+	public static <T> List<T> removeDuplicates(List<T> list)
 	{
+		Validate.notNull(list, "list cannot be null!");
+
 		Map<T, Object> map = new LinkedHashMap<>();
 
 		for (T element : list)
@@ -393,8 +419,10 @@ public class Util
 	 * @return Boolean value from the given object. Defaults to
 	 *         <code>false</code>
 	 */
-	public static boolean toBoolean(@NonNull Object object)
+	public static boolean toBoolean(Object object)
 	{
+		Validate.notNull(object, "object cannot be null!");
+
 		if (object instanceof Boolean)
 		{
 			return ((Boolean) object).booleanValue();
@@ -420,8 +448,11 @@ public class Util
 	 * @deprecated {@link Block#setData(byte)} is deprecated
 	 */
 	@Deprecated
-	public static void setData(@NonNull Block block, @NonNull MaterialData data)
+	public static void setData(Block block, MaterialData data)
 	{
+		Validate.notNull(block, "block cannot be null!");
+		Validate.notNull(data, "data cannot be null!");
+
 		block.setData(data.getData());
 		block.getState().update(true);
 	}
@@ -435,6 +466,8 @@ public class Util
 	 */
 	public static String blockStateToString(@NonNull BlockState state)
 	{
+		Validate.notNull(state, "state cannot be null!");
+
 		StringBuilder ret = new StringBuilder();
 
 		if (state instanceof Sign)
@@ -476,29 +509,17 @@ public class Util
 	}
 
 	/**
-	 * Returns a <code>String</code> representation of an Array. This performs
-	 * the same function as <code>Arrays.toString(Object[])</code> and is
-	 * deprecated for that reason.
-	 *
-	 * @param array Array to represent
-	 * @return The string representation
-	 * @deprecated Use {@link Arrays#toString(Object[])
-	 */
-	@Deprecated
-	public static String arrayToString(@NonNull Object[] array)
-	{
-		return Arrays.toString(array);
-	}
-
-	/**
 	 * Concatenates two arrays of the same type.
 	 *
 	 * @param first First array
 	 * @param second Second array
 	 * @return Concatenated array
 	 */
-	public static <T> T[] concat(@NonNull T[] first, @NonNull T[] second)
+	public static <T> T[] concat(T[] first, T[] second)
 	{
+		Validate.notNull(first, "first cannot be null!");
+		Validate.notNull(second, "second cannot be null!");
+
 		T[] ret = Arrays.copyOf(first, first.length + second.length);
         System.arraycopy(second, 0, ret, first.length, second.length);
         return ret;
@@ -511,7 +532,7 @@ public class Util
 	 * @param name Type name
 	 * @return True if the type exists, false if not
 	 */
-	public static <T extends Enum<T>> boolean isEnumType(@NonNull Class<T> clazz, @NonNull String name)
+	public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name)
 	{
         try
         {

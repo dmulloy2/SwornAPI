@@ -6,20 +6,30 @@ package net.dmulloy2.types;
 /**
  * StringJoiner is used to construct a sequence of characters separated by a
  * delimiter
- * 
+ *
  * @author dmulloy2
  */
 
 public class StringJoiner
 {
+	private static final String DEFAULT_GLUE = " ";
+
 	private String glue;
 	private StringBuilder builder;
 
 	/**
+	 * Constructs a new StringJoiner with the default glue.
+	 */
+	public StringJoiner()
+	{
+		this.glue = DEFAULT_GLUE;
+		this.builder = new StringBuilder();
+	}
+
+	/**
 	 * Constructs a new StringJoiner with a given delimiter
-	 * 
-	 * @param glue
-	 *        - Delimiter
+	 *
+	 * @param glue Delimiter
 	 */
 	public StringJoiner(String glue)
 	{
@@ -29,9 +39,8 @@ public class StringJoiner
 
 	/**
 	 * Appends a given {@link String} to this StringJoiner
-	 * 
-	 * @param string
-	 *        - String to append
+	 *
+	 * @param string String to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner append(final String string)
@@ -43,9 +52,8 @@ public class StringJoiner
 
 	/**
 	 * Appends an {@link Iterable} set of {@link String}s
-	 * 
-	 * @param strings
-	 *        - Strings to append
+	 *
+	 * @param strings Strings to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner appendAll(final Iterable<String> strings)
@@ -60,9 +68,8 @@ public class StringJoiner
 
 	/**
 	 * Appends a given array of {@link String}s to this StringJoiner
-	 * 
-	 * @param strings
-	 *        - Strings to append
+	 *
+	 * @param strings - Strings to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner appendAll(final String... strings)
@@ -77,7 +84,7 @@ public class StringJoiner
 
 	/**
 	 * Resets this {@link StringJoiner}'s string value
-	 * 
+	 *
 	 * @return This, for chaining
 	 */
 	public final StringJoiner newString()
@@ -89,9 +96,8 @@ public class StringJoiner
 	/**
 	 * Sets a new delimiter for this {@link StringJoiner} while keeping the
 	 * string value.
-	 * 
-	 * @param glue
-	 *        - New delimiter
+	 *
+	 * @param glue New delimiter
 	 * @return This, for chaining
 	 */
 	public final StringJoiner setGlue(final String glue)
@@ -107,9 +113,7 @@ public class StringJoiner
 	public final String toString()
 	{
 		if (builder.lastIndexOf(glue) >= 0)
-		{
 			builder.delete(builder.lastIndexOf(glue), builder.length());
-		}
 
 		return builder.toString();
 	}

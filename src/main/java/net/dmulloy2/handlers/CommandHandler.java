@@ -8,20 +8,18 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentBuilder;
-import net.dmulloy2.commands.CmdHelp;
 import net.dmulloy2.commands.Command;
-import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 
 /**
  * Handles commands. This supports both prefixed and non-prefixed commands.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -31,23 +29,21 @@ public class CommandHandler implements CommandExecutor
 	private List<Command> registeredPrefixedCommands;
 	private List<Command> registeredCommands;
 
-	private CmdHelp helpCommand;
-
 	private final SwornPlugin plugin;
 	public CommandHandler(SwornPlugin plugin)
 	{
 		this.plugin = plugin;
-		this.helpCommand = new CmdHelp(plugin);
-		this.registeredCommands = new ArrayList<Command>();
+		this.registeredCommands = new ArrayList<>();
 	}
 
 	/**
 	 * Registers a non-prefixed {@link Command}.
-	 * 
+	 *
 	 * @param command Non-prefixed {@link Command} to register.
 	 */
 	public void registerCommand(Command command)
 	{
+		Validate.notNull(command, "command cannot be null!");
 		PluginCommand pluginCommand = plugin.getCommand(command.getName());
 		if (pluginCommand != null)
 		{
@@ -63,11 +59,12 @@ public class CommandHandler implements CommandExecutor
 	/**
 	 * Registers a prefixed {@link Command}. The commandPrefix must be set for
 	 * this method to work.
-	 * 
+	 *
 	 * @param command Prefixed {@link Command} to register.
 	 */
 	public void registerPrefixedCommand(Command command)
 	{
+		Validate.notNull(command, "command cannot be null!");
 		if (commandPrefix != null)
 			registeredPrefixedCommands.add(command);
 	}
@@ -99,11 +96,12 @@ public class CommandHandler implements CommandExecutor
 	/**
 	 * Sets the command prefix. This method must be called before any prefixed
 	 * commands are registered.
-	 * 
+	 *
 	 * @param commandPrefix Command prefix
 	 */
 	public void setCommandPrefix(String commandPrefix)
 	{
+		Validate.notEmpty(commandPrefix, "prefix cannot be null or empty!");
 		this.commandPrefix = commandPrefix;
 		this.registeredPrefixedCommands = new ArrayList<Command>();
 
@@ -116,6 +114,24 @@ public class CommandHandler implements CommandExecutor
 	public boolean usesCommandPrefix()
 	{
 		return commandPrefix != null;
+	}
+
+	public final Command getCommand(String name)
+	{
+		Validate.notNull(name, "name cannot be null!");
+		for (Command command : registeredPrefixedCommands)
+		{
+			if (name.equalsIgnoreCase(command.getName()) || command.getAliases().contains(name.toLowerCase()))
+				return command;
+		}
+
+		for (Command command : registeredCommands)
+		{
+			if (name.equalsIgnoreCase(command.getName()) || command.getAliases().contains(name.toLowerCase()))
+				return command;
+		}
+
+		return null;
 	}
 
 	/**
@@ -132,25 +148,29 @@ public class CommandHandler implements CommandExecutor
 			for (int i = 1; i < args.length; i++)
 				argsList.add(args[i]);
 
-			for (Command command : registeredPrefixedCommands)
+			Command command = getCommand(commandName);
+			if (command != null)
 			{
-				if (commandName.equalsIgnoreCase(command.getName()) || command.getAliases().contains(commandName.toLowerCase()))
-				{
-					command.execute(sender, argsList.toArray(new String[0]));
-					return true;
-				}
+				command.execute(sender, args);
+				return true;
 			}
 
-			List<BaseComponent> components = new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ",
-					commandName)).addAll(helpCommand.getFancyUsageTemplate()).getParts();
-
-			ChatUtil.sendMessage(sender, components.toArray(new BaseComponent[components.size()]));
+			new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", commandName))
+				.addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
 		}
 		else
 		{
-			plugin.getHelpCommand().execute(sender, args);
+			getHelpCommand().execute(sender, args);
 		}
 
 		return true;
+	}
+
+	private final Command getHelpCommand()
+	{
+		if (plugin.getHelpCommand() != null)
+			return plugin.getHelpCommand();
+
+		return getCommand("help");
 	}
 }

@@ -12,6 +12,7 @@ import java.util.List;
 import net.dmulloy2.types.RainbowColors;
 import net.dmulloy2.types.StringJoiner;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 
@@ -35,6 +36,9 @@ public class FormatUtil
 	 */
 	public static String format(String format, Object... objects)
 	{
+		Validate.notNull(format, "format cannot be null!");
+		Validate.noNullElements(objects, "objects cannot contain null elements!");
+
 		try
 		{
 			format = MessageFormat.format(format, objects);
@@ -51,7 +55,7 @@ public class FormatUtil
 	 */
 	public static String replaceColors(String message)
 	{
-		// Rainbow
+		Validate.notNull(message, "message cannot be null!");
 		message = message.replaceAll("(&([zZ]))", "&z");
 		if (message.contains("&z"))
 		{
@@ -98,10 +102,11 @@ public class FormatUtil
 	 */
 	public static String getFriendlyName(Object obj)
 	{
+		Validate.notNull(obj, "obj cannot be null!");
+
 		try
 		{
-			// Clever little method to check if the method isn't declared by a
-			// class other than Object.
+			// Clever little method to check if the method isn't declared by a class other than Object.
 			Method method = ReflectionUtil.getMethod(obj.getClass(), "toString");
 			if (method.getDeclaringClass().getSuperclass() == null)
 			{
@@ -120,12 +125,14 @@ public class FormatUtil
 	 */
 	public static String getFriendlyName(String string)
 	{
+		Validate.notNull(string, "string cannot be null!");
+
 		String ret = string.toLowerCase();
 		ret = ret.replaceAll("_", " ");
 		return WordUtils.capitalize(ret);
 	}
 
-	private static final List<String> vowels = Arrays.asList("a", "e", "i", "o", "u");
+	private static final List<String> VOWELS = Arrays.asList("a", "e", "i", "o", "u");
 
 	/**
 	 * Returns the proper article of a given string
@@ -135,8 +142,10 @@ public class FormatUtil
 	 */
 	public static String getArticle(String string)
 	{
+		Validate.notNull(string, "string cannot be null!");
+
 		string = string.toLowerCase();
-		for (String vowel : vowels)
+		for (String vowel : VOWELS)
 		{
 			if (string.startsWith(vowel))
 				return "an";
@@ -153,6 +162,8 @@ public class FormatUtil
 	 */
 	public static String getPlural(String string, int amount)
 	{
+		Validate.notNull(string, "string cannot be null!");
+
 		amount = Math.abs(amount);
 		if (amount == 0 || amount > 1)
 		{
@@ -174,6 +185,9 @@ public class FormatUtil
 	 */
 	public static String join(String glue, String... args)
 	{
+		Validate.notNull(glue, "glue cannot be null");
+		Validate.noNullElements(args, "args cannot have null elements!");
+
 		return new StringJoiner(glue).appendAll(args).toString();
 	}
 
@@ -186,6 +200,9 @@ public class FormatUtil
 	 */
 	public static String trimFileExtension(File file, String extension)
 	{
+		Validate.notNull(file, "file cannot be null!");
+		Validate.notNull(extension, "extension cannot be null!");
+
 		int index = file.getName().lastIndexOf(extension);
 		return index > 0 ? file.getName().substring(0, index) : file.getName();
 	}

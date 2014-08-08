@@ -11,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Handles permissions.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -30,7 +30,7 @@ public class PermissionHandler
 
 	/**
 	 * Returns whether or not a {@link CommandSender} has a permission.
-	 * 
+	 *
 	 * @param sender Sender to check.
 	 * @param permission Permission.
 	 * @return Whether or not they have the permission.
@@ -42,7 +42,7 @@ public class PermissionHandler
 
 	/**
 	 * Returns whether or not a {@link CommandSender} has a permission.
-	 * 
+	 *
 	 * @param sender Sender to check.
 	 * @param permission Permission.
 	 * @return Whether or not they have the permission.
@@ -60,7 +60,7 @@ public class PermissionHandler
 
 	/**
 	 * Gets the complete permission string for a given {@link IPermission}.
-	 * 
+	 *
 	 * @param permission - Permission to get the node for.
 	 * @return The complete permission string.
 	 */

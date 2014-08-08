@@ -3,7 +3,6 @@
  */
 package net.dmulloy2.gui;
 
-import lombok.NonNull;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
 
@@ -24,8 +23,10 @@ public abstract class AbstractGUI
 	protected final Player player;
 	protected final SwornPlugin plugin;
 
-	public AbstractGUI(@NonNull SwornPlugin plugin, @NonNull Player player)
+	public AbstractGUI(SwornPlugin plugin, Player player)
 	{
+		Validate.notNull(plugin, "plugin cannot be null");
+		Validate.notNull(player, "player cannot be null!");
 		this.player = player;
 		this.plugin = plugin;
 	}
@@ -36,7 +37,7 @@ public abstract class AbstractGUI
 		int size = getSize();
 		Validate.isTrue(size > 0, "Inventory size must not be negative!");
 		Validate.isTrue(size < 54, "Inventory size is too large!");
-		Validate.isTrue(size % 9 == 0, "Inventory size must be a multiple of 9!");
+		Validate.isTrue(size % 9 == 0, "Inventory size must be divisible by 9!");
 
 		// Truncate title
 		String title = FormatUtil.format(getTitle());
@@ -79,7 +80,7 @@ public abstract class AbstractGUI
 
 	// ---- Events
 
-	public void onInventoryClick(InventoryClickEvent event) { }
+	public void onInventoryClick(Player player, InventoryClickEvent event) { }
 
-	public void onInventoryClose(InventoryCloseEvent event) { }
+	public void onInventoryClose(Player player, InventoryCloseEvent event) { }
 }

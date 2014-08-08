@@ -7,8 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lombok.Getter;
-import lombok.NonNull;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -36,8 +36,9 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	private transient Location location;
 	private transient SimpleVector simpleVector;
 
-	public LazyLocation(@NonNull String worldName, int x, int y, int z)
+	public LazyLocation(String worldName, int x, int y, int z)
 	{
+		Validate.notNull(worldName, "worldName cannot be null!");
 		this.worldName = worldName;
 		this.x = x;
 		this.y = y;
@@ -69,8 +70,9 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		this(player.getLocation());
 	}
 
-	public LazyLocation(@NonNull Map<String, Object> args)
+	public LazyLocation(Map<String, Object> args)
 	{
+		Validate.notNull(args, "args cannot be null!");
 		this.worldName = (String) args.get("worldName");
 		this.x = (int) args.get("x");
 		this.y = (int) args.get("y");
@@ -114,10 +116,11 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		if (simpleVector != null)
 			return;
 
-		if (getLocation() == null)
+		Location location = getLocation();
+		if (location == null)
 			return;
 
-		simpleVector = new SimpleVector(getLocation());
+		simpleVector = new SimpleVector(location);
 	}
 
 	/**
@@ -144,7 +147,7 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	@Override
 	public Map<String, Object> serialize()
 	{
-		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		Map<String, Object> result = new LinkedHashMap<>();
 
 		result.put("worldName", worldName);
 		result.put("x", x);
@@ -158,7 +161,7 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean equals(@NonNull Object obj)
+	public boolean equals(Object obj)
 	{
 		if (obj instanceof LazyLocation)
 		{

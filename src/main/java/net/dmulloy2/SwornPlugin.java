@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import net.dmulloy2.commands.CmdHelp;
 import net.dmulloy2.commands.Command;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
@@ -32,7 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Main SwornAPI class. Plugins utilizing this API should extend this class.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -52,18 +51,8 @@ public abstract class SwornPlugin extends JavaPlugin
 		return new ArrayList<>();
 	}
 
-	private final CmdHelp cmdHelp = new CmdHelp(this);
 	public Command getHelpCommand()
 	{
-		return cmdHelp;
-	}
-
-	/**
-	 * @deprecated Moved to {@link SwornAPI#checkRegistrations()}
-	 */
-	@Deprecated
-	public static final void checkRegistrations()
-	{
-		SwornAPI.checkRegistrations();
+		return null;
 	}
 }

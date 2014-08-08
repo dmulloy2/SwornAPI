@@ -9,6 +9,7 @@ import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.reflection.WrappedChatPacket;
 import net.dmulloy2.reflection.WrappedChatSerializer;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -32,6 +33,7 @@ public class ChatUtil
 	 */
 	public static final void sendMessage(CommandSender sender, BaseComponent... message)
 	{
+		Validate.notNull(sender, "sender cannot be null!");
 		if (sender instanceof Player)
 		{
 			try
@@ -48,6 +50,9 @@ public class ChatUtil
 	{
 		try
 		{
+			Validate.notNull(player, "player cannot be null!");
+			Validate.notEmpty(json, "json cannot be null or empty!");
+
 			WrappedChatSerializer serializer = new WrappedChatSerializer();
 			Object chatComponent = serializer.serialize(json);
 
@@ -56,7 +61,7 @@ public class ChatUtil
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending chat packet to " + player.getName(), ex);
+			throw ReflectionException.fromThrowable("Sending chat packet to " + player.getName(), ex);
 		}
 	}
 }

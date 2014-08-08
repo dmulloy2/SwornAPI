@@ -41,4 +41,12 @@ public class ReflectionException extends Exception
 	{
 		super(message, cause);
 	}
+
+	public static ReflectionException fromThrowable(String message, Throwable ex)
+	{
+		if (ex instanceof ReflectionException)
+			return (ReflectionException) ex;
+
+		return new ReflectionException(message, ex);
+	}
 }

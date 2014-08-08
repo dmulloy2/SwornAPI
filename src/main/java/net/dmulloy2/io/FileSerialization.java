@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import net.dmulloy2.util.Util;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -24,6 +26,9 @@ public class FileSerialization
 	{
 		try
 		{
+			Validate.notNull(instance, "instance cannot be null!");
+			Validate.notNull(file, "file cannot be null!");
+
 			if (file.exists())
 				file.delete();
 
@@ -37,9 +42,9 @@ public class FileSerialization
 
 			fc.save(file);
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
-			System.err.println(Util.getUsefulStack(ex, "saving file " + file.getName()));
+			Bukkit.getLogger().severe("[SwornAPI] " + Util.getUsefulStack(ex, "saving file " + file.getName()));
 		}
 	}
 
@@ -48,6 +53,9 @@ public class FileSerialization
 	{
 		try
 		{
+			Validate.notNull(file, "file cannot be null!");
+			Validate.notNull(clazz, "clazz cannot be null!");
+
 			if (! file.exists())
 				return null;
 
@@ -56,9 +64,9 @@ public class FileSerialization
 
 			return (T) ConfigurationSerialization.deserializeObject(map, clazz);
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
-			System.err.println(Util.getUsefulStack(ex, "loading file " + file.getName()));
+			Bukkit.getLogger().severe("[SwornAPI] " + Util.getUsefulStack(ex, "loading file " + file.getName()));
 			return null;
 		}
 	}

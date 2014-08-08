@@ -19,11 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.util.ChatUtil;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 /**
  * ComponentBuilder simplifies creating basic messages by allowing the use of a
@@ -195,14 +194,13 @@ public class ComponentBuilder
 	/**
 	 * Sends the resulting JSON-chat message to a given player.
 	 *
-	 * @param player {@link Player} to send the message to
+	 * @param sender {@link CommandSender} to send the message to
 	 * @return the created components
-	 * @throws ReflectionException If sending the message fails
 	 */
-	public BaseComponent[] send(Player player) throws ReflectionException
+	public BaseComponent[] send(CommandSender sender)
 	{
 		BaseComponent[] components = create();
-		ChatUtil.sendMessage(player, components);
+		ChatUtil.sendMessage(sender, components);
 		return components;
 	}
 }
