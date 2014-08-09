@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -25,7 +26,7 @@ import org.bukkit.entity.Player;
  * @author dmulloy2
  */
 
-@Getter
+@Getter @Setter
 @SerializableAs("net.dmulloy2.LazyLocation")
 public final class LazyLocation implements ConfigurationSerializable, Cloneable
 {
@@ -139,6 +140,16 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	{
 		initSimpleVector();
 		return simpleVector;
+	}
+
+	public static LazyLocation getMaximum(LazyLocation l1, LazyLocation l2)
+	{
+		return new LazyLocation(l1.worldName, Math.max(l1.x, l2.x), Math.max(l1.y, l2.y), Math.max(l1.z, l2.z));
+	}
+
+	public static LazyLocation getMinimum(LazyLocation l1, LazyLocation l2)
+	{
+		return new LazyLocation(l1.worldName, Math.min(l1.x, l2.x), Math.min(l1.y, l2.y), Math.min(l1.z, l2.z));
 	}
 
 	/**
