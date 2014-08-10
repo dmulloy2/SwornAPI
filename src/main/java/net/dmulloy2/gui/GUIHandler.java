@@ -97,7 +97,7 @@ public class GUIHandler implements Listener
 			if (GUIHandler.isBrowsingGUI(player))
 			{
 				AbstractGUI gui = GUIHandler.getGUI(player);
-				gui.onInventoryClick(player, event);
+				gui.onInventoryClick(event);
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public class GUIHandler implements Listener
 			if (GUIHandler.isBrowsingGUI(player))
 			{
 				AbstractGUI gui = GUIHandler.getGUI(player);
-				gui.onInventoryClose(player, event);
+				gui.onInventoryClose(event);
 				removeBrowsing(player);
 			}
 		}

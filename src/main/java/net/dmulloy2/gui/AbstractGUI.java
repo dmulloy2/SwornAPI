@@ -80,7 +80,7 @@ public abstract class AbstractGUI
 
 	// ---- Events
 
-	public void onInventoryClick(Player player, InventoryClickEvent event) { }
+	public void onInventoryClick(InventoryClickEvent event) { }
 
-	public void onInventoryClose(Player player, InventoryCloseEvent event) { }
+	public void onInventoryClose(InventoryCloseEvent event) { }
 }
