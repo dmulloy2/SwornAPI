@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
+import net.dmulloy2.types.Versioning;
+import net.dmulloy2.types.Versioning.Version;
 import net.dmulloy2.util.Util;
 
 import org.apache.commons.lang.Validate;
@@ -29,6 +32,8 @@ import com.google.common.collect.ImmutableList;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>>
 {
+	private static final Map<String, UUID> cache = new WeakHashMap<>();
+
 	private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
 	private static final JSONParser jsonParser = new JSONParser();
 
@@ -51,7 +56,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	@Override
 	public Map<String, UUID> call() throws Exception
 	{
-		Map<String, UUID> uuidMap = new HashMap<String, UUID>();
+		Map<String, UUID> uuidMap = new HashMap<>();
 		for (List<String> names : namesList)
 		{
 			String body = buildBody(names);
@@ -69,6 +74,8 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 			}
 		}
 
+		if (Versioning.getVersion() == Version.MC_16)
+			cache.putAll(uuidMap);
 		return uuidMap;
 	}
 
@@ -102,6 +109,13 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		Validate.notNull(name, "name cannot be null!");
 		if (name.length() == 36)
 			return UUID.fromString(name);
+
+		// Only use caching in 1.6
+		if (Versioning.getVersion() == Version.MC_16)
+		{
+			if (cache.containsKey(name))
+				return cache.get(name);
+		}
 
 		UUIDFetcher fetcher = new UUIDFetcher(Util.toList(name));
 		return fetcher.call().get(name);

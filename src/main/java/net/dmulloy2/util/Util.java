@@ -18,7 +18,10 @@ import java.util.Random;
 import java.util.UUID;
 
 import lombok.NonNull;
+import net.dmulloy2.io.UUIDFetcher;
 import net.dmulloy2.types.StringJoiner;
+import net.dmulloy2.types.Versioning;
+import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -103,6 +106,24 @@ public class Util
 	}
 
 	/**
+	 * Gets a {@link Player}'s {@link UUID}. This can be potentially blocking if
+	 * an outdated version is being used.
+	 *
+	 * @param player Player to get the unique id for
+	 * @return The player's UUID or null if one cannot be found
+	 */
+	public static UUID getUniqueId(OfflinePlayer player)
+	{
+		try
+		{
+			// Lookup the UUID
+			if (Versioning.getVersion() == Version.MC_16)
+				return UUIDFetcher.getUUID(player.getName());
+		} catch (Throwable ex) { }
+		return player.getUniqueId();
+	}
+
+	/**
 	 * Gets a list of online {@link Player}s. This also provides backwards
 	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
 	 *
@@ -131,7 +152,7 @@ public class Util
 		Validate.notNull(identifier, "identifier cannot be null!");
 		for (OfflinePlayer banned : Bukkit.getBannedPlayers())
 		{
-			if (banned.getUniqueId().toString().equals(identifier) || banned.getName().equalsIgnoreCase(identifier))
+			if (identifier.equalsIgnoreCase(banned.getName()) || identifier.equals(getUniqueId(banned)))
 				return true;
 		}
 
