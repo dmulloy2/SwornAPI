@@ -4,6 +4,7 @@
 package net.dmulloy2.handlers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -140,22 +141,19 @@ public class CommandHandler implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args)
 	{
-		List<String> argsList = new ArrayList<String>();
-
 		if (args.length > 0)
 		{
-			String commandName = args[0];
-			for (int i = 1; i < args.length; i++)
-				argsList.add(args[i]);
+			String name = args[0];
+			args = Arrays.copyOfRange(args, 1, args.length);
 
-			Command command = getCommand(commandName);
+			Command command = getCommand(name);
 			if (command != null)
 			{
 				command.execute(sender, args);
 				return true;
 			}
 
-			new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", commandName))
+			new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name))
 				.addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
 		}
 		else
