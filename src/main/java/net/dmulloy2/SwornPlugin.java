@@ -55,4 +55,9 @@ public abstract class SwornPlugin extends JavaPlugin
 	{
 		return null;
 	}
+
+	public ClassLoader classLoader()
+	{
+		return super.getClassLoader();
+	}
 }

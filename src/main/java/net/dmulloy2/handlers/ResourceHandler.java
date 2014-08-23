@@ -8,28 +8,55 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-import lombok.Getter;
+import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.io.FileResourceLoader;
-
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author dmulloy2
  */
 
-@Getter
 public class ResourceHandler
 {
+	private Locale locale;
 	private ResourceBundle messages;
-	public ResourceHandler(JavaPlugin plugin, ClassLoader classLoader)
+
+	public ResourceHandler(SwornPlugin plugin)
+	{
+		this(plugin, plugin.classLoader());
+	}
+
+	public ResourceHandler(SwornPlugin plugin, ClassLoader classLoader)
 	{
 		try
 		{
-			messages = ResourceBundle.getBundle("messages", Locale.getDefault(), new FileResourceLoader(classLoader, plugin));
+			if (plugin.getConfig().isSet("locale"))
+				locale = Locale.forLanguageTag(plugin.getConfig().getString("locale"));
+			if (locale == null)
+				locale = Locale.getDefault();
+
+			messages = ResourceBundle.getBundle("messages", locale, new FileResourceLoader(classLoader, plugin));
 		}
 		catch (MissingResourceException ex)
 		{
 			plugin.getLogger().log(Level.SEVERE, "Could not find resource bundle: messages.properties");
 		}
+	}
+
+	@Deprecated
+	public ResourceBundle getMessages()
+	{
+		return messages;
+	}
+
+	public final String getMessage(String key)
+	{
+		if (messages == null)
+			return "Messages file missing!";
+
+		try
+		{
+			return messages.getString(key);
+		} catch (Throwable ex) { }
+		return "<Missing Message: " + key + ">";
 	}
 }

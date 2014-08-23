@@ -6,9 +6,8 @@ package net.dmulloy2.handlers;
 import java.util.logging.Level;
 
 import lombok.AllArgsConstructor;
+import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
-
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Handles logging and formatting through the plugin's logger.
@@ -19,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @AllArgsConstructor
 public class LogHandler
 {
-	private final JavaPlugin plugin;
+	private final SwornPlugin plugin;
 
 	/**
 	 * Logs a formatted message to console with a given level.

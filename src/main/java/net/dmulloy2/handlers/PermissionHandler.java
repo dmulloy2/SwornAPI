@@ -3,11 +3,11 @@
  */
 package net.dmulloy2.handlers;
 
+import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.IPermission;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Handles permissions.
@@ -23,7 +23,7 @@ public class PermissionHandler
 		this.prefix = prefix.toLowerCase() + ".";
 	}
 
-	public PermissionHandler(JavaPlugin plugin)
+	public PermissionHandler(SwornPlugin plugin)
 	{
 		this(plugin.getName());
 	}
