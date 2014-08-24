@@ -37,7 +37,6 @@ public class FormatUtil
 	public static String format(String format, Object... objects)
 	{
 		Validate.notNull(format, "format cannot be null!");
-		Validate.noNullElements(objects, "objects cannot contain null elements!");
 
 		try
 		{
