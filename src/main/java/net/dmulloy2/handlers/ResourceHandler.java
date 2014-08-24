@@ -19,6 +19,7 @@ public class ResourceHandler
 {
 	private Locale locale;
 	private ResourceBundle messages;
+	private final SwornPlugin plugin;
 
 	public ResourceHandler(SwornPlugin plugin)
 	{
@@ -27,6 +28,8 @@ public class ResourceHandler
 
 	public ResourceHandler(SwornPlugin plugin, ClassLoader classLoader)
 	{
+		this.plugin = plugin;
+
 		try
 		{
 			if (plugin.getConfig().isSet("locale"))
@@ -48,15 +51,29 @@ public class ResourceHandler
 		return messages;
 	}
 
+	private boolean bundleWarning;
+
 	public final String getMessage(String key)
 	{
 		if (messages == null)
-			return "Messages file missing!";
+		{
+			if (! bundleWarning)
+			{
+				plugin.getLogHandler().log(Level.WARNING, "Messages bundle is missing!");
+				bundleWarning = true;
+			}
+
+			return "<Missing message bundle>";
+		}
 
 		try
 		{
 			return messages.getString(key);
-		} catch (Throwable ex) { }
-		return "<Missing Message: " + key + ">";
+		}
+		catch (Throwable ex)
+		{
+			plugin.getLogHandler().log(Level.WARNING, "Message for key \"{0}\" is missing!", key);
+			return "<Missing message \"" + key + "\">";
+		}
 	}
 }
