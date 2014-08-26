@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import net.dmulloy2.io.IOUtil;
 import net.dmulloy2.types.RainbowColors;
 import net.dmulloy2.types.StringJoiner;
 
@@ -191,18 +192,11 @@ public class FormatUtil
 	}
 
 	/**
-	 * Returns the given {@link File}'s name with the extension omitted.
-	 *
-	 * @param file {@link File}
-	 * @param extension File extension
-	 * @return The file's name with the extension omitted
+	 * @deprecated Moved to {@link IOUtil}
 	 */
+	@Deprecated
 	public static String trimFileExtension(File file, String extension)
 	{
-		Validate.notNull(file, "file cannot be null!");
-		Validate.notNull(extension, "extension cannot be null!");
-
-		int index = file.getName().lastIndexOf(extension);
-		return index > 0 ? file.getName().substring(0, index) : file.getName();
+		return IOUtil.trimFileExtension(file, extension);
 	}
 }

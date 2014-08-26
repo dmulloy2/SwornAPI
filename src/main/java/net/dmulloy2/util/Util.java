@@ -240,7 +240,7 @@ public class Util
 	 * @param ex Underlying {@link Throwable}
 	 * @param circumstance Circumstance in which the Exception occured
 	 */
-	public static String getUsefulStack(@NonNull Throwable ex, String circumstance)
+	public static String getUsefulStack(Throwable ex, String circumstance)
 	{
 		Validate.notNull(ex, "ex cannot be null!");
 
@@ -567,7 +567,9 @@ public class Util
 	 * Quietly closes a {@link Closeable} object.
 	 *
 	 * @param close Object to close
+	 * @deprecated Replaced with {@link Closer}
 	 */
+	@Deprecated
 	public static void closeQuietly(Closeable close)
 	{
 		try
