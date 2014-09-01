@@ -176,7 +176,7 @@ public abstract class Command implements CommandExecutor
 			case NONE:
 				return false;
 			case OPS:
-				return player.isOp();
+				return sender.isOp();
 			default:
 				return hasPermission(sender, permission);
 		}
