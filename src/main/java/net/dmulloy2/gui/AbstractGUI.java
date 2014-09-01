@@ -36,7 +36,7 @@ public abstract class AbstractGUI
 		// Size checks
 		int size = getSize();
 		Validate.isTrue(size > 0, "Inventory size must not be negative!");
-		Validate.isTrue(size < 54, "Inventory size is too large!");
+		Validate.isTrue(size <= 54, "Inventory size is too large!");
 		Validate.isTrue(size % 9 == 0, "Inventory size must be divisible by 9!");
 
 		// Truncate title
