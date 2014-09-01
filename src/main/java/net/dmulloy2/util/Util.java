@@ -3,7 +3,6 @@
  */
 package net.dmulloy2.util;
 
-import java.io.Closeable;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -488,44 +487,40 @@ public class Util
 	{
 		Validate.notNull(state, "state cannot be null!");
 
-		StringBuilder ret = new StringBuilder();
-
 		if (state instanceof Sign)
 		{
 			Sign sign = (Sign) state;
-			ret.append("Sign { lines = " + Arrays.toString(sign.getLines()) + " }");
+			return "Sign { lines = " + Arrays.toString(sign.getLines()) + " }";
 		}
 		else if (state instanceof CommandBlock)
 		{
 			CommandBlock cmd = (CommandBlock) state;
-			ret.append("CommandBlock { command = " + cmd.getCommand() + ", name = " + cmd.getName() + " }");
+			return "CommandBlock { command = " + cmd.getCommand() + ", name = " + cmd.getName() + " }";
 		}
 		else if (state instanceof Jukebox)
 		{
 			Jukebox jukebox = (Jukebox) state;
-			ret.append("Jukebox { playing = " + FormatUtil.getFriendlyName(jukebox.getPlaying()) + " }");
+			return "Jukebox { playing = " + FormatUtil.getFriendlyName(jukebox.getPlaying()) + " }";
 		}
 		else if (state instanceof NoteBlock)
 		{
 			NoteBlock note = (NoteBlock) state;
-			ret.append("NoteBlock { note = " + FormatUtil.getFriendlyName(note.getNote().getTone()) + " }");
+			return "NoteBlock { note = " + FormatUtil.getFriendlyName(note.getNote().getTone()) + " }";
 		}
 		else if (state instanceof Skull)
 		{
 			Skull skull = (Skull) state;
-			ret.append("Skull { type = " + FormatUtil.getFriendlyName(skull.getSkullType()) + ", owner = " + skull.getOwner() + " }");
+			return "Skull { type = " + FormatUtil.getFriendlyName(skull.getSkullType()) + ", owner = " + skull.getOwner() + " }";
 		}
 		else if (state instanceof Furnace)
 		{
 			Furnace furnace = (Furnace) state;
-			ret.append("Furnace { burnTime = " + furnace.getBurnTime() + ", cookTime = " + furnace.getCookTime() + " }");
+			return "Furnace { burnTime = " + furnace.getBurnTime() + ", cookTime = " + furnace.getCookTime() + " }";
 		}
 		else
 		{
-			ret.append("BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }");
+			return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
 		}
-
-		return ret.toString();
 	}
 
 	/**
@@ -561,19 +556,4 @@ public class Util
         } catch (Throwable ex) { }
         return false;
     }
-
-	/**
-	 * Quietly closes a {@link Closeable} object.
-	 *
-	 * @param close Object to close
-	 * @deprecated Replaced with {@link Closer}
-	 */
-	@Deprecated
-	public static void closeQuietly(Closeable close)
-	{
-		try
-		{
-			close.close();
-		} catch (Throwable ex) { }
-	}
 }
