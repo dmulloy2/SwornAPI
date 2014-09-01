@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import lombok.NonNull;
 import net.dmulloy2.io.UUIDFetcher;
 import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.types.Versioning;
@@ -485,7 +484,7 @@ public class Util
 	 * @param state BlockState to represent
 	 * @return The string representation
 	 */
-	public static String blockStateToString(@NonNull BlockState state)
+	public static String blockStateToString(BlockState state)
 	{
 		Validate.notNull(state, "state cannot be null!");
 

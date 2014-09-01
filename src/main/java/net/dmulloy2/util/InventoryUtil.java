@@ -6,8 +6,6 @@ package net.dmulloy2.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.NonNull;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,8 +29,10 @@ public class InventoryUtil
 	 * @param inventory Inventory to check
 	 * @return True if the inventory is empty, false if not
 	 */
-	public static boolean isEmpty(@NonNull Inventory inventory)
+	public static boolean isEmpty(Inventory inventory)
 	{
+		Validate.notNull(inventory, "inventory cannot be null!");
+
 		for (ItemStack stack : inventory.getContents())
 		{
 			if (stack != null && stack.getType() != Material.AIR)
@@ -58,8 +58,11 @@ public class InventoryUtil
 	 * @param player Player whose inventory is being checked
 	 * @return True if there is room, false if not
 	 */
-	public static boolean hasRoom(@NonNull ItemStack item, @NonNull Player player)
+	public static boolean hasRoom(ItemStack item, Player player)
 	{
+		Validate.notNull(item, "item cannot be null!");
+		Validate.notNull(player, "player cannot be null!");
+
 		int maxStackSize = (item.getMaxStackSize() == -1) ? player.getInventory().getMaxStackSize() : item.getMaxStackSize();
 		return hasRoom(item, player.getInventory(), maxStackSize);
 	}
@@ -72,8 +75,11 @@ public class InventoryUtil
 	 * @param maxStackSize Maximum stack size
 	 * @return True if there is room, false if not
 	 */
-	public static boolean hasRoom(@NonNull ItemStack item, @NonNull Inventory inventory, int maxStackSize)
+	public static boolean hasRoom(ItemStack item, Inventory inventory, int maxStackSize)
 	{
+		Validate.notNull(item, "item cannot be null!");
+		Validate.notNull(inventory, "inventory cannot be null!");
+
 		int amount = item.getAmount();
 
 		for (ItemStack stack : inventory.getContents())
@@ -99,8 +105,9 @@ public class InventoryUtil
 	 * @param item {@link ItemStack} to give the player
 	 * @return Leftovers, if any
 	 */
-	public static Map<Integer, ItemStack> giveItem(@NonNull Player player, @NonNull ItemStack item)
+	public static Map<Integer, ItemStack> giveItem(Player player, ItemStack item)
 	{
+		Validate.notNull(player, "player cannot be null!");
 		return addItems(player.getInventory(), item);
 	}
 
@@ -111,8 +118,11 @@ public class InventoryUtil
 	 * @param items {@link ItemStack}s to give the player
 	 * @return Leftovers, if any
 	 */
-	public static Map<Integer, ItemStack> giveItems(@NonNull Player player, @NonNull ItemStack... items)
+	public static Map<Integer, ItemStack> giveItems(Player player, ItemStack... items)
 	{
+		Validate.notNull(player, "player cannot be null!");
+		Validate.noNullElements(items, "items cannot contain null elements!");
+
 		return addItems(player.getInventory(), items);
 	}
 
@@ -125,8 +135,11 @@ public class InventoryUtil
 	 * @param dat Item data
 	 * @return The amount of items
 	 */
-	public static int amount(@NonNull Inventory inventory, @NonNull Material type, short dat)
+	public static int amount(Inventory inventory, Material type, short dat)
 	{
+		Validate.notNull(inventory, "inventory cannot be null!");
+		Validate.notNull(type, "type cannot be null!");
+
 		int ret = 0;
 		ItemStack[] items = inventory.getContents();
 		for (int slot = 0; slot < items.length; slot++)
@@ -157,8 +170,10 @@ public class InventoryUtil
 	 * @param amt Amount to remove
 	 * @throws IllegalArgumentException if {@code amt} is less than 0
 	 */
-	public static void remove(@NonNull Inventory inventory, @NonNull Material type, short dat, int amt)
+	public static void remove(Inventory inventory, Material type, short dat, int amt)
 	{
+		Validate.notNull(inventory, "inventory cannot be null!");
+		Validate.notNull(type, "type cannot be null!");
 		Validate.isTrue(amt > 0, "amt cannot be less than 0!");
 
 		int start = amt;
