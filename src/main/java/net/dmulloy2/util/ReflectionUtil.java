@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.types.Versioning;
+import net.dmulloy2.types.Versioning.Version;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,7 +24,7 @@ public class ReflectionUtil
 {
 	private ReflectionUtil() { }
 
-	private static String VERSION;
+	private static String PACKAGE;
 
 	/**
 	 * Attempts to get the NMS (net.minecraft.server) class with this name.
@@ -34,14 +36,14 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getNMSClass(String name)
 	{
-		if (VERSION == null)
+		if (PACKAGE == null)
 		{
-			// Lazy-load VERSION
+			// Lazy-load PACKAGE
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			PACKAGE = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		}
 
-		name = "net.minecraft.server." + VERSION + "." + name;
+		name = "net.minecraft.server." + PACKAGE + "." + name;
 
 		try
 		{
@@ -60,20 +62,43 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getOBCClass(String name)
 	{
-		if (VERSION == null)
+		if (PACKAGE == null)
 		{
 			// Lazy-load VERSION
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			PACKAGE = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		}
 
-		name = "org.bukkit.craftbukkit." + VERSION + "." + name;
+		name = "org.bukkit.craftbukkit." + PACKAGE + "." + name;
 
 		try
 		{
 			return Class.forName(name);
 		} catch (Throwable ex) { }
 		return null;
+	}
+
+	private static final Version SUPPORTED = Version.MC_17;
+
+	/**
+	 * Whether or not reflection is supported. Current supported version: 1.7.x
+	 *
+	 * @return True if reflection is supported, false if not
+	 */
+	public static final boolean isReflectionSupported()
+	{
+		return Versioning.getVersion() == SUPPORTED && ! isSnapshotProtocol();
+	}
+
+	private static final String SNAPSHOT_CLASS = "org.spigotmc.SpigotDebreakifier";
+	private static final boolean isSnapshotProtocol()
+	{
+		try
+		{
+			Class.forName(SNAPSHOT_CLASS);
+			return true;
+		} catch (Throwable ex) { }
+		return false;
 	}
 
 	/**

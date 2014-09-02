@@ -34,7 +34,8 @@ public class ChatUtil
 	public static final void sendMessage(CommandSender sender, BaseComponent... message)
 	{
 		Validate.notNull(sender, "sender cannot be null!");
-		if (sender instanceof Player)
+
+		if (sender instanceof Player && ReflectionUtil.isReflectionSupported())
 		{
 			try
 			{
