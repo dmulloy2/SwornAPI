@@ -20,6 +20,9 @@ public abstract class WrappedPacket extends AbstractWrapper
 {
 	public final void send(Player player) throws ReflectionException
 	{
+		if (! ReflectionUtil.isReflectionSupported(player))
+			throw new ReflectionException("Reflection is not supported for " + player.getName());
+
 		try
 		{
 			Object nmsPlayer = ReflectionUtil.getHandle(player);
@@ -36,6 +39,9 @@ public abstract class WrappedPacket extends AbstractWrapper
 
 	public final void sendToServer(Player player) throws ReflectionException
 	{
+		if (! ReflectionUtil.isReflectionSupported(player))
+			throw new ReflectionException("Reflection is not supported for " + player.getName());
+
 		try
 		{
 			Object nmsPlayer = ReflectionUtil.getHandle(player);

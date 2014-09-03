@@ -15,6 +15,7 @@ public class Versioning
 
 	public static enum Version
 	{
+		MC_18,
 		MC_17,
 		MC_16,
 		UNKNOWN,
@@ -27,7 +28,9 @@ public class Versioning
 		if (version == null)
 		{
 			String versionString = Bukkit.getVersion();
-			if (versionString.contains("1.7"))
+			if (versionString.contains("1.8"))
+				version = Version.MC_18;
+			else if (versionString.contains("1.7"))
 				version = Version.MC_17;
 			else if (versionString.contains("1.6"))
 				version = Version.MC_16;
@@ -36,5 +39,16 @@ public class Versioning
 		}
 
 		return version;
+	}
+
+	private static final Version SUPPORTED = Version.MC_17;
+	public static final Version getSupportedVersion()
+	{
+		return SUPPORTED;
+	}
+
+	public static final boolean isSupported()
+	{
+		return getVersion() == SUPPORTED;
 	}
 }

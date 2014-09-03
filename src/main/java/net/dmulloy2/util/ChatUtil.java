@@ -35,13 +35,17 @@ public class ChatUtil
 	{
 		Validate.notNull(sender, "sender cannot be null!");
 
-		if (sender instanceof Player && ReflectionUtil.isReflectionSupported())
+		if (sender instanceof Player)
 		{
-			try
+			Player player = (Player) sender;
+			if (ReflectionUtil.isReflectionSupported(player))
 			{
-				sendChatPacket((Player) sender, ComponentSerializer.toString(message));
-				return;
-			} catch (Throwable ex) { }
+				try
+				{
+					sendChatPacket((Player) sender, ComponentSerializer.toString(message));
+					return;
+				} catch (Throwable ex) { }
+			}
 		}
 
 		sender.sendMessage(BaseComponent.toLegacyText(message));

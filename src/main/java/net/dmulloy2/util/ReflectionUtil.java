@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
 
@@ -76,29 +75,6 @@ public class ReflectionUtil
 			return Class.forName(name);
 		} catch (Throwable ex) { }
 		return null;
-	}
-
-	private static final Version SUPPORTED = Version.MC_17;
-
-	/**
-	 * Whether or not reflection is supported. Current supported version: 1.7.x
-	 *
-	 * @return True if reflection is supported, false if not
-	 */
-	public static final boolean isReflectionSupported()
-	{
-		return Versioning.getVersion() == SUPPORTED && ! isSnapshotProtocol();
-	}
-
-	private static final String SNAPSHOT_CLASS = "org.spigotmc.SpigotDebreakifier";
-	private static final boolean isSnapshotProtocol()
-	{
-		try
-		{
-			Class.forName(SNAPSHOT_CLASS);
-			return true;
-		} catch (Throwable ex) { }
-		return false;
 	}
 
 	/**
@@ -185,28 +161,51 @@ public class ReflectionUtil
 		return null;
 	}
 
+	// ---- Versioning
+
 	/**
-	 * Sends a packet to a {@link Player}
+	 * Whether or not a {@link Player} can reliably be sent packets. This works
+	 * by checking the player's client {@link Version} against the supported
+	 * version.
 	 *
-	 * @param player Player to send the packet to
-	 * @param packet Packet to send
-	 * @throws ReflectionException If something goes wrong
-	 * @deprecated Replaced with more reliable wrappers
+	 * @param player Player to check
+	 * @return True if they can reliably be sent packets, false if not
 	 */
-	@Deprecated
-	public static final void sendPacket(Player player, Object packet) throws ReflectionException
+	public static final boolean isReflectionSupported(Player player)
+	{
+		return Versioning.getSupportedVersion() == getClientVersion(player);
+	}
+
+	/**
+	 * Returns the client {@link Version} a given {@link Player} is using.
+	 *
+	 * @param player Player to get version for
+	 * @return Their client version
+	 */
+	public static final Version getClientVersion(Player player)
 	{
 		try
 		{
-			Object nmsPlayer = getHandle(player);
-			Field playerConnectionField = getField(nmsPlayer.getClass(), "playerConnection");
-			Object playerConnection = playerConnectionField.get(nmsPlayer);
-			Method sendPacket = getMethod(playerConnection.getClass(), "sendPacket");
-			sendPacket.invoke(playerConnection, packet);
-		}
-		catch (Throwable ex)
-		{
-			throw new ReflectionException("Sending packet to " + player.getName(), ex);
-		}
+			Object handle = getHandle(player);
+			Field playerConnectionField = getField(handle.getClass(), "playerConnection");
+			Object playerConnection = playerConnectionField.get(handle);
+
+			Field networkManagerField = getField(playerConnection.getClass(), "networkManager");
+			Object networkManager = networkManagerField.get(playerConnection);
+
+			Method getVersion = getMethod(networkManager.getClass(), "getVersion");
+			int version = (int) getVersion.invoke(networkManager);
+			switch (version)
+			{
+				case 4:
+				case 5:
+					return Version.MC_17;
+				case 47:
+					return Version.MC_18;
+				default:
+					return Version.UNKNOWN;
+			}
+		} catch (Throwable ex) { }
+		return Version.UNKNOWN;
 	}
 }
