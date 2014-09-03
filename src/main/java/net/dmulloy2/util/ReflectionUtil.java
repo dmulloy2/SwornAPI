@@ -193,7 +193,7 @@ public class ReflectionUtil
 			Field networkManagerField = getField(playerConnection.getClass(), "networkManager");
 			Object networkManager = networkManagerField.get(playerConnection);
 
-			Method getVersion = getMethod(networkManager.getClass(), "getVersion");
+			Method getVersion = getMethod(networkManager.getClass(), "getVersion", new Class<?>[0]);
 			int version = (int) getVersion.invoke(networkManager);
 			switch (version)
 			{
