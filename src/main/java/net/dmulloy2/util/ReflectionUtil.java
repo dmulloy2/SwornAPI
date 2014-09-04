@@ -10,6 +10,7 @@ import java.util.Arrays;
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -35,6 +36,8 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getNMSClass(String name)
 	{
+		Validate.notNull(name, "name cannot be null!");
+
 		if (PACKAGE == null)
 		{
 			// Lazy-load PACKAGE
@@ -61,6 +64,8 @@ public class ReflectionUtil
 	 */
 	public static final Class<?> getOBCClass(String name)
 	{
+		Validate.notNull(name, "name cannot be null!");
+
 		if (PACKAGE == null)
 		{
 			// Lazy-load VERSION
@@ -86,42 +91,47 @@ public class ReflectionUtil
 	 */
 	public static final Field getField(Class<?> clazz, String name)
 	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		Validate.notNull(name, "name cannot be null!");
+
 		try
 		{
-			Field field = clazz.getField(name);
+			Field field = clazz.getDeclaredField(name);
 			if (field != null)
 				return field;
 
-			field = clazz.getDeclaredField(name);
-			if (field != null)
-				return field;
+			return clazz.getField(name);
 		} catch (Throwable ex) { }
 		return null;
 	}
 
 	/**
-	 * Checks if a field is declared in a given {@link Class}
+	 * Whether or not a {@link Field} exists in a given {@link Class}.
 	 *
 	 * @param clazz Class object
-	 * @param name Name of variable
-	 * @return Whether or not the field is declared
+	 * @param name Field name
+	 * @return True if the field exists, false if not
 	 */
-	public static final boolean isDeclaredField(Class<?> clazz, String name)
+	public static final boolean fieldExists(Class<?> clazz, String name)
 	{
 		return getField(clazz, name) != null;
 	}
 
 	/**
 	 * Gets a {@link Method} in a given {@link Class} object with the specified
-	 * args.
+	 * arguments.
 	 *
 	 * @param clazz Class object
 	 * @param name Method name
 	 * @param args Arguments
-	 * @return The method, or null if none exists.
+	 * @return The method, or null if none exists
 	 */
 	public static final Method getMethod(Class<?> clazz, String name, Class<?>... args)
 	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		Validate.notNull(name, "name cannot be null!");
+		if (args == null) args = new Class<?>[0];
+
 		for (Method method : clazz.getMethods())
 		{
 			if (method.getName().equals(name) && Arrays.equals(args, method.getParameterTypes()))
@@ -136,10 +146,13 @@ public class ReflectionUtil
 	 *
 	 * @param clazz Class object
 	 * @param name Method name
-	 * @return The method, or null if none exists.
+	 * @return The method, or null if none exists
 	 */
 	public static final Method getMethod(Class<?> clazz, String name)
 	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		Validate.notNull(name, "name cannot be null!");
+
 		for (Method method : clazz.getMethods())
 		{
 			if (method.getName().equals(name))
@@ -158,6 +171,8 @@ public class ReflectionUtil
 	 */
 	public static final Object getHandle(Object object)
 	{
+		Validate.notNull(object, "object cannot be null!");
+
 		Method getHandle = getMethod(object.getClass(), "getHandle");
 
 		try
@@ -190,6 +205,8 @@ public class ReflectionUtil
 	 */
 	public static final Version getClientVersion(Player player)
 	{
+		Validate.notNull(player, "player cannot be null!");
+
 		try
 		{
 			Object handle = getHandle(player);
