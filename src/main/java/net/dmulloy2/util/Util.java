@@ -296,6 +296,23 @@ public class Util
 	}
 
 	/**
+	 * Gets the current thread's stack.
+	 *
+	 * @return The current thread's stack
+	 */
+	public static final String getThreadStack()
+	{
+		try
+		{
+			throw new Exception("Thread Stack");
+		}
+		catch (Exception ex)
+		{
+			return getUsefulStack(ex, null);
+		}
+	}
+
+	/**
 	 * @see {@link Util#getWorkingJar(Class)
 	 */
 	public static final String getWorkingJar(String clazzName)
