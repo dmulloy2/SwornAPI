@@ -37,15 +37,11 @@ public class ChatUtil
 
 		if (sender instanceof Player)
 		{
-			Player player = (Player) sender;
-			if (ReflectionUtil.isReflectionSupported(player))
+			try
 			{
-				try
-				{
-					sendChatPacket((Player) sender, ComponentSerializer.toString(message));
-					return;
-				} catch (Throwable ex) { }
-			}
+				sendChatPacket((Player) sender, ComponentSerializer.toString(message));
+				return;
+			} catch (Throwable ex) { }
 		}
 
 		sender.sendMessage(BaseComponent.toLegacyText(message));

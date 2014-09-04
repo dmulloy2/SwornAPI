@@ -15,10 +15,10 @@ public class Versioning
 
 	public static enum Version
 	{
-		MC_18,
-		MC_17,
-		MC_16,
 		UNKNOWN,
+		MC_16,
+		MC_17,
+		MC_18,
 		;
 	}
 
