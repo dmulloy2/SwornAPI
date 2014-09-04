@@ -88,7 +88,13 @@ public class ReflectionUtil
 	{
 		try
 		{
-			return clazz.getField(name);
+			Field field = clazz.getField(name);
+			if (field != null)
+				return field;
+
+			field = clazz.getDeclaredField(name);
+			if (field != null)
+				return field;
 		} catch (Throwable ex) { }
 		return null;
 	}
