@@ -29,11 +29,11 @@ public class PermissionHandler
 	}
 
 	/**
-	 * Returns whether or not a {@link CommandSender} has a permission.
+	 * Whether or not a {@link CommandSender} has a permission.
 	 *
 	 * @param sender Sender to check.
 	 * @param permission Permission.
-	 * @return Whether or not they have the permission.
+	 * @return True if they have the permission, false if not
 	 */
 	public final boolean hasPermission(CommandSender sender, IPermission permission)
 	{
@@ -41,11 +41,11 @@ public class PermissionHandler
 	}
 
 	/**
-	 * Returns whether or not a {@link CommandSender} has a permission.
+	 * Whether or not a {@link CommandSender} has a permission.
 	 *
 	 * @param sender Sender to check.
 	 * @param permission Permission.
-	 * @return Whether or not they have the permission.
+	 * @return True if they have the permission, false if not
 	 */
 	public final boolean hasPermission(CommandSender sender, String permission)
 	{
@@ -62,7 +62,7 @@ public class PermissionHandler
 	 * Gets the complete permission string for a given {@link IPermission}.
 	 *
 	 * @param permission - Permission to get the node for.
-	 * @return The complete permission string.
+	 * @return The complete permission string
 	 */
 	public final String getPermissionString(IPermission permission)
 	{

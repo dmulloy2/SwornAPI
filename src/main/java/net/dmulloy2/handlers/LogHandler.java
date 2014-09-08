@@ -44,8 +44,8 @@ public class LogHandler
 	}
 
 	/**
-	 * Logs a debug message to console with a given level level if <code>debug</code> is set to
-	 * <code>true</code> in the config.yml.
+	 * Logs a debug message to console with a given level if <code>debug</code>
+	 * is set to <code>true</code> in the config.yml.
 	 *
 	 * @param level Logging {@link Level}.
 	 * @param msg Message to log.
@@ -60,8 +60,8 @@ public class LogHandler
 	}
 
 	/**
-	 * Logs a debug message to console with the INFO level if <code>debug</code> is set to
-	 * <code>true</code> in the config.yml.
+	 * Logs a debug message to console with the INFO level if <code>debug</code>
+	 * is set to <code>true</code> in the config.yml.
 	 *
 	 * @param msg Message to log.
 	 * @param objects Objects to format in.

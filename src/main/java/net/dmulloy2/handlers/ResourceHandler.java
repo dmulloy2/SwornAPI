@@ -19,8 +19,8 @@ public class ResourceHandler
 {
 	private Locale locale;
 	private ResourceBundle messages;
-	private final SwornPlugin plugin;
 
+	private final SwornPlugin plugin;
 	public ResourceHandler(SwornPlugin plugin)
 	{
 		this(plugin, plugin.classLoader());
@@ -45,6 +45,9 @@ public class ResourceHandler
 		}
 	}
 
+	/**
+	 * @deprecated Use {@link #getMessage(String)} instead
+	 */
 	@Deprecated
 	public ResourceBundle getMessages()
 	{
@@ -53,6 +56,12 @@ public class ResourceHandler
 
 	private boolean bundleWarning;
 
+	/**
+	 * Gets a message from the message file with a given key.
+	 *
+	 * @param key Message key
+	 * @return The message
+	 */
 	public final String getMessage(String key)
 	{
 		if (messages == null)

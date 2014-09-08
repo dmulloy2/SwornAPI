@@ -71,7 +71,9 @@ public class CommandHandler implements CommandExecutor
 	}
 
 	/**
-	 * @return A {@link List} of all registered non-prefixed commands.
+	 * Gets a {@link List} of all registered non-prefixed commands.
+	 *
+	 * @return The list
 	 */
 	public List<Command> getRegisteredCommands()
 	{
@@ -79,7 +81,9 @@ public class CommandHandler implements CommandExecutor
 	}
 
 	/**
-	 * @return A {@link List} of all registered prefixed commands.
+	 * Gets a {@link List} of all registered prefixed commands.
+	 *
+	 * @return The list
 	 */
 	public List<Command> getRegisteredPrefixedCommands()
 	{
@@ -87,7 +91,9 @@ public class CommandHandler implements CommandExecutor
 	}
 
 	/**
-	 * @return The command prefix.
+	 * Gets the command prefix.
+	 *
+	 * @return The prefix, or null if not used
 	 */
 	public String getCommandPrefix()
 	{
@@ -110,13 +116,21 @@ public class CommandHandler implements CommandExecutor
 	}
 
 	/**
-	 * @return whether or not the command prefix is used.
+	 * Whether or not the command prefix is used.
+	 *
+	 * @return True if the command prefix is used, false if not
 	 */
 	public boolean usesCommandPrefix()
 	{
 		return commandPrefix != null;
 	}
 
+	/**
+	 * Gets a {@link Command} by name.
+	 *
+	 * @param name Command name
+	 * @return Command, or null if not found
+	 */
 	public final Command getCommand(String name)
 	{
 		Validate.notNull(name, "name cannot be null!");
@@ -153,8 +167,8 @@ public class CommandHandler implements CommandExecutor
 				return true;
 			}
 
-			new ComponentBuilder(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name))
-				.addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
+			String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
+			new ComponentBuilder(error).addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
 		}
 		else
 		{
