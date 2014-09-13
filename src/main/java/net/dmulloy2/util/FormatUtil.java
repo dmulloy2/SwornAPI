@@ -3,14 +3,11 @@
  */
 package net.dmulloy2.util;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import net.dmulloy2.io.IOUtil;
-import net.dmulloy2.types.RainbowColors;
 import net.dmulloy2.types.StringJoiner;
 
 import org.apache.commons.lang.Validate;
@@ -47,6 +44,11 @@ public class FormatUtil
 		return replaceColors(format);
 	}
 
+	private static final String[] rainbowColors = new String[]
+	{
+			"c", "6", "e", "a", "b", "d", "5"
+	};
+
 	/**
 	 * Replaces color codes in a given string. Includes rainbow.
 	 *
@@ -71,7 +73,7 @@ public class FormatUtil
 					int index = 0;
 					while (index < s.length() && s.charAt(index) != '&')
 					{
-						ret.append("&" + RainbowColors.getColor(index % RainbowColors.values().length));
+						ret.append("&" + rainbowColors[index % rainbowColors.length]);
 						ret.append(s.charAt(index));
 						index++;
 					}
@@ -189,14 +191,5 @@ public class FormatUtil
 		Validate.noNullElements(args, "args cannot have null elements!");
 
 		return new StringJoiner(glue).appendAll(args).toString();
-	}
-
-	/**
-	 * @deprecated Moved to {@link IOUtil}
-	 */
-	@Deprecated
-	public static String trimFileExtension(File file, String extension)
-	{
-		return IOUtil.trimFileExtension(file, extension);
 	}
 }

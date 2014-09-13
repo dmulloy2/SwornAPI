@@ -24,7 +24,7 @@ public class InventoryUtil
 	private InventoryUtil() { }
 
 	/**
-	 * Returns whether or not a given {@link Inventory} is empty.
+	 * Whether or not a given {@link Inventory} is empty.
 	 *
 	 * @param inventory Inventory to check
 	 * @return True if the inventory is empty, false if not
@@ -52,7 +52,7 @@ public class InventoryUtil
 	}
 
 	/**
-	 * Returns whether or not a {@link Player}'s inventory has room for an item.
+	 * Whether or not a {@link Player}'s inventory has room for an item.
 	 *
 	 * @param item {@link ItemStack} to check
 	 * @param player Player whose inventory is being checked
@@ -68,7 +68,7 @@ public class InventoryUtil
 	}
 
 	/**
-	 * Returns whether or not an {@link Inventory} has room for an item.
+	 * Whether or not an {@link Inventory} has room for an item.
 	 *
 	 * @param item {@link ItemStack} to check
 	 * @param inventory Inventory being checked

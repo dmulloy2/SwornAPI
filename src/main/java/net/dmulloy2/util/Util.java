@@ -5,7 +5,6 @@ package net.dmulloy2.util;
 
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -134,9 +133,9 @@ public class Util
 			// Provide backwards compatibility
 			Method getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
 			if (getOnlinePlayers.getReturnType() != Collection.class)
-				return toList((Player[]) getOnlinePlayers.invoke(null));
+				return ListUtil.toList((Player[]) getOnlinePlayers.invoke(null));
 		} catch (Throwable ex) { }
-		return newList(Bukkit.getOnlinePlayers());
+		return ListUtil.newList(Bukkit.getOnlinePlayers());
 	}
 
 	/**
@@ -341,39 +340,31 @@ public class Util
 	}
 
 	/**
-	 * Constructs a new {@link List} from an existing {@link Collection}. This
-	 * helps with concurrency problems. Changes to the returned list will not be
-	 * reflected in the original collection. The use of this method is generally
-	 * not performance-effective.
-	 * <p>
-	 * TODO: Find a better solution.
-	 *
-	 * @param coll Base Collection
-	 * @return The List
+	 * @deprecated Use {@link ListUtil#newList(Collection)}
 	 */
+	@Deprecated
 	public static <T> List<T> newList(Collection<? extends T> coll)
 	{
-		Validate.notNull(coll, "coll cannot be null!");
-		return new ArrayList<>(coll);
+		return ListUtil.newList(coll);
 	}
 
 	/**
-	 * Constructs a new {@link List} paramaterized with <code>T</code>.
-	 *
-	 * @param objects Array of <code>T</code> to create the list with
-	 * @return a new {@link List} from the given objects
+	 * @deprecated Use {@link ListUtil#toList(Object...)}
 	 */
+	@Deprecated
 	@SafeVarargs
 	public static <T> List<T> toList(T... objects)
 	{
-		Validate.notNull(objects, "objects cannot be null!");
+		return ListUtil.toList(objects);
+	}
 
-		List<T> ret = new ArrayList<>();
-
-		for (T t : objects)
-			ret.add(t);
-
-		return ret;
+	/**
+	 * @deprecated Use {@link ListUtil#removeDuplicates(List)}
+	 */
+	@Deprecated
+	public static <T> List<T> removeDuplicates(List<T> list)
+	{
+		return ListUtil.removeDuplicates(list);
 	}
 
 	/**
@@ -425,26 +416,6 @@ public class Util
 		}
 
 		return null;
-	}
-
-	private static final Object NULL = new Object();
-
-	/**
-	 * Removes duplicate entries from a {@link List}. Retains order.
-	 *
-	 * @param list List to remove duplicate entries from
-	 * @return The list, without duplicate entries
-	 */
-	public static <T> List<T> removeDuplicates(List<T> list)
-	{
-		Validate.notNull(list, "list cannot be null!");
-
-		Map<T, Object> map = new LinkedHashMap<>();
-
-		for (T element : list)
-			map.put(element, NULL);
-
-		return new ArrayList<>(map.keySet());
 	}
 
 	/**

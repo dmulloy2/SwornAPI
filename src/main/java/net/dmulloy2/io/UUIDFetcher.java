@@ -13,7 +13,7 @@ import java.util.concurrent.Callable;
 
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
-import net.dmulloy2.util.Util;
+import net.dmulloy2.util.ListUtil;
 
 import org.apache.commons.lang.Validate;
 import org.json.simple.JSONArray;
@@ -117,7 +117,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 				return cache.get(name);
 		}
 
-		UUIDFetcher fetcher = new UUIDFetcher(Util.toList(name));
+		UUIDFetcher fetcher = new UUIDFetcher(ListUtil.toList(name));
 		return fetcher.call().get(name);
 	}
 }

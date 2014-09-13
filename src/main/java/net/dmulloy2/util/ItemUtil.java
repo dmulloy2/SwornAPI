@@ -325,29 +325,6 @@ public class ItemUtil
 	}
 
 	/**
-	 * Returns the basic data of an ItemStack in string form.
-	 *
-	 * @param stack ItemStack to "convert" to a string
-	 * @return ItemStack's data in string form
-	 * @deprecated ItemStack defines a pretty useful toString() method
-	 * @see {@link ItemStack#toString()}
-	 */
-	@Deprecated
-	public static String itemToString(ItemStack stack)
-	{
-		StringBuilder ret = new StringBuilder();
-		ret.append("Type: " + FormatUtil.getFriendlyName(stack.getType()));
-		ret.append(" Data: " + stack.getDurability());
-		ret.append(" Amount: " + stack.getAmount());
-		ret.append(" Enchants:");
-		for (Entry<Enchantment, Integer> enchantment : stack.getEnchantments().entrySet())
-			ret.append(" " + EnchantmentType.toName(enchantment.getKey()) + ": " + enchantment.getValue());
-		ret.append(" ItemMeta: " + stack.getItemMeta());
-
-		return ret.toString();
-	}
-
-	/**
 	 * Returns an ItemStack's enchantments in string form.
 	 *
 	 * @param stack ItemStack to get enchantments

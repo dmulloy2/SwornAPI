@@ -18,25 +18,21 @@ public class MaterialUtil
 	private MaterialUtil() { }
 
 	/**
-	 * Returns the {@link org.bukkit.Material} from a given string
+	 * Gets the {@link org.bukkit.Material} from a given string.
 	 *
 	 * @param string String to get the Material from
-	 * @return The {@link org.bukkit.Material} from a given string
+	 * @return The material, or null if not found
 	 */
-	public static org.bukkit.Material getMaterial(String string)
+	public static final org.bukkit.Material getMaterial(String string)
 	{
 		if (NumberUtil.isInt(string))
-		{
 			return getMaterial(NumberUtil.toInt(string));
-		}
-		else
-		{
-			return matchMaterial(string);
-		}
+
+		return matchMaterial(string);
 	}
 
-	@SuppressWarnings("deprecation")
-	private static org.bukkit.Material matchMaterial(String string)
+	@SuppressWarnings("deprecation") // Bukkit.getUnsafe()
+	private static final org.bukkit.Material matchMaterial(String string)
 	{
 		org.bukkit.Material material = null;
 
@@ -49,8 +45,7 @@ public class MaterialUtil
 		{
 			try
 			{
-				// This method never returns null, but if a result is not found,
-				// it returns AIR
+				// This method never returns null, but if a result is not found, it returns AIR
 				org.bukkit.Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
 				if (internal != org.bukkit.Material.AIR)
 					material = internal;
@@ -61,69 +56,61 @@ public class MaterialUtil
 	}
 
 	/**
-	 * Returns the {@link org.bukkit.Material} from a given integer
+	 * Returns the {@link org.bukkit.Material} from a given integer.
 	 *
 	 * @param id Integer to get the Material from
-	 * @return The {@link org.bukkit.Material} from a given integer
+	 * @return Material, or null if not found
 	 */
-	public static org.bukkit.Material getMaterial(int id)
+	public static final org.bukkit.Material getMaterial(int id)
 	{
 		Material mat = Material.getMaterial(id);
 		if (mat != null)
-		{
 			return mat.getBukkitMaterial();
-		}
 
 		return null;
 	}
 
 	/**
-	 * Gets the type id for a Bukkit Material
+	 * Gets the Item ID for a Bukkit Material.
 	 *
 	 * @param mat Bukkit material
-	 * @return Item ID (if applicable)
+	 * @return Item ID, or -1 if not found
 	 */
-	public static int getItemId(org.bukkit.Material bukkitMaterial)
+	public static final int getItemId(org.bukkit.Material bukkitMaterial)
 	{
 		Material mat = Material.getByBukkitMaterial(bukkitMaterial);
 		if (mat != null)
-		{
 			return mat.getId();
-		}
 
-		return -1; // Result not found
+		return -1;
 	}
 
 	/**
-	 * Gets the friendly name of a material
+	 * Gets the friendly name of a Material.
 	 *
-	 * @param s Material name
-	 * @return Friendly name
+	 * @param name Material name
+	 * @return Friendly name, or "null" if not found
 	 */
-	public static String getMaterialName(String s)
+	public static final String getMaterialName(String name)
 	{
-		org.bukkit.Material mat = getMaterial(s);
+		org.bukkit.Material mat = getMaterial(name);
 		if (mat == null)
-		{
-			return "Null";
-		}
+			return "null";
 
 		return FormatUtil.getFriendlyName(mat);
 	}
 
 	/**
-	 * Gets the friendly name of a material
+	 * Gets the friendly name of a Material.
 	 *
 	 * @param id Item ID
-	 * @return Friendly name
+	 * @return Friendly name, or "null" if not found
 	 */
-	public static String getMaterialName(int id)
+	public static final String getMaterialName(int id)
 	{
 		org.bukkit.Material mat = getMaterial(id);
 		if (mat == null)
-		{
-			return "Null";
-		}
+			return "null";
 
 		return FormatUtil.getFriendlyName(mat);
 	}

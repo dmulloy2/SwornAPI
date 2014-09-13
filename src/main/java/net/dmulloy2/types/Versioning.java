@@ -13,6 +13,9 @@ public class Versioning
 {
 	private Versioning() { }
 
+	/**
+	 * Represents a supported Minecraft version
+	 */
 	public static enum Version
 	{
 		UNKNOWN,
@@ -23,6 +26,12 @@ public class Versioning
 	}
 
 	private static Version version;
+
+	/**
+	 * Gets the {@link Version} that this server is currently running.
+	 *
+	 * @return The version
+	 */
 	public static final Version getVersion()
 	{
 		if (version == null)
@@ -41,14 +50,33 @@ public class Versioning
 		return version;
 	}
 
-	private static final Version SUPPORTED = Version.MC_17;
-	public static final Version getSupportedVersion()
+	/**
+	 * Gets the version string that this server is currently running.
+	 *
+	 * @return The version string
+	 */
+	public static String getVersionString()
 	{
-		return SUPPORTED;
+		switch (getVersion())
+		{
+			case MC_16:
+				return "Minecraft 1.6.x";
+			case MC_17:
+				return "Minecraft 1.7.x";
+			case MC_18:
+				return "Minecraft 1.8.x";
+			default:
+				return "Unknown";
+		}
 	}
 
+	/**
+	 * Whether or not the currently running version is supported.
+	 *
+	 * @return True if it is supported, false if not
+	 */
 	public static final boolean isSupported()
 	{
-		return getVersion() == SUPPORTED;
+		return getVersion() != Version.UNKNOWN;
 	}
 }

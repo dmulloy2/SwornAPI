@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
@@ -184,6 +183,8 @@ public class ReflectionUtil
 
 	// ---- Versioning
 
+	private static final Version SUPPORTED = Version.MC_17;
+
 	/**
 	 * Whether or not a {@link Player} can reliably be sent packets. This works
 	 * by checking the player's client {@link Version} against the supported
@@ -194,7 +195,7 @@ public class ReflectionUtil
 	 */
 	public static final boolean isReflectionSupported(Player player)
 	{
-		return Versioning.getSupportedVersion() == getClientVersion(player);
+		return SUPPORTED == getClientVersion(player);
 	}
 
 	/**
