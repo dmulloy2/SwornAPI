@@ -3,7 +3,10 @@
  */
 package net.dmulloy2.util;
 
+import java.util.List;
+
 import net.dmulloy2.types.Material;
+import net.dmulloy2.types.Transformation;
 
 import org.bukkit.Bukkit;
 
@@ -113,5 +116,17 @@ public class MaterialUtil
 			return "null";
 
 		return FormatUtil.getFriendlyName(mat);
+	}
+
+	public static final List<org.bukkit.Material> fromStrings(List<String> strings)
+	{
+		return ListUtil.transform(strings, new Transformation<String, org.bukkit.Material>()
+		{
+			@Override
+			public org.bukkit.Material transform(String string)
+			{
+				return MaterialUtil.getMaterial(string);
+			}
+		});
 	}
 }
