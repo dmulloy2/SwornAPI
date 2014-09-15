@@ -28,7 +28,7 @@ public class CmdHelp extends Command
 	{
 		super(plugin);
 		this.name = "help";
-		this.optionalArgs.add("page");
+		this.addOptionalArg("page");
 		this.description = "Shows " + plugin.getName() + " help";
 		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;

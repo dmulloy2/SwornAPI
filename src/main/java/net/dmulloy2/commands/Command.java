@@ -4,7 +4,10 @@
 package net.dmulloy2.commands;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
@@ -52,8 +55,10 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	protected List<String> requiredArgs;
-	protected List<String> optionalArgs;
+	protected @Deprecated List<String> requiredArgs;
+	protected @Deprecated List<String> optionalArgs;
+
+	protected SyntaxMap syntax;
 	protected List<String> aliases;
 
 	protected boolean hasSubCommands;
@@ -63,9 +68,11 @@ public abstract class Command implements CommandExecutor
 	public Command(SwornPlugin plugin)
 	{
 		this.plugin = plugin;
-		this.requiredArgs = new ArrayList<String>(2);
-		this.optionalArgs = new ArrayList<String>(2);
+		this.syntax = new SyntaxMap();
 		this.aliases = new ArrayList<String>(2);
+
+		this.requiredArgs = new LegacySyntax(true);
+		this.optionalArgs = new LegacySyntax(false);
 	}
 
 	// ---- Execution
@@ -90,7 +97,7 @@ public abstract class Command implements CommandExecutor
 			return;
 		}
 
-		if (requiredArgs.size() > args.length)
+		if (syntax.requiredSize() > args.length)
 		{
 			invalidArgs();
 			return;
@@ -249,11 +256,13 @@ public abstract class Command implements CommandExecutor
 
 		ret.append(name);
 
-		for (String s : optionalArgs)
-			ret.append(String.format(" &3[%s]", s));
-
-		for (String s : requiredArgs)
-			ret.append(String.format(" &3<%s>", s));
+		for (Entry<String, Boolean> entry : syntax)
+		{
+			if (entry.getValue())
+				ret.append(String.format(" &3<%s>", entry.getKey()));
+			else
+				ret.append(String.format(" &3[%s]", entry.getKey()));
+		}
 
 		if (displayHelp)
 			ret.append(" &e" + description);
@@ -423,6 +432,66 @@ public abstract class Command implements CommandExecutor
 		else
 		{
 			return sender.getName();
+		}
+	}
+
+	protected final void addRequiredArg(String arg)
+	{
+		syntax.addRequired(arg);
+	}
+
+	protected final void addOptionalArg(String arg)
+	{
+		syntax.addOptional(arg);
+	}
+
+	class SyntaxMap extends LinkedHashMap<String, Boolean> implements Iterable<Entry<String, Boolean>>
+	{
+		private static final long serialVersionUID = 1L;
+
+		public final void addRequired(String syntax)
+		{
+			super.put(syntax, true);
+		}
+
+		public final void addOptional(String syntax)
+		{
+			super.put(syntax, false);
+		}
+
+		public final int requiredSize()
+		{
+			int required = 0;
+			for (Entry<String, Boolean> entry : this)
+			{
+				if (entry.getValue())
+					required++;
+			}
+			return required;
+		}
+
+		@Override
+		public Iterator<Entry<String, Boolean>> iterator()
+		{
+			return entrySet().iterator();
+		}
+	}
+
+	class LegacySyntax extends ArrayList<String>
+	{
+		private static final long serialVersionUID = 1L;
+
+		private final boolean required;
+		public LegacySyntax(boolean required)
+		{
+			this.required = required;
+		}
+
+		@Override
+		public final boolean add(String string)
+		{
+			syntax.put(string, required);
+			return super.add(string);
 		}
 	}
 }
