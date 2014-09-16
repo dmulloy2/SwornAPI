@@ -99,7 +99,10 @@ public abstract class Command implements CommandExecutor
 
 		if (syntax.requiredSize() > args.length)
 		{
-			invalidArgs();
+			StringJoiner joiner = new StringJoiner("&c, &3");
+			joiner.appendAll(syntax.missingSyntax(args.length));
+
+			err("Invalid syntax! Missing arguments: {0}", joiner.toString());
 			return;
 		}
 
@@ -412,11 +415,6 @@ public abstract class Command implements CommandExecutor
 
 	// ---- Utility
 
-	protected final void invalidArgs()
-	{
-		err("Invalid arguments! Try: {0}", getUsageTemplate(false));
-	}
-
 	protected final String getName(CommandSender sender)
 	{
 		if (sender instanceof BlockCommandSender)
@@ -435,6 +433,20 @@ public abstract class Command implements CommandExecutor
 		}
 	}
 
+	// ---- Syntax
+
+	@Deprecated
+	protected final void invalidArgs()
+	{
+		err("Invalid arguments! Try: {0}", getUsageTemplate(false));
+	}
+
+	protected final void invalidSyntax()
+	{
+		String invalidSyntax = FormatUtil.format("&cError: &4Invalid syntax! Try: ");
+		sendMessage(new ComponentBuilder(invalidSyntax).addAll(getFancyUsageTemplate()).create());
+	}
+
 	protected final void addRequiredArg(String arg)
 	{
 		syntax.addRequired(arg);
@@ -445,7 +457,7 @@ public abstract class Command implements CommandExecutor
 		syntax.addOptional(arg);
 	}
 
-	class SyntaxMap extends LinkedHashMap<String, Boolean> implements Iterable<Entry<String, Boolean>>
+	public class SyntaxMap extends LinkedHashMap<String, Boolean> implements Iterable<Entry<String, Boolean>>
 	{
 		private static final long serialVersionUID = 1L;
 
@@ -470,6 +482,39 @@ public abstract class Command implements CommandExecutor
 			return required;
 		}
 
+		public final List<String> missingSyntax(int size)
+		{
+			List<String> ret = new ArrayList<>();
+
+			int required = requiredSize();
+			for (int i = size; i < required; i++)
+				ret.add(get(i));
+
+			return ret;
+		}
+
+		public final String get(int index)
+		{
+			return get(index, true);
+		}
+
+		public final String get(int index, boolean required)
+		{
+			int i = 0;
+
+			for (Entry<String, Boolean> entry : this)
+			{
+				if (entry.getValue() == required)
+				{
+					if (i == index)
+						return entry.getKey();
+					i++;
+				}
+			}
+
+			return null;
+		}
+
 		@Override
 		public Iterator<Entry<String, Boolean>> iterator()
 		{
@@ -477,7 +522,7 @@ public abstract class Command implements CommandExecutor
 		}
 	}
 
-	class LegacySyntax extends ArrayList<String>
+	public class LegacySyntax extends ArrayList<String>
 	{
 		private static final long serialVersionUID = 1L;
 
