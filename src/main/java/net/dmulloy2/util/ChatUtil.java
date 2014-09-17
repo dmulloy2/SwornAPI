@@ -3,11 +3,14 @@
  */
 package net.dmulloy2.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentSerializer;
-import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.reflection.WrappedChatPacket;
 import net.dmulloy2.reflection.WrappedChatSerializer;
+import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
@@ -39,30 +42,23 @@ public class ChatUtil
 		{
 			try
 			{
-				sendChatPacket((Player) sender, ComponentSerializer.toString(message));
-				return;
+				Player player = (Player) sender;
+				if (SUPPORTED_VERSIONS.contains(ReflectionUtil.getClientVersion(player)))
+				{
+					WrappedChatSerializer serializer = new WrappedChatSerializer();
+					Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
+
+					WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
+					packet.send(player);
+					return;
+				}
 			} catch (Throwable ex) { }
 		}
 
 		sender.sendMessage(BaseComponent.toLegacyText(message));
 	}
 
-	private static final void sendChatPacket(Player player, String json) throws ReflectionException
-	{
-		try
-		{
-			Validate.notNull(player, "player cannot be null!");
-			Validate.notEmpty(json, "json cannot be null or empty!");
-
-			WrappedChatSerializer serializer = new WrappedChatSerializer();
-			Object chatComponent = serializer.serialize(json);
-
-			WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
-			packet.send(player);
-		}
-		catch (Throwable ex)
-		{
-			throw ReflectionException.fromThrowable("Sending chat packet to " + player.getName(), ex);
-		}
-	}
+	private static final List<Version> SUPPORTED_VERSIONS = Arrays.asList(
+			Version.MC_17, Version.MC_18
+	);
 }
