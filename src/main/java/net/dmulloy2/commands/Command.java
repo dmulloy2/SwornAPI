@@ -102,7 +102,7 @@ public abstract class Command implements CommandExecutor
 			StringJoiner joiner = new StringJoiner("&c, &3");
 			joiner.appendAll(syntax.missingSyntax(args.length));
 
-			err("Invalid syntax! Missing arguments: {0}", joiner.toString());
+			err("Invalid syntax! Missing arguments: &3{0}", joiner.toString());
 			return;
 		}
 
