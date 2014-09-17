@@ -64,10 +64,7 @@ public class Util
 
 		// Then attempt to match
 		List<Player> players = Bukkit.matchPlayer(identifier);
-		if (! players.isEmpty())
-			return players.get(0);
-
-		return null;
+		return ! players.isEmpty() ? players.get(0) : null;
 	}
 
 	/**
@@ -96,10 +93,7 @@ public class Util
 			return Bukkit.getOfflinePlayer(UUID.fromString(identifier));
 
 		OfflinePlayer op = Bukkit.getOfflinePlayer(identifier);
-		if (op.hasPlayedBefore())
-			return op;
-
-		return null;
+		return op.hasPlayedBefore() ? op : null;
 	}
 
 	/**
@@ -156,8 +150,10 @@ public class Util
 		return false;
 	}
 
+	private static Random random;
+
 	/**
-	 * Returns a random integer out of <code>x</code>.
+	 * Returns a pseudorandom integer out of <code>x</code>.
 	 *
 	 * @param x Integer the random should be out of
 	 * @return A random integer out of x.
@@ -167,8 +163,10 @@ public class Util
 	{
 		Validate.isTrue(x > 0, "x cannot be negative!");
 
-		Random rand = new Random();
-		return rand.nextInt(x);
+		if (random == null)
+			random = new Random();
+
+		return random.nextInt(x);
 	}
 
 	/**
@@ -502,8 +500,8 @@ public class Util
 		Validate.notNull(second, "second cannot be null!");
 
 		T[] ret = Arrays.copyOf(first, first.length + second.length);
-        System.arraycopy(second, 0, ret, first.length, second.length);
-        return ret;
+		System.arraycopy(second, 0, ret, first.length, second.length);
+		return ret;
 	}
 
 	/**
@@ -515,11 +513,11 @@ public class Util
 	 */
 	public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name)
 	{
-        try
-        {
-            Enum.valueOf(clazz, name.toUpperCase());
-            return true;
-        } catch (Throwable ex) { }
-        return false;
-    }
+		try
+		{
+			Enum.valueOf(clazz, name.toUpperCase());
+			return true;
+		} catch (Throwable ex) { }
+		return false;
+	}
 }
