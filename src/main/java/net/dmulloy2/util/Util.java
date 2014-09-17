@@ -312,7 +312,12 @@ public class Util
 	}
 
 	/**
-	 * @see {@link Util#getWorkingJar(Class)
+	 * Gets the working jar of a given Class. This is the same as
+	 * {@link #getWorkingJar(Class)}, but the class name is passed through
+	 * {@link Class#forName(String)} first.
+	 *
+	 * @param clazzName Class name
+	 * @return The working jar, or null if not found
 	 */
 	public static final String getWorkingJar(String clazzName)
 	{
@@ -324,9 +329,10 @@ public class Util
 	}
 
 	/**
-	 * Gets the working jar of a given class.
+	 * Gets the working jar of a given {@link Class}.
 	 *
-	 * @return The name, null if not found
+	 * @param clazz Class to get the jar for
+	 * @return The working jar, or null if not found
 	 */
 	public static final String getWorkingJar(Class<?> clazz)
 	{
@@ -334,37 +340,10 @@ public class Util
 		{
 			String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
 			path = URLDecoder.decode(path, "UTF-8");
-			return path.substring(path.lastIndexOf("/") + 1);
+			path = path.substring(path.lastIndexOf("/") + 1);
+			return ! path.isEmpty() ? path : null;
 		} catch (Throwable ex) { }
 		return null;
-	}
-
-	/**
-	 * @deprecated Use {@link ListUtil#newList(Collection)}
-	 */
-	@Deprecated
-	public static <T> List<T> newList(Collection<? extends T> coll)
-	{
-		return ListUtil.newList(coll);
-	}
-
-	/**
-	 * @deprecated Use {@link ListUtil#toList(Object...)}
-	 */
-	@Deprecated
-	@SafeVarargs
-	public static <T> List<T> toList(T... objects)
-	{
-		return ListUtil.toList(objects);
-	}
-
-	/**
-	 * @deprecated Use {@link ListUtil#removeDuplicates(List)}
-	 */
-	@Deprecated
-	public static <T> List<T> removeDuplicates(List<T> list)
-	{
-		return ListUtil.removeDuplicates(list);
 	}
 
 	/**
@@ -452,9 +431,8 @@ public class Util
 	 *
 	 * @param block Block to set data of
 	 * @param data Data to set
-	 * @deprecated {@link Block#setData(byte)} is deprecated
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
 	public static void setData(Block block, MaterialData data)
 	{
 		Validate.notNull(block, "block cannot be null!");
