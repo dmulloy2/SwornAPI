@@ -85,9 +85,8 @@ public class ListUtil
 	 *
 	 * @param objects Array of <code>T</code> to create the list with
 	 * @return a new {@link List} from the given objects
-	 * @deprecated {@link Arrays#asList(Object...)} provides a much more efficient solution.
+	 * @see {@link Arrays#asList(Object...)}
 	 */
-	@Deprecated
 	@SafeVarargs
 	public static <T> List<T> toList(T... objects)
 	{
