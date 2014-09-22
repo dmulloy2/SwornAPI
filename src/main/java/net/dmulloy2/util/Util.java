@@ -58,13 +58,12 @@ public class Util
 	{
 		Validate.notNull(identifier, "identifier cannot be null!");
 
-		// Get by UUID first
+		// First, get by UUID
 		if (identifier.length() == 36)
 			return Bukkit.getPlayer(UUID.fromString(identifier));
 
-		// Then attempt to match
-		List<Player> players = Bukkit.matchPlayer(identifier);
-		return ! players.isEmpty() ? players.get(0) : null;
+		// Last, get by name
+		return Bukkit.getPlayer(identifier);
 	}
 
 	/**
@@ -120,6 +119,7 @@ public class Util
 	 *
 	 * @return A list of online Players
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<Player> getOnlinePlayers()
 	{
 		try
@@ -127,9 +127,9 @@ public class Util
 			// Provide backwards compatibility
 			Method getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
 			if (getOnlinePlayers.getReturnType() != Collection.class)
-				return ListUtil.toList((Player[]) getOnlinePlayers.invoke(null));
+				return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
 		} catch (Throwable ex) { }
-		return ListUtil.newList(Bukkit.getOnlinePlayers());
+		return (List<Player>) Bukkit.getOnlinePlayers();
 	}
 
 	/**

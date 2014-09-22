@@ -4,6 +4,7 @@
 package net.dmulloy2.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +23,6 @@ import net.dmulloy2.types.IPermission;
 import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
-import net.dmulloy2.util.ListUtil;
 import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
 
@@ -311,9 +311,13 @@ public abstract class Command implements CommandExecutor
 		return builder.create();
 	}
 
+	private List<String> descriptionList;
+
 	public List<String> getDescription()
 	{
-		return ListUtil.toList(description);
+		if (descriptionList == null)
+			descriptionList = Arrays.asList(description);
+		return descriptionList;
 	}
 
 	// ---- Sub Commands

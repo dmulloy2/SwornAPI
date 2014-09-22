@@ -4,6 +4,7 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,20 +85,15 @@ public class ListUtil
 	 *
 	 * @param objects Array of <code>T</code> to create the list with
 	 * @return a new {@link List} from the given objects
+	 * @deprecated {@link Arrays#asList(Object...)} provides a much more efficient solution.
 	 */
+	@Deprecated
 	@SafeVarargs
 	public static <T> List<T> toList(T... objects)
 	{
 		Validate.notNull(objects, "objects cannot be null!");
-
-		List<T> ret = new ArrayList<>();
-
-		for (T t : objects)
-			ret.add(t);
-
-		return ret;
+		return Arrays.asList(objects);
 	}
-
 
 	/**
 	 * Transforms a list of {@code O} into a list of {@code T}.

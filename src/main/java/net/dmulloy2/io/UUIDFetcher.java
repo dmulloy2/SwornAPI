@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,6 @@ import java.util.concurrent.Callable;
 
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
-import net.dmulloy2.util.ListUtil;
 
 import org.apache.commons.lang.Validate;
 import org.json.simple.JSONArray;
@@ -117,7 +117,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 				return cache.get(name);
 		}
 
-		UUIDFetcher fetcher = new UUIDFetcher(ListUtil.toList(name));
+		UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 		return fetcher.call().get(name);
 	}
 }
