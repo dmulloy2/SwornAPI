@@ -113,6 +113,8 @@ public class Util
 		return player.getUniqueId();
 	}
 
+	private static Method getOnlinePlayers;
+
 	/**
 	 * Gets a list of online {@link Player}s. This also provides backwards
 	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
@@ -125,7 +127,8 @@ public class Util
 		try
 		{
 			// Provide backwards compatibility
-			Method getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
+			if (getOnlinePlayers == null)
+				getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
 			if (getOnlinePlayers.getReturnType() != Collection.class)
 				return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
 		} catch (Throwable ex) { }
