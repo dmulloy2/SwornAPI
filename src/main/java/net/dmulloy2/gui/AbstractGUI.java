@@ -39,11 +39,13 @@ public abstract class AbstractGUI
 		Validate.isTrue(size <= 54, "Inventory size is too large!");
 		Validate.isTrue(size % 9 == 0, "Inventory size must be divisible by 9!");
 
-		// Truncate title
-		String title = FormatUtil.format(getTitle());
-		if (title.length() > 36)
+		// Validate title
+		String title = getTitle();
+		Validate.notNull(title, "Inventory title cannot be null!");
+		title = FormatUtil.format(getTitle());
+		if (title.length() > 32)
 		{
-			title = title.substring(0, 35);
+			title = title.substring(0, 31);
 			title = title + "\u2026";
 		}
 
