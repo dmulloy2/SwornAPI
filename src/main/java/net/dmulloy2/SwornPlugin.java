@@ -25,8 +25,8 @@ import net.dmulloy2.commands.Command;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
-import net.dmulloy2.util.FormatUtil;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -43,7 +43,7 @@ public abstract class SwornPlugin extends JavaPlugin
 
 	public String getPrefix()
 	{
-		return FormatUtil.format("&e");
+		return ChatColor.YELLOW.toString();
 	}
 
 	public List<String> getExtraHelp()

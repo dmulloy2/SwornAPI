@@ -5,9 +5,7 @@ package net.dmulloy2.gui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-import lombok.Getter;
 import net.dmulloy2.SwornPlugin;
 
 import org.apache.commons.lang.Validate;
@@ -18,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * @author dmulloy2
@@ -25,67 +24,31 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 public class GUIHandler implements Listener
 {
-	private static final @Getter GUIHandler instance = new GUIHandler();
-	private static Map<UUID, AbstractGUI> openGUI = new HashMap<>();
+	private static GUIHandler instance;
+	private Map<String, AbstractGUI> open;
 
-	/**
-	 * Registers GUI events for a given SwornPlugin
-	 *
-	 * @param plugin Plugin to register events for
-	 */
-	public static void registerEvents(SwornPlugin plugin)
+	public GUIHandler(SwornPlugin plugin)
 	{
-		Validate.notNull(plugin, "plugin cannot be null!");
-		plugin.getServer().getPluginManager().registerEvents(instance, plugin);
+		this.open = new HashMap<>();
+
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		instance = this;
 	}
 
 	/**
-	 * Opens a given GUI for a given {@link Player}
+	 * Opens a given GUI for a given {@link Player}.
 	 *
 	 * @param player Player to open GUI for
 	 * @param gui GUI to open
 	 */
-	public static void openGUI(Player player, AbstractGUI gui)
+	public void open(Player player, AbstractGUI gui)
 	{
 		Validate.notNull(player, "player cannot be null!");
 		Validate.notNull(gui, "gui cannot be null!");
-		openGUI.put(player.getUniqueId(), gui);
+		open.put(player.getName(), gui);
 	}
 
-	/**
-	 * Whether or not a given {@link Player} is viewing a GUI
-	 *
-	 * @param player Player in question
-	 * @return Whether or not they are viewing a GUI
-	 */
-	public static boolean isBrowsingGUI(Player player)
-	{
-		Validate.notNull(player, "player cannot be null!");
-		return openGUI.containsKey(player.getUniqueId());
-	}
-
-	/**
-	 * Removes a browsing {@link Player}
-	 *
-	 * @param player Player to remove
-	 */
-	public static void removeBrowsing(Player player)
-	{
-		if (player != null)
-			openGUI.remove(player.getUniqueId());
-	}
-
-	/**
-	 * Gets the GUI a {@link Player} is viewing.
-	 *
-	 * @param player Player viewing a GUI
-	 * @return The GUI, or null if none is found
-	 */
-	public static AbstractGUI getGUI(Player player)
-	{
-		Validate.notNull(player, "player cannot be null!");
-		return openGUI.get(player.getUniqueId());
-	}
+	// ---- Listeners
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent event)
@@ -94,9 +57,9 @@ public class GUIHandler implements Listener
 		if (clicker instanceof Player)
 		{
 			Player player = (Player) clicker;
-			if (GUIHandler.isBrowsingGUI(player))
+			if (open.containsKey(player.getName()))
 			{
-				AbstractGUI gui = GUIHandler.getGUI(player);
+				AbstractGUI gui = open.get(player.getName());
 				gui.onInventoryClick(event);
 			}
 		}
@@ -109,12 +72,47 @@ public class GUIHandler implements Listener
 		if (closer instanceof Player)
 		{
 			Player player = (Player) closer;
-			if (GUIHandler.isBrowsingGUI(player))
+			if (open.containsKey(player.getName()))
 			{
-				AbstractGUI gui = GUIHandler.getGUI(player);
+				AbstractGUI gui = open.get(player.getName());
 				gui.onInventoryClose(event);
-				removeBrowsing(player);
+				open.remove(player.getName());
 			}
 		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerQuit(PlayerQuitEvent event)
+	{
+		Player player = event.getPlayer();
+		if (open.containsKey(player.getName()))
+		{
+			player.closeInventory();
+			open.remove(player.getName());
+		}
+	}
+
+	// ---- Legacy Methods
+
+	/**
+	 * @deprecated Legacy method. Use reference-based instances.
+	 */
+	@Deprecated
+	public static GUIHandler getInstance()
+	{
+		return instance;
+	}
+
+	@Deprecated
+	public static void registerEvents(SwornPlugin plugin)
+	{
+		Validate.notNull(plugin, "plugin cannot be null!");
+		new GUIHandler(plugin);
+	}
+
+	@Deprecated
+	public static void openGUI(Player player, AbstractGUI gui)
+	{
+		instance.open(player, gui);
 	}
 }
