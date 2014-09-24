@@ -41,7 +41,7 @@ public class ResourceHandler
 		}
 		catch (MissingResourceException ex)
 		{
-			plugin.getLogger().log(Level.SEVERE, "Could not find resource bundle: messages.properties");
+			plugin.getLogHandler().log(Level.SEVERE, "Could not find resource bundle: {0}", ex.getKey());
 		}
 	}
 
