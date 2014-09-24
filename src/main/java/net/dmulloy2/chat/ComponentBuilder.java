@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import net.dmulloy2.util.ChatUtil;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

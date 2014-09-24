@@ -8,9 +8,9 @@ import java.util.List;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ChatUtil;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.CommandVisibility;
-import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 
 /**

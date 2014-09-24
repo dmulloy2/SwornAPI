@@ -24,15 +24,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class GUIHandler implements Listener
 {
-	private static GUIHandler instance;
-	private Map<String, AbstractGUI> open;
+	private final Map<String, AbstractGUI> open;
 
 	public GUIHandler(SwornPlugin plugin)
 	{
 		this.open = new HashMap<>();
-
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		instance = this;
 	}
 
 	/**
@@ -90,29 +87,5 @@ public class GUIHandler implements Listener
 			player.closeInventory();
 			open.remove(player.getName());
 		}
-	}
-
-	// ---- Legacy Methods
-
-	/**
-	 * @deprecated Legacy method. Use reference-based instances.
-	 */
-	@Deprecated
-	public static GUIHandler getInstance()
-	{
-		return instance;
-	}
-
-	@Deprecated
-	public static void registerEvents(SwornPlugin plugin)
-	{
-		Validate.notNull(plugin, "plugin cannot be null!");
-		new GUIHandler(plugin);
-	}
-
-	@Deprecated
-	public static void openGUI(Player player, AbstractGUI gui)
-	{
-		instance.open(player, gui);
 	}
 }

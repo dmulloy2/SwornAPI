@@ -45,15 +45,6 @@ public class ResourceHandler
 		}
 	}
 
-	/**
-	 * @deprecated Use {@link #getMessage(String)} instead
-	 */
-	@Deprecated
-	public ResourceBundle getMessages()
-	{
-		return messages;
-	}
-
 	private boolean bundleWarning;
 
 	/**

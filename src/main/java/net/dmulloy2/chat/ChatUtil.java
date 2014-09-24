@@ -1,13 +1,12 @@
 /**
  * (c) 2014 dmulloy2
  */
-package net.dmulloy2.util;
+package net.dmulloy2.chat;
 
 import java.util.Arrays;
 import java.util.List;
 
-import net.dmulloy2.chat.BaseComponent;
-import net.dmulloy2.chat.ComponentSerializer;
+import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.reflection.WrappedChatPacket;
 import net.dmulloy2.reflection.WrappedChatSerializer;
 import net.dmulloy2.types.Versioning.Version;

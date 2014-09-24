@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.util.ReflectionUtil;
 
 import org.bukkit.entity.Player;
 

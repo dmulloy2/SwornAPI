@@ -48,24 +48,6 @@ public class MyMaterial
 		this(material, (short) 0, true);
 	}
 
-	/**
-	 * @deprecated ID's are deprecated
-	 */
-	@Deprecated
-	public MyMaterial(int id, short data)
-	{
-		this(MaterialUtil.getMaterial(id), data);
-	}
-
-	/**
-	 * @deprecated ID's are deprecated
-	 */
-	@Deprecated
-	public MyMaterial(int id)
-	{
-		this(id, (short) 0);
-	}
-
 	// --- ItemStacks
 
 	/**

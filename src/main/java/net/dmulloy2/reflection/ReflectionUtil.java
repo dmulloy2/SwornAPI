@@ -1,7 +1,7 @@
 /**
  * (c) 2014 dmulloy2
  */
-package net.dmulloy2.util;
+package net.dmulloy2.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

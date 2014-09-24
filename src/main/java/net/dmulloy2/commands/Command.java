@@ -13,6 +13,7 @@ import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ChatUtil;
 import net.dmulloy2.chat.ClickEvent;
 import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.chat.HoverEvent;
@@ -21,7 +22,6 @@ import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.types.IPermission;
 import net.dmulloy2.types.StringJoiner;
-import net.dmulloy2.util.ChatUtil;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
@@ -55,9 +55,6 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	protected @Deprecated List<String> requiredArgs;
-	protected @Deprecated List<String> optionalArgs;
-
 	protected SyntaxMap syntax;
 	protected List<String> aliases;
 
@@ -70,9 +67,6 @@ public abstract class Command implements CommandExecutor
 		this.plugin = plugin;
 		this.syntax = new SyntaxMap();
 		this.aliases = new ArrayList<String>(2);
-
-		this.requiredArgs = new LegacySyntax(true);
-		this.optionalArgs = new LegacySyntax(false);
 	}
 
 	// ---- Execution
@@ -439,12 +433,6 @@ public abstract class Command implements CommandExecutor
 
 	// ---- Syntax
 
-	@Deprecated
-	protected final void invalidArgs()
-	{
-		err("Invalid arguments! Try: {0}", getUsageTemplate(false));
-	}
-
 	protected final void invalidSyntax()
 	{
 		String invalidSyntax = FormatUtil.format("&cError: &4Invalid syntax! Try: ");
@@ -523,24 +511,6 @@ public abstract class Command implements CommandExecutor
 		public Iterator<Entry<String, Boolean>> iterator()
 		{
 			return entrySet().iterator();
-		}
-	}
-
-	public class LegacySyntax extends ArrayList<String>
-	{
-		private static final long serialVersionUID = 1L;
-
-		private final boolean required;
-		public LegacySyntax(boolean required)
-		{
-			this.required = required;
-		}
-
-		@Override
-		public final boolean add(String string)
-		{
-			syntax.put(string, required);
-			return super.add(string);
 		}
 	}
 }
