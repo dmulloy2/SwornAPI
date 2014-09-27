@@ -3,61 +3,70 @@
  */
 package net.dmulloy2.types;
 
+import org.apache.commons.lang.Validate;
+
 /**
  * StringJoiner is used to construct a sequence of characters separated by a
- * delimiter
+ * delimiter.
  *
  * @author dmulloy2
  */
 
 public class StringJoiner
 {
-	private static final String DEFAULT_GLUE = " ";
+	public static final String DEFAULT_DELIMITER = " ";
+	public static final StringJoiner SPACE = new StringJoiner();
 
-	private String glue;
+	private String delimiter;
 	private StringBuilder builder;
 
 	/**
-	 * Constructs a new StringJoiner with the default glue.
+	 * Constructs a new StringJoiner with the default delimiter.
 	 */
 	public StringJoiner()
 	{
-		this.glue = DEFAULT_GLUE;
+		this.delimiter = DEFAULT_DELIMITER;
 		this.builder = new StringBuilder();
 	}
 
 	/**
-	 * Constructs a new StringJoiner with a given delimiter
+	 * Constructs a new StringJoiner with a given delimiter.
 	 *
-	 * @param glue Delimiter
+	 * @param delimiter Delimiter
 	 */
-	public StringJoiner(String glue)
+	public StringJoiner(String delimiter)
 	{
-		this.glue = glue;
+		Validate.notNull(delimiter, "delimiter cannot be null!");
+
+		this.delimiter = delimiter;
 		this.builder = new StringBuilder();
 	}
 
 	/**
-	 * Appends a given {@link String} to this StringJoiner
+	 * Appends a given {@link String} to this StringJoiner.
 	 *
 	 * @param string String to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner append(final String string)
 	{
+		Validate.notNull(string, "string cannot be null!");
+
 		if (! string.isEmpty())
-			builder.append(string + glue);
+			builder.append(string + delimiter);
 		return this;
 	}
 
 	/**
-	 * Appends an {@link Iterable} set of {@link String}s
+	 * Appends an {@link Iterable} set of {@link String}s.
 	 *
 	 * @param strings Strings to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner appendAll(final Iterable<String> strings)
 	{
+		Validate.notNull(strings, "strings cannot be null!");
+
 		for (String string : strings)
 		{
 			append(string);
@@ -67,13 +76,15 @@ public class StringJoiner
 	}
 
 	/**
-	 * Appends a given array of {@link String}s to this StringJoiner
+	 * Appends a given array of {@link String}s to this StringJoiner.
 	 *
-	 * @param strings - Strings to append
+	 * @param strings Strings to append
 	 * @return This, for chaining
 	 */
 	public final StringJoiner appendAll(final String... strings)
 	{
+		Validate.noNullElements(strings, "strings cannot have null elements!");
+
 		for (String string : strings)
 		{
 			append(string);
@@ -83,7 +94,7 @@ public class StringJoiner
 	}
 
 	/**
-	 * Resets this {@link StringJoiner}'s string value
+	 * Resets this {@link StringJoiner}'s string value.
 	 *
 	 * @return This, for chaining
 	 */
@@ -97,12 +108,14 @@ public class StringJoiner
 	 * Sets a new delimiter for this {@link StringJoiner} while keeping the
 	 * string value.
 	 *
-	 * @param glue New delimiter
+	 * @param delimiter New delimiter
 	 * @return This, for chaining
 	 */
-	public final StringJoiner setGlue(final String glue)
+	public final StringJoiner setDelimiter(final String delimiter)
 	{
-		this.glue = glue;
+		Validate.notNull(delimiter, "delimiter cannot be null!");
+
+		this.delimiter = delimiter;
 		return this;
 	}
 
@@ -112,8 +125,8 @@ public class StringJoiner
 	@Override
 	public final String toString()
 	{
-		if (builder.lastIndexOf(glue) >= 0)
-			builder.delete(builder.lastIndexOf(glue), builder.length());
+		if (builder.lastIndexOf(delimiter) >= 0)
+			builder.delete(builder.lastIndexOf(delimiter), builder.length());
 
 		return builder.toString();
 	}

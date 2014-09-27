@@ -181,16 +181,31 @@ public class FormatUtil
 	 * Joins together multiple given strings with the given glue using the
 	 * {@link StringJoiner} class.
 	 *
-	 * @param glue String to join the args together with
+	 * @param delimiter String to join the args together with
 	 * @param args Strings to join together
 	 * @return Multiple strings joined together with the given glue.
 	 * @see {@link StringJoiner}
 	 */
-	public static String join(String glue, String... args)
+	public static String join(String delimiter, String... args)
 	{
-		Validate.notNull(glue, "glue cannot be null");
+		Validate.notNull(delimiter, "glue cannot be null");
 		Validate.noNullElements(args, "args cannot have null elements!");
 
-		return new StringJoiner(glue).appendAll(args).toString();
+		return new StringJoiner(delimiter).appendAll(args).toString();
+	}
+
+	/**
+	 * Joins together multiple given strings with a single space using the
+	 * {@link StringJoiner} class.
+	 *
+	 * @param args Strings to join together
+	 * @return Multiple strings joined together with a space
+	 * @see {@link StringJoiner}
+	 */
+	public static String join(String... args)
+	{
+		Validate.noNullElements(args, "args cannot have null elements!");
+
+		return StringJoiner.SPACE.newString().appendAll(args).toString();
 	}
 }

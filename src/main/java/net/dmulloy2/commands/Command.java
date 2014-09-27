@@ -371,7 +371,7 @@ public abstract class Command implements CommandExecutor
 	protected final int argAsInt(int arg, boolean msg)
 	{
 		int ret = -1;
-		if (args.length >= arg)
+		if (args.length > arg)
 			ret = NumberUtil.toInt(args[arg]);
 
 		if (msg && ret == - 1)
@@ -383,7 +383,7 @@ public abstract class Command implements CommandExecutor
 	protected final double argAsDouble(int arg, boolean msg)
 	{
 		double ret = -1.0D;
-		if (args.length >= arg)
+		if (args.length > arg)
 			ret = NumberUtil.toDouble(args[arg]);
 
 		if (msg && ret == -1.0D)
@@ -392,9 +392,14 @@ public abstract class Command implements CommandExecutor
 		return ret;
 	}
 
-	protected final boolean argAsBoolean(int arg)
+	protected boolean argAsBoolean(int arg)
 	{
-		return Util.toBoolean(args[arg]);
+		return argAsBoolean(arg, false);
+	}
+
+	protected boolean argAsBoolean(int arg, boolean def)
+	{
+		return args.length > arg ? Util.toBoolean(args[arg]) : def;
 	}
 
 	protected final String getFinalArg(int start)
