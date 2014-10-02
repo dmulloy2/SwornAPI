@@ -1,6 +1,7 @@
 package net.dmulloy2.io;
 
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -20,6 +21,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.common.collect.ImmutableList;
 
@@ -54,7 +56,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	}
 
 	@Override
-	public Map<String, UUID> call() throws Exception
+	public Map<String, UUID> call() throws IOException, ParseException
 	{
 		Map<String, UUID> uuidMap = new HashMap<>();
 		for (List<String> names : namesList)
@@ -79,7 +81,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return uuidMap;
 	}
 
-	private static final void writeBody(HttpURLConnection connection, String body) throws Exception
+	private static final void writeBody(HttpURLConnection connection, String body) throws IOException
 	{
 		DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
 		writer.write(body.getBytes());
@@ -87,7 +89,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		writer.close();
 	}
 
-	private static final HttpURLConnection createConnection() throws Exception
+	private static final HttpURLConnection createConnection() throws IOException
 	{
 		URL url = new URL(PROFILE_URL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -104,7 +106,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return JSONValue.toJSONString(names);
 	}
 
-	public static final UUID getUUID(String name) throws Exception
+	public static final UUID getUUID(String name) throws IOException, ParseException
 	{
 		Validate.notNull(name, "name cannot be null!");
 		if (name.length() == 36)
