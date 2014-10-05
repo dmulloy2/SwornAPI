@@ -83,15 +83,16 @@ public class Util
 	{
 		Validate.notNull(identifier, "identifier cannot be null!");
 
-		// Check online players first
+		// First, check online players
 		Player player = matchPlayer(identifier);
 		if (player != null)
 			return player;
 
-		// Then check UUID
+		// Then, check UUID
 		if (identifier.length() == 36)
 			return Bukkit.getOfflinePlayer(UUID.fromString(identifier));
 
+		// Last, get by name
 		OfflinePlayer op = Bukkit.getOfflinePlayer(identifier);
 		return op.hasPlayedBefore() ? op : null;
 	}
@@ -134,24 +135,6 @@ public class Util
 				return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
 		} catch (Throwable ex) { }
 		return (List<Player>) Bukkit.getOnlinePlayers();
-	}
-
-	/**
-	 * Whether or not a player is banned.
-	 *
-	 * @param identifier Player name or UUID
-	 * @return True if the player is banned, false if not
-	 */
-	public static boolean isBanned(String identifier)
-	{
-		Validate.notNull(identifier, "identifier cannot be null!");
-		for (OfflinePlayer banned : Bukkit.getBannedPlayers())
-		{
-			if (identifier.equalsIgnoreCase(banned.getName()) || identifier.equals(getUniqueId(banned)))
-				return true;
-		}
-
-		return false;
 	}
 
 	private static Random random;
