@@ -23,7 +23,7 @@ public class ItemParser
 {
 	private final SwornPlugin plugin;
 
-	public ItemStack parse(String string)
+	public final ItemStack parse(String string)
 	{
 		try
 		{
@@ -36,7 +36,20 @@ public class ItemParser
 		}
 	}
 
-	public List<ItemStack> parse(List<String> strings)
+	public static final ItemStack parse(SwornPlugin plugin, String string)
+	{
+		try
+		{
+			return ItemUtil.readItem(string);
+		}
+		catch (Throwable ex)
+		{
+			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "parsing item \"" + string + "\""));
+			return null;
+		}
+	}
+
+	public final List<ItemStack> parse(List<String> strings)
 	{
 		return ListUtil.transform(strings, new Transformation<String, ItemStack>()
 		{
@@ -44,6 +57,18 @@ public class ItemParser
 			public ItemStack transform(String string)
 			{
 				return parse(string);
+			}
+		});
+	}
+
+	public static final List<ItemStack> parse(final SwornPlugin plugin, List<String> strings)
+	{
+		return ListUtil.transform(strings, new Transformation<String, ItemStack>()
+		{
+			@Override
+			public ItemStack transform(String string)
+			{
+				return parse(plugin, string);
 			}
 		});
 	}
