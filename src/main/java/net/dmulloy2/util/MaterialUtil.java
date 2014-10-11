@@ -3,10 +3,10 @@
  */
 package net.dmulloy2.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.dmulloy2.types.Material;
-import net.dmulloy2.types.Transformation;
 
 import org.bukkit.Bukkit;
 
@@ -85,7 +85,18 @@ public class MaterialUtil
 		if (mat != null)
 			return mat.getId();
 
-		return -1;
+		return - 1;
+	}
+
+	/**
+	 * Gets the friendly name of a Material.
+	 *
+	 * @param mat Material
+	 * @return Friendly name
+	 */
+	public static final String getMaterialName(org.bukkit.Material mat)
+	{
+		return FormatUtil.getFriendlyName(mat);
 	}
 
 	/**
@@ -100,7 +111,7 @@ public class MaterialUtil
 		if (mat == null)
 			return "null";
 
-		return FormatUtil.getFriendlyName(mat);
+		return getMaterialName(mat);
 	}
 
 	/**
@@ -115,18 +126,26 @@ public class MaterialUtil
 		if (mat == null)
 			return "null";
 
-		return FormatUtil.getFriendlyName(mat);
+		return getMaterialName(mat);
 	}
 
+	/**
+	 * Converts a list of strings into a list of Materials.
+	 *
+	 * @param strings List to convert
+	 * @return Converted list
+	 */
 	public static final List<org.bukkit.Material> fromStrings(List<String> strings)
 	{
-		return ListUtil.transform(strings, new Transformation<String, org.bukkit.Material>()
+		List<org.bukkit.Material> ret = new ArrayList<>();
+
+		for (String string : strings)
 		{
-			@Override
-			public org.bukkit.Material transform(String string)
-			{
-				return MaterialUtil.getMaterial(string);
-			}
-		});
+			org.bukkit.Material material = getMaterial(string);
+			if (material != null)
+				ret.add(material);
+		}
+
+		return ret;
 	}
 }
