@@ -85,7 +85,7 @@ public class MaterialUtil
 		if (mat != null)
 			return mat.getId();
 
-		return - 1;
+		return -1;
 	}
 
 	/**
