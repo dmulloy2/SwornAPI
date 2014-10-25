@@ -3,6 +3,9 @@
  */
 package net.dmulloy2.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import org.bukkit.Bukkit;
 
 /**
@@ -16,13 +19,17 @@ public class Versioning
 	/**
 	 * Represents a supported Minecraft version
 	 */
+	@Getter
+	@AllArgsConstructor
 	public static enum Version
 	{
-		UNKNOWN,
-		MC_16,
-		MC_17,
-		MC_18,
+		UNKNOWN("Unknown"),
+		MC_16("Minecraft 1.6.x"),
+		MC_17("Minecraft 1.7.x"),
+		MC_18("Minecraft 1.8.x"),
 		;
+
+		private final String name;
 	}
 
 	private static Version version;
@@ -57,17 +64,7 @@ public class Versioning
 	 */
 	public static String getVersionString()
 	{
-		switch (getVersion())
-		{
-			case MC_16:
-				return "Minecraft 1.6.x";
-			case MC_17:
-				return "Minecraft 1.7.x";
-			case MC_18:
-				return "Minecraft 1.8.x";
-			default:
-				return "Unknown";
-		}
+		return getVersion().getName();
 	}
 
 	/**
