@@ -6,6 +6,7 @@ package net.dmulloy2.chat;
 import java.util.Arrays;
 import java.util.List;
 
+import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.reflection.WrappedChatPacket;
 import net.dmulloy2.reflection.WrappedChatSerializer;
@@ -55,6 +56,41 @@ public class ChatUtil
 		}
 
 		sender.sendMessage(BaseComponent.toLegacyText(message));
+	}
+
+	/**
+	 * Sends a JSON chat message to a {@link CommandSender}. If message sending
+	 * fails, a {@link ReflectionException} will be thrown.
+	 *
+	 * @param sender CommandSender to send the message to
+	 * @param message Message to send
+	 * @throws ReflectionException If sending fails
+	 */
+	public static final void sendMessageRaw(CommandSender sender, BaseComponent... message) throws ReflectionException
+	{
+		Validate.notNull(sender, "sender cannot be null!");
+
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
+			Version version = ReflectionUtil.getClientVersion(player);
+			if (SUPPORTED_VERSIONS.contains(version))
+			{
+				WrappedChatSerializer serializer = new WrappedChatSerializer();
+				Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
+
+				WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
+				packet.send(player);
+			}
+			else
+			{
+				throw new ReflectionException("Version " + version.getName() + " is not supported.");
+			}
+		}
+		else
+		{
+			throw new ReflectionException("JSON chat messages can only be sent to players.");
+		}
 	}
 
 	private static final List<Version> SUPPORTED_VERSIONS = Arrays.asList(

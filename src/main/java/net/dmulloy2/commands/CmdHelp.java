@@ -5,6 +5,7 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
@@ -12,6 +13,7 @@ import net.dmulloy2.chat.ChatUtil;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.Util;
 
 /**
  * Generic help command.
@@ -44,22 +46,32 @@ public class CmdHelp extends Command
 			{
 				index = Integer.parseInt(args[pageArgIndex]);
 				if (index < 1 || index > getPageCount())
-					throw new IndexOutOfBoundsException();
+				{
+					err("&4There is no page with the index &c{0}&4.", index);
+					return;
+				}
 			}
 			catch (NumberFormatException ex)
 			{
 				err("&c{0} &4is not a number.", args[0]);
 				return;
 			}
-			catch (IndexOutOfBoundsException ex)
-			{
-				err("&4There is no page with the index &c{0}&4.", args[0]);
-				return;
-			}
 		}
 
-		for (BaseComponent[] components : getPage(index))
-			ChatUtil.sendMessage(sender, components);
+		try
+		{
+			// Attempt to send fancy help
+			for (BaseComponent[] components : getPage(index))
+				ChatUtil.sendMessageRaw(sender, components);
+		}
+		catch (Throwable ex)
+		{
+			// Fallback to legacy help
+			for (String line : getLegacyPage(index))
+				sendMessage(line);
+
+			plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "sending help to " + sender.getName()));
+		}
 	}
 
 	public int getPageCount()
@@ -69,7 +81,7 @@ public class CmdHelp extends Command
 
 	public int getListSize()
 	{
-		return buildHelpMenu().size();
+		return getHelpMenu().size();
 	}
 
 	public List<BaseComponent[]> getPage(int index)
@@ -86,7 +98,26 @@ public class CmdHelp extends Command
 		return lines;
 	}
 
+	public List<String> getLegacyPage(int index)
+	{
+		List<String> lines = new ArrayList<>();
+
+		lines.addAll(getLegacyHeader(index));
+		lines.addAll(getLegacyLines((index - 1) * linesPerPage, index * linesPerPage));
+
+		String footer = getLegacyFooter();
+		if (! footer.isEmpty())
+			lines.add(footer);
+
+		return lines;
+	}
+
 	public List<BaseComponent[]> getHeader(int index)
+	{
+		return TextComponent.fromLegacyList(getLegacyHeader(index));
+	}
+
+	public List<String> getLegacyHeader(int index)
 	{
 		List<String> header = new ArrayList<>();
 
@@ -96,17 +127,30 @@ public class CmdHelp extends Command
 			header.add(FormatUtil.format(extra));
 
 		header.add(FormatUtil.format("&eKey: &3<required> [optional]"));
-
-		return TextComponent.fromLegacyList(header);
+		return header;
 	}
 
 	public List<BaseComponent[]> getLines(int startIndex, int endIndex)
 	{
+		List<BaseComponent[]> helpMenu = getHelpMenu();
 		List<BaseComponent[]> lines = new ArrayList<>();
 
 		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
 		{
-			lines.add(buildHelpMenu().get(i));
+			lines.add(helpMenu.get(i));
+		}
+
+		return lines;
+	}
+
+	public List<String> getLegacyLines(int startIndex, int endIndex)
+	{
+		List<String> helpMenu = getLegacyHelpMenu();
+		List<String> lines = new ArrayList<>();
+
+		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
+		{
+			lines.add(helpMenu.get(i));
 		}
 
 		return lines;
@@ -117,7 +161,13 @@ public class CmdHelp extends Command
 		return TextComponent.fromLegacyText(FormatUtil.format("&eHover to see command information. Click to insert into chat."));
 	}
 
-	private final List<BaseComponent[]> buildHelpMenu()
+	public String getLegacyFooter()
+	{
+		// No footer
+		return "";
+	}
+
+	private final List<BaseComponent[]> getHelpMenu()
 	{
 		List<BaseComponent[]> ret = new ArrayList<>();
 
@@ -140,6 +190,35 @@ public class CmdHelp extends Command
 					ret.addAll(cmd.getFancySubCommandHelp(true));
 				else
 					ret.add(cmd.getFancyUsageTemplate(true));
+			}
+		}
+
+		return ret;
+	}
+
+	private final List<String> getLegacyHelpMenu()
+	{
+		List<String> ret = new ArrayList<>();
+
+		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
+		{
+			if (cmd.isVisibleTo(sender))
+			{
+				if (cmd.hasSubCommands())
+					ret.addAll(cmd.getSubCommandHelp(true));
+				else
+					ret.add(cmd.getUsageTemplate(true));
+			}
+		}
+
+		for (Command cmd : plugin.getCommandHandler().getRegisteredCommands())
+		{
+			if (cmd.isVisibleTo(sender))
+			{
+				if (cmd.hasSubCommands())
+					ret.addAll(cmd.getSubCommandHelp(true));
+				else
+					ret.add(cmd.getUsageTemplate(true));
 			}
 		}
 

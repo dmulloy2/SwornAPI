@@ -4,12 +4,12 @@
 package net.dmulloy2.exception;
 
 /**
- * An {@link Exception} that results from bad time.
- * 
+ * An Exception that results from bad time.
+ *
  * @author dmulloy2
  */
 
-public class BadTimeException extends Exception
+public class BadTimeException extends RuntimeException
 {
 	private static final long serialVersionUID = 5846361750537427952L;
 
@@ -23,7 +23,7 @@ public class BadTimeException extends Exception
 
 	/**
 	 * Constructs a BadTimeException with a given message.
-	 * 
+	 *
 	 * @param message Exception message
 	 */
 	public BadTimeException(String message)
@@ -33,7 +33,7 @@ public class BadTimeException extends Exception
 
 	/**
 	 * Constructs a BadTimeException with a given message and cause.
-	 * 
+	 *
 	 * @param message Exception message
 	 * @param cause {@link Throwable} cause
 	 */

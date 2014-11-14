@@ -10,7 +10,7 @@ import net.dmulloy2.SwornPlugin;
 
 /**
  * Represents a command that has pagination.
- * 
+ *
  * @author dmulloy2
  */
 
@@ -34,16 +34,14 @@ public abstract class PaginatedCommand extends Command
 			{
 				index = Integer.parseInt(args[pageArgIndex]);
 				if (index < 1 || index > getPageCount())
-					throw new IndexOutOfBoundsException();
+				{
+					err("&4There is no page with the index &c{0}&4.", index);
+					return;
+				}
 			}
 			catch (NumberFormatException ex)
 			{
 				err("&c{0} &4is not a number.", args[0]);
-				return;
-			}
-			catch (IndexOutOfBoundsException ex)
-			{
-				err("&4There is no page with the index &c{0}&4.", args[0]);
 				return;
 			}
 		}
@@ -54,7 +52,7 @@ public abstract class PaginatedCommand extends Command
 
 	/**
 	 * Gets the number of pages in the list associated with this command
-	 * 
+	 *
 	 * @return The number of pages
 	 */
 	public int getPageCount()
@@ -64,14 +62,14 @@ public abstract class PaginatedCommand extends Command
 
 	/**
 	 * Gets the size of the list associated with this command
-	 * 
+	 *
 	 * @return The size of the list
 	 */
 	public abstract int getListSize();
 
 	/**
 	 * Gets all of the page lines for the specified page index
-	 * 
+	 *
 	 * @param index The page index
 	 * @return List of page lines
 	 */
@@ -88,7 +86,7 @@ public abstract class PaginatedCommand extends Command
 
 	/**
 	 * Gets the header {@link String} for this command
-	 * 
+	 *
 	 * @param index The page index
 	 * @return String header for this page
 	 */
@@ -96,7 +94,7 @@ public abstract class PaginatedCommand extends Command
 
 	/**
 	 * Gets all lines from startIndex up to but not including endIndex
-	 * 
+	 *
 	 * @param startIndex The starting index in the list
 	 * @param endIndex The end index in the list
 	 * @return All lines between start and end indexes
@@ -116,7 +114,7 @@ public abstract class PaginatedCommand extends Command
 	/**
 	 * Gets a {@link String} representation of the line at the specified index
 	 * in the list
-	 * 
+	 *
 	 * @param index The index of the entry in the list
 	 * @return A string representation of the line
 	 */
