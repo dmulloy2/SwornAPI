@@ -28,10 +28,11 @@ public class MaterialUtil
 	 */
 	public static final org.bukkit.Material getMaterial(String string)
 	{
-		if (NumberUtil.isInt(string))
-			return getMaterial(NumberUtil.toInt(string));
+		org.bukkit.Material ret = matchMaterial(string);
+		if (ret == null && NumberUtil.isInt(string))
+			ret = getMaterial(NumberUtil.toInt(string));
 
-		return matchMaterial(string);
+		return ret;
 	}
 
 	@SuppressWarnings("deprecation") // Bukkit.getUnsafe()
