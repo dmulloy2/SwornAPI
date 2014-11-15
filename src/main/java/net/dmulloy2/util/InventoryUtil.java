@@ -52,53 +52,6 @@ public class InventoryUtil
 	}
 
 	/**
-	 * Whether or not a {@link Player}'s inventory has room for an item.
-	 *
-	 * @param item {@link ItemStack} to check
-	 * @param player Player whose inventory is being checked
-	 * @return True if there is room, false if not
-	 */
-	public static boolean hasRoom(ItemStack item, Player player)
-	{
-		Validate.notNull(item, "item cannot be null!");
-		Validate.notNull(player, "player cannot be null!");
-
-		int maxStackSize = (item.getMaxStackSize() == -1) ? player.getInventory().getMaxStackSize() : item.getMaxStackSize();
-		return hasRoom(item, player.getInventory(), maxStackSize);
-	}
-
-	/**
-	 * Whether or not an {@link Inventory} has room for an item.
-	 *
-	 * @param item {@link ItemStack} to check
-	 * @param inventory Inventory being checked
-	 * @param maxStackSize Maximum stack size
-	 * @return True if there is room, false if not
-	 */
-	public static boolean hasRoom(ItemStack item, Inventory inventory, int maxStackSize)
-	{
-		Validate.notNull(item, "item cannot be null!");
-		Validate.notNull(inventory, "inventory cannot be null!");
-
-		int amount = item.getAmount();
-
-		for (ItemStack stack : inventory.getContents())
-		{
-			if (stack == null || stack.getType() == Material.AIR)
-				amount -= maxStackSize;
-			else if (stack.getType() == item.getType() && stack.getDurability() == item.getDurability()
-					&& (stack.getEnchantments().size() == 0 ? item.getEnchantments().size() == 0 :
-						stack.getEnchantments().equals(item.getEnchantments())))
-				amount -= maxStackSize - stack.getAmount();
-
-			if (amount <= 0)
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Gives a {@link Player} an item.
 	 *
 	 * @param player {@link Player} to give them item to

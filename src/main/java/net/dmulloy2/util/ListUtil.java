@@ -25,27 +25,6 @@ public class ListUtil
 	private static final Object EMPTY = new Object();
 
 	/**
-	 * Whether or not a given list contains a given string (case-insensitive).
-	 *
-	 * @param list List to check
-	 * @param string String to check for
-	 * @return True if the list contains it, false if not
-	 */
-	public static boolean containsIgnoreCase(List<String> list, String string)
-	{
-		Validate.notNull(list, "list cannot be null!");
-		Validate.notNull(string, "string cannot be null!");
-
-		for (String element : list)
-		{
-			if (element != null && element.equalsIgnoreCase(string))
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Constructs a new {@link List} from an existing {@link Collection}. This
 	 * helps with concurrency problems. Changes to the returned list will not be
 	 * reflected in the original collection. The use of this method is generally

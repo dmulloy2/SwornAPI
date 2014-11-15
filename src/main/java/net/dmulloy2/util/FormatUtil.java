@@ -112,11 +112,8 @@ public class FormatUtil
 			// Clever little method to check if the method isn't declared by a class other than Object.
 			Method method = ReflectionUtil.getMethod(obj.getClass(), "toString");
 			if (method.getDeclaringClass().getSuperclass() == null)
-			{
 				return obj.getClass().getSimpleName();
-			}
 		} catch (Throwable ex) { }
-
 		return getFriendlyName(obj.toString());
 	}
 

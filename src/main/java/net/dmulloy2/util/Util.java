@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +14,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import net.dmulloy2.io.UUIDFetcher;
 import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.types.StringJoiner;
-import net.dmulloy2.types.Versioning;
-import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -95,24 +91,6 @@ public class Util
 		// Last, get by name
 		OfflinePlayer op = Bukkit.getOfflinePlayer(identifier);
 		return op.hasPlayedBefore() ? op : null;
-	}
-
-	/**
-	 * Gets a {@link Player}'s {@link UUID}. This can be potentially blocking if
-	 * an outdated version is being used.
-	 *
-	 * @param player Player to get the unique id for
-	 * @return The player's UUID or null if one cannot be found
-	 */
-	public static UUID getUniqueId(OfflinePlayer player)
-	{
-		try
-		{
-			// Lookup the UUID
-			if (Versioning.getVersion() == Version.MC_16)
-				return UUIDFetcher.getUUID(player.getName());
-		} catch (Throwable ex) { }
-		return player.getUniqueId();
 	}
 
 	private static Method getOnlinePlayers;
@@ -362,27 +340,6 @@ public class Util
 	}
 
 	/**
-	 * Gets the key mapped to a given value in a given map.
-	 *
-	 * @param map Map containing the value
-	 * @param value Value to get the key for
-	 * @return The key, or null if not found
-	 */
-	public static <K, V> K getKey(Map<K, V> map, V value)
-	{
-		Validate.notNull(map, "map cannot be null!");
-		Validate.notNull(value, "value cannot be null!");
-
-		for (Entry<K, V> entry : new HashMap<>(map).entrySet())
-		{
-			if (entry.getValue().equals(value))
-				return entry.getKey();
-		}
-
-		return null;
-	}
-
-	/**
 	 * Parses a given {@link Object} (preferably a {@link String}) and returns a
 	 * boolean value.
 	 *
@@ -472,23 +429,6 @@ public class Util
 		{
 			return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
 		}
-	}
-
-	/**
-	 * Concatenates two arrays of the same type.
-	 *
-	 * @param first First array
-	 * @param second Second array
-	 * @return Concatenated array
-	 */
-	public static <T> T[] concat(T[] first, T[] second)
-	{
-		Validate.notNull(first, "first cannot be null!");
-		Validate.notNull(second, "second cannot be null!");
-
-		T[] ret = Arrays.copyOf(first, first.length + second.length);
-		System.arraycopy(second, 0, ret, first.length, second.length);
-		return ret;
 	}
 
 	/**
