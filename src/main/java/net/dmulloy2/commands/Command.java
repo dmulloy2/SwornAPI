@@ -105,8 +105,8 @@ public abstract class Command implements CommandExecutor
 			if (visibility == CommandVisibility.PERMISSION)
 			{
 				StringJoiner hoverText = new StringJoiner("\n");
-				hoverText.append(FormatUtil.format("&4Permission:\n"));
-				hoverText.append(getPermissionString());
+				hoverText.append(FormatUtil.format("&4Permission:"));
+				hoverText.append(FormatUtil.format("&r{0}", getPermissionString()));
 
 				ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&cError: &4You do not have "));
 				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(Action.SHOW_TEXT, hoverText.toString()));
