@@ -23,7 +23,9 @@ public class ReflectionUtil
 {
 	private ReflectionUtil() { }
 
-	private static String PACKAGE;
+	private static final String NMS = "net.minecraft.server";
+	private static final String OBC = "org.bukkit.craftbukkit";
+	private static String VERSION;
 
 	/**
 	 * Attempts to get the NMS (net.minecraft.server) class with this name.
@@ -37,14 +39,14 @@ public class ReflectionUtil
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (PACKAGE == null)
+		if (VERSION == null)
 		{
-			// Lazy-load PACKAGE
+			// Lazy-load VERSION
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			PACKAGE = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		}
 
-		name = "net.minecraft.server." + PACKAGE + "." + name;
+		name = NMS + "." + VERSION + "." + name;
 
 		try
 		{
@@ -65,14 +67,14 @@ public class ReflectionUtil
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (PACKAGE == null)
+		if (VERSION == null)
 		{
 			// Lazy-load VERSION
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			PACKAGE = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
 		}
 
-		name = "org.bukkit.craftbukkit." + PACKAGE + "." + name;
+		name = OBC + "." + VERSION + "." + name;
 
 		try
 		{

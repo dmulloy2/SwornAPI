@@ -123,8 +123,11 @@ public class CmdHelp extends Command
 
 		header.add(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount()));
 
-		for (String extra : plugin.getExtraHelp())
-			header.add(FormatUtil.format(extra));
+		if (plugin.getExtraHelp() != null)
+		{
+			for (String extra : plugin.getExtraHelp())
+				header.add(FormatUtil.format(extra));
+		}
 
 		header.add(FormatUtil.format("&eKey: &3<required> [optional]"));
 		return header;
