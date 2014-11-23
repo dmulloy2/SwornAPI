@@ -228,7 +228,7 @@ public abstract class Command implements CommandExecutor
 
 	protected final void sendMessage(CommandSender sender, BaseComponent... components)
 	{
-		ChatUtil.sendMessage(player, components);
+		ChatUtil.sendMessage(sender, components);
 	}
 
 	// ---- Help
