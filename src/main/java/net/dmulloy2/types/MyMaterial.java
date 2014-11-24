@@ -58,7 +58,7 @@ public class MyMaterial
 	 */
 	public final boolean matches(ItemStack item)
 	{
-		return item.getType() == material && ignoreData ? true : item.getDurability() == data;
+		return item.getType() == material && (ignoreData ? true : item.getDurability() == data);
 	}
 
 	/**
@@ -159,16 +159,20 @@ public class MyMaterial
 			{
 				String[] split = string.split(":");
 				Material material = MaterialUtil.getMaterial(split[0]);
-				short data = NumberUtil.toShort(split[1]);
-				boolean ignoreData = data == -1;
-				if (data <= 0)
-					data = 0;
+				if (material != null)
+				{
+					short data = NumberUtil.toShort(split[1]);
+					boolean ignoreData = data == -1;
+					if (data <= 0)
+						data = 0;
 
-				return new MyMaterial(material, data, ignoreData);
+					return new MyMaterial(material, data, ignoreData);
+				}
 			}
 
 			Material material = MaterialUtil.getMaterial(string);
-			return new MyMaterial(material);
+			if (material != null)
+				return new MyMaterial(material);
 		} catch (Throwable ex) { }
 		return null;
 	}
