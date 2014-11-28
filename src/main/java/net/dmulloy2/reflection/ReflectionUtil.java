@@ -6,6 +6,7 @@ package net.dmulloy2.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import net.dmulloy2.types.Versioning.Version;
 
@@ -28,9 +29,9 @@ public class ReflectionUtil
 	private static String VERSION;
 
 	/**
-	 * Attempts to get the NMS (net.minecraft.server) class with this name.
-	 * While this does cross versions, it's important to note that this class
-	 * may have been changed or removed.
+	 * Attempts to get the NMS (net.minecraft.server) class with a given name.<br>
+	 * While in theory this allows the crossing of versions, it is important to
+	 * note that internal classes are frequently removed and/or reofbuscated.
 	 *
 	 * @param name Class Name
 	 * @return NMS class, or null if none exists
@@ -56,9 +57,7 @@ public class ReflectionUtil
 	}
 
 	/**
-	 * Attempts to get the OBC (org.bukkit.craftbukkit) class with this name.
-	 * While this does cross versions, it's important to note that this class
-	 * may have been changed or removed.
+	 * Attempts to get the OBC (org.bukkit.craftbukkit) class with a given name.
 	 *
 	 * @param name Class Name
 	 * @return OBC class, or null if none exists
@@ -87,7 +86,7 @@ public class ReflectionUtil
 	 * Gets a {@link Field} in a given {@link Class} object.
 	 *
 	 * @param clazz Class object
-	 * @param name Field nameame
+	 * @param name Field name
 	 * @return The field, or null if none exists.
 	 */
 	public static final Field getField(Class<?> clazz, String name)
@@ -107,35 +106,24 @@ public class ReflectionUtil
 	}
 
 	/**
-	 * Whether or not a {@link Field} exists in a given {@link Class}.
-	 *
-	 * @param clazz Class object
-	 * @param name Field name
-	 * @return True if the field exists, false if not
-	 */
-	public static final boolean fieldExists(Class<?> clazz, String name)
-	{
-		return getField(clazz, name) != null;
-	}
-
-	/**
 	 * Gets a {@link Method} in a given {@link Class} object with the specified
 	 * arguments.
 	 *
 	 * @param clazz Class object
 	 * @param name Method name
-	 * @param args Arguments
+	 * @param params Parameters
 	 * @return The method, or null if none exists
 	 */
-	public static final Method getMethod(Class<?> clazz, String name, Class<?>... args)
+	public static final Method getMethod(Class<?> clazz, String name, Class<?>... params)
 	{
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
-		if (args == null) args = new Class<?>[0];
+		if (params == null)
+			params = new Class<?>[0];
 
 		for (Method method : clazz.getMethods())
 		{
-			if (method.getName().equals(name) && Arrays.equals(args, method.getParameterTypes()))
+			if (method.getName().equals(name) && Arrays.equals(params, method.getParameterTypes()))
 				return method;
 		}
 
@@ -175,6 +163,7 @@ public class ReflectionUtil
 		Validate.notNull(object, "object cannot be null!");
 
 		Method getHandle = getMethod(object.getClass(), "getHandle");
+		Validate.notNull(getHandle, object.getClass() + " does not declare a getHandle() method!");
 
 		try
 		{
@@ -184,8 +173,9 @@ public class ReflectionUtil
 	}
 
 	// ---- Versioning
+	// TODO: Keep up with MC releases
 
-	private static final Version SUPPORTED = Version.MC_17;
+	private static final List<Version> SUPPORTED_VERSIONS = Arrays.asList(Version.MC_17);
 
 	/**
 	 * Whether or not a {@link Player} can reliably be sent packets. This works
@@ -197,7 +187,7 @@ public class ReflectionUtil
 	 */
 	public static final boolean isReflectionSupported(Player player)
 	{
-		return SUPPORTED == getClientVersion(player);
+		return SUPPORTED_VERSIONS.contains(getClientVersion(player));
 	}
 
 	/**
