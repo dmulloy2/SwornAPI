@@ -6,8 +6,8 @@ package net.dmulloy2.reflection;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 
+import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
@@ -173,35 +173,41 @@ public class ReflectionUtil
 	}
 
 	// ---- Versioning
-	// TODO: Keep up with MC releases
-
-	private static final List<Version> SUPPORTED_VERSIONS = Arrays.asList(Version.MC_17);
 
 	/**
 	 * Whether or not a {@link Player} can reliably be sent packets. This works
 	 * by checking the player's client {@link Version} against the supported
 	 * version.
 	 *
+	 * @deprecated Clients must be 1.8
 	 * @param player Player to check
-	 * @return True if they can reliably be sent packets, false if not
+	 * @return True
 	 */
+	@Deprecated
 	public static final boolean isReflectionSupported(Player player)
 	{
-		return SUPPORTED_VERSIONS.contains(getClientVersion(player));
+		return true;
 	}
 
 	/**
 	 * Returns the client {@link Version} a given {@link Player} is using.
 	 *
+	 * @deprecated Clients must be 1.8
 	 * @param player Player to get version for
 	 * @return Their client version
 	 */
+	@Deprecated
 	public static final Version getClientVersion(Player player)
 	{
 		Validate.notNull(player, "player cannot be null!");
 
+		// If the server is truly running 1.8, return it
+		if (Versioning.getVersion() == Version.MC_18)
+			return Version.MC_18;
+
 		try
 		{
+			// If not, try to determine it
 			Object handle = getHandle(player);
 			Field playerConnectionField = getField(handle.getClass(), "playerConnection");
 			Object playerConnection = playerConnectionField.get(handle);

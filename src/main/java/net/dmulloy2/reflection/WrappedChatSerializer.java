@@ -11,7 +11,7 @@ import net.dmulloy2.exception.ReflectionException;
  * @author dmulloy2
  */
 
-// TODO: Keep up to date with MC versions. 1.7.10
+// TODO: Keep up to date with MC versions. 1.8
 public class WrappedChatSerializer extends AbstractWrapper
 {
 	private static final String NMS_CLASS_NAME = "ChatSerializer";

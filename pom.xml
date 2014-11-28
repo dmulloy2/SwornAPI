@@ -101,12 +101,16 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.7.10-R0.1-SNAPSHOT</version>
+      <version>1.8-R0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/SpigotAPI.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.7.10-R0.1-SNAPSHOT</version>
+      <version>1.8-R0.1-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/Spigot.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

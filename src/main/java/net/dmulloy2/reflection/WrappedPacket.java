@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  * @author dmulloy2
  */
 
-// TODO: Keep up to date with MC versions. 1.7.10
+// TODO: Keep up to date with MC versions. 1.8
 public abstract class WrappedPacket extends AbstractWrapper
 {
 	public final void send(Player player) throws ReflectionException

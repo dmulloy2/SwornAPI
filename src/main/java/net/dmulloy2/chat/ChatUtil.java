@@ -3,14 +3,9 @@
  */
 package net.dmulloy2.chat;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.reflection.WrappedChatPacket;
 import net.dmulloy2.reflection.WrappedChatSerializer;
-import net.dmulloy2.types.Versioning.Version;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
@@ -43,15 +38,13 @@ public class ChatUtil
 			try
 			{
 				Player player = (Player) sender;
-				if (SUPPORTED_VERSIONS.contains(ReflectionUtil.getClientVersion(player)))
-				{
-					WrappedChatSerializer serializer = new WrappedChatSerializer();
-					Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
 
-					WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
-					packet.send(player);
-					return;
-				}
+				WrappedChatSerializer serializer = new WrappedChatSerializer();
+				Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
+
+				WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
+				packet.send(player);
+				return;
 			} catch (Throwable ex) { }
 		}
 
@@ -73,27 +66,16 @@ public class ChatUtil
 		if (sender instanceof Player)
 		{
 			Player player = (Player) sender;
-			Version version = ReflectionUtil.getClientVersion(player);
-			if (SUPPORTED_VERSIONS.contains(version))
-			{
-				WrappedChatSerializer serializer = new WrappedChatSerializer();
-				Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
 
-				WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
-				packet.send(player);
-			}
-			else
-			{
-				throw new ReflectionException("Version " + version.getName() + " is not supported.");
-			}
+			WrappedChatSerializer serializer = new WrappedChatSerializer();
+			Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
+
+			WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
+			packet.send(player);
 		}
 		else
 		{
 			throw new ReflectionException("JSON chat messages can only be sent to players.");
 		}
 	}
-
-	private static final List<Version> SUPPORTED_VERSIONS = Arrays.asList(
-			Version.MC_17, Version.MC_18
-	);
 }
