@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 
-import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.types.StringJoiner;
 
 import org.apache.commons.lang.Validate;
@@ -44,7 +43,7 @@ public class Util
 	private Util() { }
 
 	/**
-	 * Gets the Player from a given name or {@link UUID}.
+	 * Gets the {@link Player} from a given name or {@link UUID}.
 	 *
 	 * @param identifier Player name or UUID
 	 * @return Player from the given name or UUID, null if none exists.
@@ -64,9 +63,8 @@ public class Util
 	}
 
 	/**
-	 * Gets the OfflinePlayer from a given name or {@link UUID}.
-	 * <p>
-	 * Use of this method is discouraged as it is potentially blocking.
+	 * Gets the {@link OfflinePlayer} from a given name or {@link UUID}.<br>
+	 * This method is potentially blocking, especially with names.
 	 *
 	 * @param identifier Player name or UUID
 	 * @return OfflinePlayer from the given name or UUID, null if none exists
@@ -96,8 +94,8 @@ public class Util
 	private static Method getOnlinePlayers;
 
 	/**
-	 * Gets a list of online {@link Player}s. This also provides backwards
-	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
+	 * Gets a list of online Players. This also provides backwards compatibility
+	 * as Bukkit changed <code>getOnlinePlayers</code>.
 	 *
 	 * @return A list of online Players
 	 */
@@ -108,30 +106,11 @@ public class Util
 		{
 			// Provide backwards compatibility
 			if (getOnlinePlayers == null)
-				getOnlinePlayers = ReflectionUtil.getMethod(Bukkit.class, "getOnlinePlayers");
+				getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
 			if (getOnlinePlayers.getReturnType() != Collection.class)
 				return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
 		} catch (Throwable ex) { }
 		return (List<Player>) Bukkit.getOnlinePlayers();
-	}
-
-	private static Random random;
-
-	/**
-	 * Returns a pseudorandom integer out of <code>x</code>.
-	 *
-	 * @param x Integer the random should be out of
-	 * @return A random integer out of x.
-	 * @throws IllegalArgumentException if <code>x</code> is less than 0.
-	 */
-	public static int random(int x)
-	{
-		Validate.isTrue(x > 0, "x cannot be negative!");
-
-		if (random == null)
-			random = new Random();
-
-		return random.nextInt(x);
 	}
 
 	/**
@@ -155,12 +134,12 @@ public class Util
 	}
 
 	/**
-	 * Whether or not two locations are similar. This does not take pitch or yaw
-	 * into account.
-	 *
+	 * Whether or not two locations share the same x, y, and z coordinates.<br>
+	 * This method does not take pitch or yaw into account.
+	 * 
 	 * @param loc First location
 	 * @param loc2 Second location
-	 * @return True if the locations are similar, false if not
+	 * @return True if the locations share x, y, and z coords, false if not
 	 */
 	public static boolean checkLocation(Location loc, Location loc2)
 	{
@@ -177,7 +156,7 @@ public class Util
 	}
 
 	/**
-	 * Turns a {@link Location} into a string for debug purpouses.
+	 * Turns a {@link Location} into a string for debug purposes.
 	 *
 	 * @param loc {@link Location} to convert
 	 * @return String for debug purpouses
@@ -194,11 +173,30 @@ public class Util
 		return ret.toString();
 	}
 
+	private static Random random;
+
 	/**
-	 * Returns a useful Stack Trace for debugging purpouses.
+	 * Returns a pseudorandom integer out of <code>x</code>.
 	 *
-	 * @param ex Underlying {@link Throwable}
-	 * @param circumstance Circumstance in which the Exception occured
+	 * @param x Integer the random should be out of
+	 * @return A random integer out of x.
+	 * @throws IllegalArgumentException if <code>x</code> is less than 0.
+	 */
+	public static int random(int x)
+	{
+		Validate.isTrue(x > 0, "x cannot be negative!");
+
+		if (random == null)
+			random = new Random();
+
+		return random.nextInt(x);
+	}
+
+	/**
+	 * Returns a useful Stack Trace for debugging purposes.
+	 *
+	 * @param ex {@link Throwable} to get the stack trace for
+	 * @param circumstance Circumstance in which the Throwable was thrown
 	 */
 	public static String getUsefulStack(Throwable ex, String circumstance)
 	{
@@ -330,9 +328,7 @@ public class Util
 				V val = entry.getValue();
 				V def = original.get(key);
 				if (val.equals(def))
-				{
 					map.remove(key);
-				}
 			}
 		}
 
@@ -344,8 +340,7 @@ public class Util
 	 * boolean value.
 	 *
 	 * @param object Object to parse
-	 * @return Boolean value from the given object. Defaults to
-	 *         <code>false</code>
+	 * @return Boolean value from the given object
 	 */
 	public static boolean toBoolean(Object object)
 	{
@@ -366,10 +361,27 @@ public class Util
 	}
 
 	/**
+	 * Whether or not an Enum type exists with a given name in a given class.
+	 *
+	 * @param clazz Enum class
+	 * @param name Type name
+	 * @return True if the type exists, false if not
+	 */
+	public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name)
+	{
+		try
+		{
+			Enum.valueOf(clazz, name.toUpperCase());
+			return true;
+		} catch (Throwable ex) { }
+		return false;
+	}
+
+	/**
 	 * Sets a {@link Block}'s {@link MaterialData}. Exists because Bukkit's
-	 * BlockState API sucks.
-	 * <p>
-	 * This method is deprecated and is not guaranteed to work.
+	 * MaterialData API can be difficult to work with.<br>
+	 * This method is deprecated and is not guaranteed to work (and will
+	 * probably break completely with 1.8)
 	 *
 	 * @param block Block to set data of
 	 * @param data Data to set
@@ -429,22 +441,5 @@ public class Util
 		{
 			return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
 		}
-	}
-
-	/**
-	 * Whether or not an Enum type exists with a given name in a given class.
-	 *
-	 * @param clazz Enum class
-	 * @param name Type name
-	 * @return True if the type exists, false if not
-	 */
-	public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name)
-	{
-		try
-		{
-			Enum.valueOf(clazz, name.toUpperCase());
-			return true;
-		} catch (Throwable ex) { }
-		return false;
 	}
 }
