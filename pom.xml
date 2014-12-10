@@ -11,10 +11,10 @@
   </properties>
 
   <repositories>
-    <repository>
-      <id>md_5-repo</id>
-      <url>http://repo.md-5.net/content/repositories/public/</url>
-    </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
   </repositories>
 
   <build>
