@@ -41,7 +41,7 @@ public abstract class BaseComponent
 	/**
 	 * The color of this component and any child components (unless overridden)
 	 */
-	private ChatColor color;
+	private String color;
 
 	/**
 	 * Whether this component and any child components (unless overridden) is
@@ -147,12 +147,12 @@ public abstract class BaseComponent
 	 *
 	 * @return the color of this component
 	 */
-	public ChatColor getColor()
+	public String getColor()
 	{
 		if (color == null)
 		{
 			if (parent == null)
-				return ChatColor.WHITE;
+				return "white";
 
 			return parent.getColor();
 		}
@@ -166,7 +166,7 @@ public abstract class BaseComponent
 	 *
 	 * @return the color of this component
 	 */
-	public ChatColor getColorRaw()
+	public String getColorRaw()
 	{
 		return color;
 	}
@@ -399,7 +399,7 @@ public abstract class BaseComponent
 	public String toString()
 	{
 		return String.format("BaseComponent{color=%s, bold=%b, italic=%b, underlined=%b, strikethrough=%b, obfuscated=%b, clickEvent=%s, hoverEvent=%s, extra=%s}",
-				getColor().name(), isBold(), isItalic(), isUnderlined(), isStrikethrough(), isObfuscated(), getClickEvent(),
+				getColor(), isBold(), isItalic(), isUnderlined(), isStrikethrough(), isObfuscated(), getClickEvent(),
 				getHoverEvent(), getExtra());
 	}
 }

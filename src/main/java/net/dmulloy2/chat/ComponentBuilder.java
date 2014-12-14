@@ -68,7 +68,19 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder color(ChatColor color)
 	{
-		getCurrent().setColor(color);
+		getCurrent().setColor(color.name().toLowerCase());
+		return this;
+	}
+
+	/**
+	 * Sets the color of the current part.
+	 *
+	 * @param color the new color
+	 * @return this ComponentBuilder for chaining
+	 */
+	public ComponentBuilder color(String color)
+	{
+		getCurrent().setColor(color.toLowerCase());
 		return this;
 	}
 

@@ -18,7 +18,6 @@ package net.dmulloy2.chat;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonDeserializationContext;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonSerializationContext;
@@ -35,7 +34,7 @@ public class BaseComponentSerializer
 	{
 		if (object.has("color"))
 		{
-			component.setColor(ChatColor.valueOf(object.get("color").getAsString().toUpperCase()));
+			component.setColor(object.get("color").getAsString().toLowerCase());
 		}
 		if (object.has("bold"))
 		{
@@ -103,7 +102,7 @@ public class BaseComponentSerializer
 			ComponentSerializer.serializedComponents.get().add(component);
 			if (component.getColorRaw() != null)
 			{
-				object.addProperty("color", component.getColorRaw().name());
+				object.addProperty("color", component.getColorRaw().toLowerCase());
 			}
 			if (component.isBoldRaw() != null)
 			{
