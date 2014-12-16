@@ -9,6 +9,7 @@ import net.dmulloy2.types.Reloadable;
  * @author dmulloy2
  */
 
+@Deprecated
 public abstract class IntegrationHandler implements Reloadable
 {
 	public abstract void setup();
