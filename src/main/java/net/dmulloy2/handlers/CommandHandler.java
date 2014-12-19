@@ -17,6 +17,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 
 /**
  * Handles commands. This supports both prefixed and non-prefixed commands.
@@ -167,8 +168,16 @@ public class CommandHandler implements CommandExecutor
 				return true;
 			}
 
-			String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
-			new ComponentBuilder(error).addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
+			if (sender instanceof Player)
+			{
+				String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
+				new ComponentBuilder(error).addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
+			}
+			else
+			{
+				sender.sendMessage(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try {1}", name,
+						getHelpCommand().getUsageTemplate(false)));
+			}
 		}
 		else
 		{
