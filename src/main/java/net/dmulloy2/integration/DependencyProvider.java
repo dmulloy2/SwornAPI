@@ -17,6 +17,18 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.base.Preconditions;
 
 /**
+ * A dependency provider for optional {@link Plugin} dependencies.
+ * <p>
+ * In order to avoid a hard dependency, the following precautions should be taken: <br>
+ * <ul>
+ *   <li>Initialization of Objects of this Class should be wrapped in a try-catchblock.</li>
+ *   <li>Methods in this class should return Objects that will definitely exist at runtime.</li>
+ *     <ul>
+ *       <li>Like Bukkit objects, Strings, and Java primitives.</li>
+ *     </ul>
+ *   <li>Before calling methods from this class, {@link #isEnabled()} should be called.</li>
+ * </ul>
+ *
  * @author dmulloy2
  */
 
@@ -88,22 +100,45 @@ public class DependencyProvider<T extends Plugin>
 		}, handler);
 	}
 
+	/**
+	 * Called when the dependency is found or enabled.
+	 */
 	public void onEnable() { }
 
+	/**
+	 * Called when the dependency is disabled.
+	 */
 	public void onDisable() { }
 
+	/**
+	 * Gets the dependency.
+	 * 
+	 * @return The dependency
+	 * @throws NullPointerException if the dependency does not exist.
+	 */
 	public T getDependency()
 	{
 		return Preconditions.checkNotNull(dependency, name + " dependency does not exist.");
 	}
 
+	/**
+	 * Gets this dependency's name.
+	 * 
+	 * @return The dependency's name
+	 * @throws NullPointerException if the name does not exist.
+	 */
 	public String getName()
 	{
 		return Preconditions.checkNotNull(name, "name cannot be null.");
 	}
 
+	/**
+	 * Whether or not this dependency is enabled.
+	 * 
+	 * @return True if enabled, false if not
+	 */
 	public boolean isEnabled()
 	{
-		return enabled;
+		return enabled && dependency != null;
 	}
 }
