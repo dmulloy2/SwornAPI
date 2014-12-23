@@ -48,7 +48,7 @@ public class Util
 	 * @param identifier Player name or UUID
 	 * @return Player from the given name or UUID, null if none exists.
 	 * @see {@link Bukkit#getPlayer(UUID)}
-	 * @see {@link Bukkit#matchPlayer(String)}
+	 * @see {@link Bukkit#getPlayer(String)}
 	 */
 	public static Player matchPlayer(String identifier)
 	{
@@ -197,13 +197,15 @@ public class Util
 	 *
 	 * @param ex {@link Throwable} to get the stack trace for
 	 * @param circumstance Circumstance in which the Throwable was thrown
+	 * @param args Arguments to format into circumstance
 	 */
-	public static String getUsefulStack(Throwable ex, String circumstance)
+	public static String getUsefulStack(Throwable ex, String circumstance, Object... args)
 	{
 		Validate.notNull(ex, "ex cannot be null!");
 
 		StringJoiner joiner = new StringJoiner("\n");
-		joiner.append("Encountered an exception" + (circumstance != null ? " while " + circumstance : "") + ": " + ex.toString());
+		circumstance = circumstance != null ? FormatUtil.format(" while " + circumstance, args) : "";
+		joiner.append("Encountered an exception" + circumstance + ": " + ex.toString());
 		joiner.append("Affected classes:");
 
 		for (StackTraceElement ste : ex.getStackTrace())
