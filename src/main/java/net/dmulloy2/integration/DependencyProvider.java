@@ -53,8 +53,8 @@ public class DependencyProvider<T extends Plugin>
 				dependency = (T) handler.getServer().getPluginManager().getPlugin(name);
 				if (dependency != null)
 				{
-					onEnable();
 					enabled = true;
+					onEnable();
 					handler.getLogHandler().log("{0} integration successful.", name);
 				}
 			}
@@ -74,8 +74,8 @@ public class DependencyProvider<T extends Plugin>
 					try
 					{
 						dependency = (T) event.getPlugin();
-						onEnable();
 						enabled = true;
+						onEnable();
 						handler.getLogHandler().log("{0} integration enabled.", name);
 					}
 					catch (Throwable ex)
