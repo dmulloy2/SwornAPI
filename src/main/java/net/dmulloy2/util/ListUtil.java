@@ -10,8 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.dmulloy2.types.Transformation;
-
 import org.apache.commons.lang.Validate;
 
 /**
@@ -71,29 +69,5 @@ public class ListUtil
 	{
 		Validate.notNull(objects, "objects cannot be null!");
 		return Arrays.asList(objects);
-	}
-
-	/**
-	 * Transforms a list of {@code O} into a list of {@code T}.
-	 *
-	 * @param list Original list
-	 * @param transformation {@link Transformation}
-	 * @return The transformed list
-	 */
-	public static <T, O> List<T> transform(List<O> list, Transformation<O, T> transformation)
-	{
-		Validate.notNull(list, "list cannot be null!");
-		Validate.notNull(transformation, "transformation cannot be null!");
-
-		List<T> ret = new ArrayList<>();
-
-		for (O object : list)
-		{
-			T result = transformation.transform(object);
-			if (result != null)
-				ret.add(result);
-		}
-
-		return ret;
 	}
 }

@@ -363,23 +363,6 @@ public class Util
 	}
 
 	/**
-	 * Whether or not an Enum type exists with a given name in a given class.
-	 *
-	 * @param clazz Enum class
-	 * @param name Type name
-	 * @return True if the type exists, false if not
-	 */
-	public static <T extends Enum<T>> boolean isEnumType(Class<T> clazz, String name)
-	{
-		try
-		{
-			Enum.valueOf(clazz, name.toUpperCase());
-			return true;
-		} catch (Throwable ex) { }
-		return false;
-	}
-
-	/**
 	 * Sets a {@link Block}'s {@link MaterialData}. Exists because Bukkit's
 	 * MaterialData API can be difficult to work with.<br>
 	 * This method is deprecated and is not guaranteed to work (and will

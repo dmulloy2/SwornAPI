@@ -38,19 +38,26 @@ public class IOUtil
 		Validate.notNull(file, "file cannot be null!");
 
 		Closer closer = new Closer();
-		FileInputStream fis = closer.register(new FileInputStream(file));
-		DataInputStream dis = closer.register(new DataInputStream(fis));
-		InputStreamReader isr = closer.register(new InputStreamReader(dis));
-		BufferedReader br = closer.register(new BufferedReader(isr));
 
-		List<String> lines = new ArrayList<>();
+		try
+		{
+			FileInputStream fis = closer.register(new FileInputStream(file));
+			DataInputStream dis = closer.register(new DataInputStream(fis));
+			InputStreamReader isr = closer.register(new InputStreamReader(dis));
+			BufferedReader br = closer.register(new BufferedReader(isr));
+	
+			List<String> lines = new ArrayList<>();
+	
+			String line = null;
+			while ((line = br.readLine()) != null)
+				lines.add(line);
 
-		String line = null;
-		while ((line = br.readLine()) != null)
-			lines.add(line);
-
-		closer.close();
-		return lines;
+			return lines;
+		}
+		finally
+		{
+			closer.close();
+		}
 	}
 
 	/**
@@ -66,13 +73,19 @@ public class IOUtil
 		Validate.notNull(lines, "lines cannot be null!");
 
 		Closer closer = new Closer();
-		FileWriter fw = closer.register(new FileWriter(file));
-		PrintWriter pw = closer.register(new PrintWriter(fw));
 
-		for (String line : lines)
-			pw.println(line);
-
-		closer.close();
+		try
+		{
+			FileWriter fw = closer.register(new FileWriter(file));
+			PrintWriter pw = closer.register(new PrintWriter(fw));
+	
+			for (String line : lines)
+				pw.println(line);
+		}
+		finally
+		{
+			closer.close();
+		}
 	}
 
 	/**

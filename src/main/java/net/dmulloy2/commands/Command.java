@@ -157,11 +157,6 @@ public abstract class Command implements CommandExecutor
 		return hasPermission(sender, permission);
 	}
 
-	protected final boolean hasPermission()
-	{
-		return hasPermission(permission);
-	}
-
 	protected final String getPermissionString(IPermission permission)
 	{
 		return plugin.getPermissionHandler().getPermissionString(permission);

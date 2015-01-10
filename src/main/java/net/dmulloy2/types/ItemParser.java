@@ -9,10 +9,12 @@ import java.util.logging.Level;
 import lombok.AllArgsConstructor;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.ItemUtil;
-import net.dmulloy2.util.ListUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.inventory.ItemStack;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * @author dmulloy2
@@ -51,10 +53,10 @@ public class ItemParser
 
 	public final List<ItemStack> parse(List<String> strings)
 	{
-		return ListUtil.transform(strings, new Transformation<String, ItemStack>()
+		return Lists.transform(strings, new Function<String, ItemStack>()
 		{
 			@Override
-			public ItemStack transform(String string)
+			public ItemStack apply(String string)
 			{
 				return parse(string);
 			}
@@ -63,10 +65,10 @@ public class ItemParser
 
 	public static final List<ItemStack> parse(final SwornPlugin plugin, List<String> strings)
 	{
-		return ListUtil.transform(strings, new Transformation<String, ItemStack>()
+		return Lists.transform(strings, new Function<String, ItemStack>()
 		{
 			@Override
-			public ItemStack transform(String string)
+			public ItemStack apply(String string)
 			{
 				return parse(plugin, string);
 			}
