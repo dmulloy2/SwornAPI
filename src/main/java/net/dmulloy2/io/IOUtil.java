@@ -45,9 +45,9 @@ public class IOUtil
 			DataInputStream dis = closer.register(new DataInputStream(fis));
 			InputStreamReader isr = closer.register(new InputStreamReader(dis));
 			BufferedReader br = closer.register(new BufferedReader(isr));
-	
+
 			List<String> lines = new ArrayList<>();
-	
+
 			String line = null;
 			while ((line = br.readLine()) != null)
 				lines.add(line);
@@ -78,7 +78,7 @@ public class IOUtil
 		{
 			FileWriter fw = closer.register(new FileWriter(file));
 			PrintWriter pw = closer.register(new PrintWriter(fw));
-	
+
 			for (String line : lines)
 				pw.println(line);
 		}

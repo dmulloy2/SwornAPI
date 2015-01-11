@@ -56,11 +56,6 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		this(world.getName(), x, y, z);
 	}
 
-	public LazyLocation(World world, int x, int z)
-	{
-		this(world.getName(), x, z);
-	}
-
 	public LazyLocation(String worldName, SimpleVector vector)
 	{
 		this(worldName, vector.getX(), vector.getY(), vector.getZ());
