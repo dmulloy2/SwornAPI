@@ -30,6 +30,8 @@ import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.material.MaterialData;
 
 /**
@@ -425,6 +427,43 @@ public class Util
 		else
 		{
 			return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
+		}
+	}
+
+	/**
+	 * Properly sets the damage of an EntityDamageEvent. Certain modifiers,
+	 * especially MAGIC, do not scale properly. This method directly applies
+	 * the BASE modifier and scales the rest proportionally.
+	 * <p>
+	 * Inspired by MCore and mcMMO
+	 *
+	 * @param event Event to set damage for
+	 * @param damage New damage
+	 */
+	public static void setDamage(EntityDamageEvent event, double damage)
+	{
+		double oldDamage = event.getDamage(DamageModifier.BASE);
+		if (oldDamage == damage)
+			return;
+
+		// Determine the factor
+		double factor = damage / oldDamage;
+
+		// Scale all damage modifiers
+		for (DamageModifier modifier : DamageModifier.values())
+		{
+			if (! event.isApplicable(modifier))
+				continue;
+
+			// Directly set BASE
+			if (modifier == DamageModifier.BASE)
+			{
+				event.setDamage(modifier, damage);
+				continue;
+			}
+
+			// Scale the rest
+			event.setDamage(modifier, event.getDamage(modifier) * factor);
 		}
 	}
 }
