@@ -9,7 +9,7 @@ package net.dmulloy2.exception;
  * @author dmulloy2
  */
 
-public class ReflectionException extends Exception
+public class ReflectionException extends RuntimeException
 {
 	private static final long serialVersionUID = -355857662220280587L;
 
@@ -40,13 +40,5 @@ public class ReflectionException extends Exception
 	public ReflectionException(String message, Throwable cause)
 	{
 		super(message, cause);
-	}
-
-	public static ReflectionException fromThrowable(String message, Throwable ex)
-	{
-		if (ex instanceof ReflectionException)
-			return (ReflectionException) ex;
-
-		return new ReflectionException(message, ex);
 	}
 }

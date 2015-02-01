@@ -36,7 +36,7 @@ public class ReflectionUtil
 	 * @param name Class Name
 	 * @return NMS class, or null if none exists
 	 */
-	public static final Class<?> getNMSClass(String name)
+	public static Class<?> getNMSClass(String name)
 	{
 		Validate.notNull(name, "name cannot be null!");
 
@@ -62,7 +62,7 @@ public class ReflectionUtil
 	 * @param name Class Name
 	 * @return OBC class, or null if none exists
 	 */
-	public static final Class<?> getOBCClass(String name)
+	public static Class<?> getOBCClass(String name)
 	{
 		Validate.notNull(name, "name cannot be null!");
 
@@ -89,7 +89,7 @@ public class ReflectionUtil
 	 * @param name Field name
 	 * @return The field, or null if none exists.
 	 */
-	public static final Field getField(Class<?> clazz, String name)
+	public static Field getField(Class<?> clazz, String name)
 	{
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
@@ -114,14 +114,14 @@ public class ReflectionUtil
 	 * @param params Parameters
 	 * @return The method, or null if none exists
 	 */
-	public static final Method getMethod(Class<?> clazz, String name, Class<?>... params)
+	public static Method getMethod(Class<?> clazz, String name, Class<?>... params)
 	{
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
 		if (params == null)
 			params = new Class<?>[0];
 
-		for (Method method : clazz.getMethods())
+		for (Method method : clazz.getDeclaredMethods())
 		{
 			if (method.getName().equals(name) && Arrays.equals(params, method.getParameterTypes()))
 				return method;
@@ -137,14 +137,38 @@ public class ReflectionUtil
 	 * @param name Method name
 	 * @return The method, or null if none exists
 	 */
-	public static final Method getMethod(Class<?> clazz, String name)
+	public static Method getMethod(Class<?> clazz, String name)
 	{
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
 
-		for (Method method : clazz.getMethods())
+		for (Method method : clazz.getDeclaredMethods())
 		{
 			if (method.getName().equals(name))
+				return method;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets a {@link Method} in a given {@link Class} object.
+	 *
+	 * @param clazz Class object
+	 * @param returnType Method return type
+	 * @param params Method parameters
+	 * @return The method, or null if none exists
+	 */
+	public static Method getMethod(Class<?> clazz, Class<?> returnType, Class<?>... params)
+	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		Validate.notNull(returnType, "returnType cannot be null!");
+		if (params == null)
+			params = new Class<?>[0];
+
+		for (Method method : clazz.getDeclaredMethods())
+		{
+			if (method.getReturnType().equals(returnType) && Arrays.equals(method.getParameterTypes(), params))
 				return method;
 		}
 
@@ -158,7 +182,7 @@ public class ReflectionUtil
 	 * @param object Object to get the handle for
 	 * @return The handle, or null if none exists
 	 */
-	public static final Object getHandle(Object object)
+	public static Object getHandle(Object object)
 	{
 		Validate.notNull(object, "object cannot be null!");
 
@@ -179,24 +203,20 @@ public class ReflectionUtil
 	 * by checking the player's client {@link Version} against the supported
 	 * version.
 	 *
-	 * @deprecated Clients must be 1.8
 	 * @param player Player to check
 	 * @return True
 	 */
-	@Deprecated
-	public static final boolean isReflectionSupported(Player player)
+	public static boolean isReflectionSupported(Player player)
 	{
-		return true;
+		return getClientVersion(player) == Versioning.getVersion();
 	}
 
 	/**
 	 * Returns the client {@link Version} a given {@link Player} is using.
 	 *
-	 * @deprecated Clients must be 1.8
 	 * @param player Player to get version for
 	 * @return Their client version
 	 */
-	@Deprecated
 	public static final Version getClientVersion(Player player)
 	{
 		Validate.notNull(player, "player cannot be null!");

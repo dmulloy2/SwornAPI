@@ -6,6 +6,7 @@ package net.dmulloy2.reflection;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import lombok.Data;
 import net.dmulloy2.exception.ReflectionException;
@@ -31,7 +32,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw ReflectionException.fromThrowable("invokeMethod(" + method + ", " + args + ")", ex);
+			throw new ReflectionException(String.format("invokeMethod(%s, %s)", method, Arrays.toString(args)), ex);
 		}
 	}
 
@@ -45,7 +46,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw ReflectionException.fromThrowable("getField(" + name + ")", ex);
+			throw new ReflectionException(String.format("getField(%s)", name), ex);
 		}
 	}
 
@@ -58,7 +59,7 @@ public abstract class AbstractWrapper
 		}
 		catch (Throwable ex)
 		{
-			throw ReflectionException.fromThrowable("setField(" + field + ", " + value + ")", ex);
+			throw new ReflectionException(String.format("setField(%s, %s)", field, value));
 		}
 	}
 }
