@@ -1,6 +1,6 @@
 /**
  * SwornAPI - a common API for MineSworn and Shadowvolt plugins.
- * Copyright (C) - 2014 dmulloy2
+ * Copyright (C) - 2015 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
