@@ -62,6 +62,18 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		Map<String, UUID> uuidMap = new HashMap<>();
 		for (List<String> names : namesList)
 		{
+			if (cachingEnabled)
+			{
+				for (String name : names)
+				{
+					if (cache.containsKey(name))
+					{
+						names.remove(name);
+						uuidMap.put(name, cache.get(name));
+					}
+				}
+			}
+
 			String body = buildBody(names);
 			HttpURLConnection connection = createConnection();
 			writeBody(connection, body);
