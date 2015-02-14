@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableList;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>>
 {
+	private static boolean cachingEnabled = Versioning.getVersion() == Version.MC_16;
 	private static final Map<String, UUID> cache = new WeakHashMap<>();
 
 	private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
@@ -76,7 +77,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 			}
 		}
 
-		if (Versioning.getVersion() == Version.MC_16)
+		if (cachingEnabled)
 			cache.putAll(uuidMap);
 		return uuidMap;
 	}
@@ -112,8 +113,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		if (name.length() == 36)
 			return UUID.fromString(name);
 
-		// Only use caching in 1.6
-		if (Versioning.getVersion() == Version.MC_16)
+		if (cachingEnabled)
 		{
 			if (cache.containsKey(name))
 				return cache.get(name);
@@ -121,5 +121,15 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 		UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 		return fetcher.call().get(name);
+	}
+
+	public static void setCachingEnabled(boolean enabled)
+	{
+		if (cachingEnabled != enabled)
+		{
+			if (! enabled)
+				cache.clear();
+			cachingEnabled = enabled;
+		}
 	}
 }
