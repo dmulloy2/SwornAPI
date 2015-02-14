@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Fetches UUIDs for a list of names
@@ -44,16 +43,14 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	public UUIDFetcher(List<String> names)
 	{
 		Validate.notNull(names, "names cannot be null!");
-		ImmutableList.Builder<List<String>> builder = ImmutableList.builder();
+		this.namesList = new ArrayList<List<String>>();
 
 		int namesCopied = 0;
 		while (namesCopied < names.size())
 		{
-			builder.add(ImmutableList.copyOf(names.subList(namesCopied, Math.min(namesCopied + 100, names.size()))));
+			namesList.add(names.subList(namesCopied, Math.min(namesCopied + 100, names.size())));
 			namesCopied += 100;
 		}
-
-		this.namesList = builder.build();
 	}
 
 	@Override
