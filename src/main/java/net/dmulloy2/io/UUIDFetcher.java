@@ -61,7 +61,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		{
 			if (cachingEnabled)
 			{
-				for (String name : names)
+				for (String name : names.toArray(new String[0]))
 				{
 					if (cache.containsKey(name))
 					{
