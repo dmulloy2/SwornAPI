@@ -91,7 +91,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return uuidMap;
 	}
 
-	private static final void writeBody(HttpURLConnection connection, String body) throws IOException
+	private static void writeBody(HttpURLConnection connection, String body) throws IOException
 	{
 		DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
 		writer.write(body.getBytes());
@@ -99,7 +99,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		writer.close();
 	}
 
-	private static final HttpURLConnection createConnection() throws IOException
+	private static HttpURLConnection createConnection() throws IOException
 	{
 		URL url = new URL(PROFILE_URL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -111,12 +111,12 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		return connection;
 	}
 
-	private static final String buildBody(List<String> names)
+	private static String buildBody(List<String> names)
 	{
 		return JSONValue.toJSONString(names);
 	}
 
-	public static final UUID getUUID(String name) throws IOException, ParseException
+	public static UUID getUUID(String name) throws IOException, ParseException
 	{
 		Validate.notNull(name, "name cannot be null!");
 		if (name.length() == 36)
@@ -130,6 +130,11 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 		UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
 		return fetcher.call().get(name);
+	}
+
+	public static UUID fromCache(String name)
+	{
+		return cache.get(name);
 	}
 
 	public static void setCachingEnabled(boolean enabled)
