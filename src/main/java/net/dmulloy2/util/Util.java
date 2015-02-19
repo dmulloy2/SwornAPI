@@ -21,9 +21,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
@@ -167,12 +169,10 @@ public class Util
 	{
 		Validate.notNull(loc, "loc cannot be null!");
 
-		StringBuilder ret = new StringBuilder();
-		ret.append("World: " + loc.getWorld().getName());
-		ret.append(" X: " + loc.getBlockX());
-		ret.append(" Y: " + loc.getBlockY());
-		ret.append(" Z: " + loc.getBlockZ());
-		return ret.toString();
+		return "Location[world=" + loc.getWorld().getName()
+				+ ", x=" + loc.getBlockX()
+				+ ", y=" + loc.getBlockY()
+				+ ", z=" + loc.getBlockZ();
 	}
 
 	private static Random random;
@@ -355,13 +355,8 @@ public class Util
 			return ((Boolean) object).booleanValue();
 		}
 
-		if (object instanceof String)
-		{
-			String str = (String) object;
-			return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
-		}
-
-		return Boolean.parseBoolean(object.toString());
+		String str = object.toString();
+		return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
 	}
 
 	/**
@@ -397,36 +392,46 @@ public class Util
 		if (state instanceof Sign)
 		{
 			Sign sign = (Sign) state;
-			return "Sign { lines = " + Arrays.toString(sign.getLines()) + " }";
+			return "Sign[lines=" + Arrays.toString(sign.getLines()) + "]";
 		}
 		else if (state instanceof CommandBlock)
 		{
 			CommandBlock cmd = (CommandBlock) state;
-			return "CommandBlock { command = " + cmd.getCommand() + ", name = " + cmd.getName() + " }";
+			return "CommandBlock[command=" + cmd.getCommand() + ", name=" + cmd.getName() + "]";
 		}
 		else if (state instanceof Jukebox)
 		{
 			Jukebox jukebox = (Jukebox) state;
-			return "Jukebox { playing = " + FormatUtil.getFriendlyName(jukebox.getPlaying()) + " }";
+			return "Jukebox[playing=" + FormatUtil.getFriendlyName(jukebox.getPlaying()) + "]";
 		}
 		else if (state instanceof NoteBlock)
 		{
 			NoteBlock note = (NoteBlock) state;
-			return "NoteBlock { note = " + FormatUtil.getFriendlyName(note.getNote().getTone()) + " }";
+			return "NoteBlock[note=" + note.getNote() + "]";
 		}
 		else if (state instanceof Skull)
 		{
 			Skull skull = (Skull) state;
-			return "Skull { type = " + FormatUtil.getFriendlyName(skull.getSkullType()) + ", owner = " + skull.getOwner() + " }";
+			return "Skull[type=" + FormatUtil.getFriendlyName(skull.getSkullType()) + ", owner=" + skull.getOwner() + "]";
 		}
 		else if (state instanceof Furnace)
 		{
 			Furnace furnace = (Furnace) state;
-			return "Furnace { burnTime = " + furnace.getBurnTime() + ", cookTime = " + furnace.getCookTime() + " }";
+			return "Furnace[burnTime=" + furnace.getBurnTime() + ", cookTime=" + furnace.getCookTime() + "]";
+		}
+		else if (state instanceof Banner)
+		{
+			Banner banner = (Banner) state;
+			return "Banner[baseColor=" + FormatUtil.getFriendlyName(banner.getBaseColor()) + ", patterns=" + banner.getPatterns() + "]";
+		}
+		else if (state instanceof CreatureSpawner)
+		{
+			CreatureSpawner spawner = (CreatureSpawner) state;
+			return "CreatureSpawner[spawnedType=" + FormatUtil.getFriendlyName(spawner.getSpawnedType()) + "]";
 		}
 		else
 		{
-			return "BlockState { type = " + FormatUtil.getFriendlyName(state.getType()) + " }";
+			return "BlockState[type=" + FormatUtil.getFriendlyName(state.getType()) + "]";
 		}
 	}
 

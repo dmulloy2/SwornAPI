@@ -45,6 +45,17 @@ public class GUIHandler implements Listener
 		open.put(player.getName(), gui);
 	}
 
+	/**
+	 * Opens a given GUI.
+	 * 
+	 * @param gui GUI to open
+	 */
+	public void open(AbstractGUI gui)
+	{
+		Validate.notNull(gui, "gui cannot be null!");
+		open(gui.getPlayer(), gui);
+	}
+
 	// ---- Listeners
 
 	@EventHandler(priority = EventPriority.HIGHEST)

@@ -4,7 +4,6 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,14 +59,20 @@ public class ListUtil
 	/**
 	 * Constructs a new {@link List} paramaterized with <code>T</code>.
 	 *
-	 * @param objects Array of <code>T</code> to create the list with
+	 * @param elements Array of <code>T</code> to create the list with
 	 * @return a new {@link List} from the given objects
-	 * @see {@link Arrays#asList(Object...)}
 	 */
 	@SafeVarargs
-	public static <T> List<T> toList(T... objects)
+	public static <T> List<T> toList(T... elements)
 	{
-		Validate.notNull(objects, "objects cannot be null!");
-		return Arrays.asList(objects);
+		Validate.notNull(elements, "elements cannot be null!");
+
+		List<T> list = new ArrayList<T>();
+		for (T element : elements)
+		{
+			list.add(element);
+		}
+
+		return list;
 	}
 }

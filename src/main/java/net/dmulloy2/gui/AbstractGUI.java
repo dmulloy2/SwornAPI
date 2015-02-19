@@ -55,6 +55,11 @@ public abstract class AbstractGUI
 		player.openInventory(inventory);
 	}
 
+	public final Player getPlayer()
+	{
+		return player;
+	}
+
 	// ---- Required Methods
 
 	public abstract int getSize();

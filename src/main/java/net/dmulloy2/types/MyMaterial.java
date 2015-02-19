@@ -111,7 +111,7 @@ public class MyMaterial
 		if (ignoreData)
 			return material.toString();
 
-		return "MyMaterial { material = " + material + ", data = " + data + " }";
+		return "MyMaterial[material=" + material + ", data=" + data + "]";
 	}
 
 	/**

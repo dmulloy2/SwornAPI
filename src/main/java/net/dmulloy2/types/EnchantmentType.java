@@ -26,6 +26,7 @@ public enum EnchantmentType
 	DAMAGE_ALL("sharpness", "sharp"),
 	DAMAGE_ARTHROPODS("bane"),
 	DAMAGE_UNDEAD("smite"),
+	DEPTH_STRIDER("depthstrider"),
 	DIG_SPEED("efficiency", "eff"),
 	DURABILITY("durability", "dura"),
 	FIRE_ASPECT("fireaspect"),

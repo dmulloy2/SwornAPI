@@ -163,6 +163,7 @@ public class InventoryUtil
 								inventory.setItem(slot, null);
 							}
 						}
+
 						if (amt <= 0)
 							return;
 					}
@@ -277,7 +278,7 @@ public class InventoryUtil
 	private static int firstPartial(Inventory inventory, ItemStack item, int maxAmount)
 	{
 		if (item == null)
-			return - 1;
+			return -1;
 
 		ItemStack[] stacks = inventory.getContents();
 		for (int i = 0; i < stacks.length; i++)
@@ -287,6 +288,6 @@ public class InventoryUtil
 				return i;
 		}
 
-		return - 1;
+		return -1;
 	}
 }

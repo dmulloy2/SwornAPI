@@ -161,12 +161,10 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	public Map<String, Object> serialize()
 	{
 		Map<String, Object> result = new LinkedHashMap<>();
-
 		result.put("worldName", worldName);
 		result.put("x", x);
 		result.put("y", y);
 		result.put("z", z);
-
 		return result;
 	}
 
@@ -205,7 +203,7 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	@Override
 	public String toString()
 	{
-		return "LazyLocation { x = " + x + ", y = " + y + ", z = " + z + ", worldName = " + worldName + " }";
+		return "LastLocation[worldName=" + worldName + ", x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 
 	/**
