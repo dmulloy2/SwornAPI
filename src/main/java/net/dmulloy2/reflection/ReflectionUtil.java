@@ -121,7 +121,7 @@ public class ReflectionUtil
 		if (params == null)
 			params = new Class<?>[0];
 
-		for (Method method : clazz.getDeclaredMethods())
+		for (Method method : clazz.getMethods())
 		{
 			if (method.getName().equals(name) && Arrays.equals(params, method.getParameterTypes()))
 				return method;
@@ -142,33 +142,9 @@ public class ReflectionUtil
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
 
-		for (Method method : clazz.getDeclaredMethods())
+		for (Method method : clazz.getMethods())
 		{
 			if (method.getName().equals(name))
-				return method;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Gets a {@link Method} in a given {@link Class} object.
-	 *
-	 * @param clazz Class object
-	 * @param returnType Method return type
-	 * @param params Method parameters
-	 * @return The method, or null if none exists
-	 */
-	public static Method getMethod(Class<?> clazz, Class<?> returnType, Class<?>... params)
-	{
-		Validate.notNull(clazz, "clazz cannot be null!");
-		Validate.notNull(returnType, "returnType cannot be null!");
-		if (params == null)
-			params = new Class<?>[0];
-
-		for (Method method : clazz.getDeclaredMethods())
-		{
-			if (method.getReturnType().equals(returnType) && Arrays.equals(method.getParameterTypes(), params))
 				return method;
 		}
 
@@ -208,7 +184,7 @@ public class ReflectionUtil
 	 */
 	public static boolean isReflectionSupported(Player player)
 	{
-		return getClientVersion(player) == Versioning.getVersion();
+		return Versioning.getVersion() == getClientVersion(player);
 	}
 
 	/**

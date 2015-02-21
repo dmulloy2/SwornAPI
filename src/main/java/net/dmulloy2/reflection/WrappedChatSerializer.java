@@ -15,7 +15,6 @@ import net.dmulloy2.exception.ReflectionException;
 public class WrappedChatSerializer extends AbstractWrapper
 {
 	private static final String NMS_CLASS_NAME = "ChatSerializer";
-	private static final Class<?> chatComponentClass = ReflectionUtil.getNMSClass("IChatBaseComponent");
 
 	private final Method serialize;
 	public WrappedChatSerializer() throws ReflectionException
@@ -26,7 +25,7 @@ public class WrappedChatSerializer extends AbstractWrapper
 			this.constructor = null;
 			this.nmsHandle = null;
 
-			this.serialize = ReflectionUtil.getMethod(nmsClass, chatComponentClass, String.class);
+			this.serialize = ReflectionUtil.getMethod(nmsClass, "a", String.class);
 		}
 		catch (Throwable ex)
 		{

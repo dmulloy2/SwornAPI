@@ -17,24 +17,14 @@ import org.bukkit.entity.Player;
 // TODO: Keep up to date with MC versions. 1.8
 public abstract class WrappedPacket extends AbstractWrapper
 {
-	private static final Field playerConnectionField;
-	private static final Method sendPacket;
-
-	static
-	{
-		Class<?> entityPlayer = ReflectionUtil.getNMSClass("EntityPlayer");
-		playerConnectionField = ReflectionUtil.getField(entityPlayer, "playerConnection");
-
-		Class<?> playerConnection = playerConnectionField.getDeclaringClass();
-		sendPacket = ReflectionUtil.getMethod(playerConnection, "sendPacket");
-	}
-	
 	public final void send(Player player) throws ReflectionException
 	{
 		try
 		{
 			Object nmsPlayer = ReflectionUtil.getHandle(player);
+			Field playerConnectionField = ReflectionUtil.getField(nmsPlayer.getClass(), "playerConnection");
 			Object playerConnection = playerConnectionField.get(nmsPlayer);
+			Method sendPacket = ReflectionUtil.getMethod(playerConnection.getClass(), "sendPacket");
 			sendPacket.invoke(playerConnection, nmsHandle);
 		}
 		catch (Throwable ex)
@@ -48,6 +38,7 @@ public abstract class WrappedPacket extends AbstractWrapper
 		try
 		{
 			Object nmsPlayer = ReflectionUtil.getHandle(player);
+			Field playerConnectionField = ReflectionUtil.getField(nmsPlayer.getClass(), "playerConnection");
 			Object playerConnection = playerConnectionField.get(nmsPlayer);
 			Method a = ReflectionUtil.getMethod(playerConnection.getClass(), "a", nmsClass);
 			a.invoke(playerConnection, nmsHandle);
