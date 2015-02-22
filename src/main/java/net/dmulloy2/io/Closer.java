@@ -15,7 +15,7 @@ import org.apache.commons.lang.Validate;
 
 public class Closer implements Closeable
 {
-	private final List<Closeable> list = new ArrayList<>();
+	private final List<AutoCloseable> list = new ArrayList<>();
 
 	/**
 	 * Registers a closeable object.
@@ -40,14 +40,28 @@ public class Closer implements Closeable
 		if (list.isEmpty())
 			return;
 
-		for (Closeable closeable : list)
+		for (AutoCloseable closeable : list)
 		{
-			try
-			{
-				closeable.close();
-			} catch (Throwable ex) { }
+			closeQuietly(closeable);
 		}
 
 		list.clear();
+	}
+
+	/**
+	 * Quietly closes a closeable object, ignoring all exceptions.
+	 * 
+	 * @param closeable Object to close
+	 */
+	public static void closeQuietly(AutoCloseable closeable)
+	{
+		try
+		{
+			if (closeable != null)
+				closeable.close();
+		}
+		catch (Throwable ex)
+		{
+		}
 	}
 }
