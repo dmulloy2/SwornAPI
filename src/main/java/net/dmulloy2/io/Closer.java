@@ -59,9 +59,6 @@ public class Closer implements Closeable
 		{
 			if (closeable != null)
 				closeable.close();
-		}
-		catch (Throwable ex)
-		{
-		}
+		} catch (Throwable ex) { }
 	}
 }
