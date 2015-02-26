@@ -75,4 +75,41 @@ public class ListUtil
 
 		return list;
 	}
+
+	/**
+	 * Whether or not a list contains a String, ignoring case.
+	 * @param list List to check
+	 * @param string String to check for
+	 * @return Whether or not the list contains the given String
+	 */
+	public static boolean containsIgnoreCase(List<String> list, String string)
+	{
+		Validate.notNull(list, "list cannot be null!");
+		Validate.notNull(string, "string cannot be null!");
+
+		for (String element : list)
+		{
+			if (string.equalsIgnoreCase(element))
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Removes a given String element from a list, ignoring case.
+	 * @param list List to remove from
+	 * @param string String to remove
+	 */
+	public static void removeIgnoreCase(List<String> list, String string)
+	{
+		Validate.notNull(list, "list cannot be null!");
+		Validate.notNull(string, "string cannot be null!");
+
+		for (String element : list)
+		{
+			if (string.equalsIgnoreCase(element))
+				list.remove(element);
+		}
+	}
 }
