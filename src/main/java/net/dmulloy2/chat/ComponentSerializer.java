@@ -18,12 +18,12 @@ package net.dmulloy2.chat;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonDeserializationContext;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonDeserializer;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonElement;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonParseException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 
 /**
  * @author md_5
@@ -40,7 +40,7 @@ public class ComponentSerializer implements JsonDeserializer<BaseComponent>
 	public static BaseComponent[] parse(String json)
 	{
 		if (json.startsWith("[")) // Array
-		{ 
+		{
 			return gson.fromJson(json, BaseComponent[].class);
 		}
 		return new BaseComponent[]

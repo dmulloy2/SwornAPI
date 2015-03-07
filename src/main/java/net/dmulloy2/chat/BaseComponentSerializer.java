@@ -18,11 +18,10 @@ package net.dmulloy2.chat;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonDeserializationContext;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
-import org.bukkit.craftbukkit.libs.com.google.gson.JsonSerializationContext;
-
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 
 /**
  * @author md_5
