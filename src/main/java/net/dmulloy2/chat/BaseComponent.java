@@ -142,8 +142,7 @@ public abstract class BaseComponent
 
 	/**
 	 * Returns the color of this component. This uses the parent's color if this
-	 * component doesn't have one. {@link ChatColor#WHITE} is returned if no
-	 * color is found.
+	 * component doesn't have one. Null is returned if no color is found.
 	 *
 	 * @return the color of this component
 	 */
@@ -152,7 +151,7 @@ public abstract class BaseComponent
 		if (color == null)
 		{
 			if (parent == null)
-				return "white";
+				return null;
 
 			return parent.getColor();
 		}

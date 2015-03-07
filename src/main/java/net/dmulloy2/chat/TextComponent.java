@@ -79,7 +79,9 @@ public class TextComponent extends BaseComponent
 	@Override
 	protected void toLegacyText(StringBuilder builder)
 	{
-		builder.append(getColor());
+		String color = getColor();
+		if (color != null)
+			builder.append(color);
 
 		if (isBold())
 			builder.append(ChatColor.BOLD);
