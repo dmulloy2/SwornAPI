@@ -172,7 +172,7 @@ public class Util
 		return "Location[world=" + loc.getWorld().getName()
 				+ ", x=" + loc.getBlockX()
 				+ ", y=" + loc.getBlockY()
-				+ ", z=" + loc.getBlockZ();
+				+ ", z=" + loc.getBlockZ() + "]";
 	}
 
 	private static Random random;
@@ -447,12 +447,14 @@ public class Util
 	 */
 	public static void setDamage(EntityDamageEvent event, double damage)
 	{
+		Validate.isTrue(! Double.isNaN(damage), "damage must be a real number!");
+
 		double oldDamage = event.getDamage(DamageModifier.BASE);
 		if (oldDamage == damage)
 			return;
 
 		// Determine the factor
-		double factor = damage / oldDamage;
+		final double factor = damage / oldDamage;
 
 		// Scale all damage modifiers
 		for (DamageModifier modifier : DamageModifier.values())
@@ -467,8 +469,10 @@ public class Util
 				continue;
 			}
 
-			// Scale the rest
-			event.setDamage(modifier, event.getDamage(modifier) * factor);
+			// Scale the rest; ensure it isn't NaN
+			double newDamage = factor * event.getDamage(modifier);
+			newDamage = Double.isNaN(newDamage) ? 0.0D : newDamage;
+			event.setDamage(modifier, newDamage);
 		}
 	}
 }

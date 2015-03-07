@@ -3,6 +3,7 @@
  */
 package net.dmulloy2.reflection;
 
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -170,6 +171,38 @@ public class ReflectionUtil
 			return getHandle.invoke(object, new Object[0]);
 		} catch (Throwable ex) { }
 		return null;
+	}
+
+	/**
+	 * Prints the contents of a given Object to a given PrintStream.
+	 * @param out PrintStream to print contents to
+	 * @param obj Object to print contents of
+	 */
+	public static void printObject(PrintStream out, Object obj)
+	{
+		Class<?> clazz = obj.getClass();
+		out.println(clazz.getSimpleName() + "[");
+
+		for (Field field : clazz.getFields())
+		{
+			try
+			{
+				out.println("  " + field.getName() + " = " + field.get(field));
+			} catch (Throwable ex) { }
+		}
+
+		for (Method method : clazz.getMethods())
+		{
+			if (method.getParameterTypes().length == 0 && method.getReturnType() != Void.TYPE)
+			{
+				try
+				{
+					out.println("  " + method.getName() + " = " + method.invoke(obj));
+				} catch (Throwable ex) { }
+			}
+		}
+
+		out.println("]");
 	}
 
 	// ---- Versioning
