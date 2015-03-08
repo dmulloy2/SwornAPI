@@ -216,7 +216,7 @@ public class Util
 			if (! className.contains("net.minecraft"))
 			{
 				StringBuilder line = new StringBuilder();
-				line.append("  " + className + "." + ste.getMethodName());
+				line.append("\t" + className + "." + ste.getMethodName());
 				if (ste.getLineNumber() > 0)
 					line.append("(Line " + ste.getLineNumber() + ")");
 				else
@@ -241,7 +241,7 @@ public class Util
 				if (! className.contains("net.minecraft"))
 				{
 					StringBuilder line = new StringBuilder();
-					line.append("  " + className + "." + ste.getMethodName());
+					line.append("\t" + className + "." + ste.getMethodName());
 					if (ste.getLineNumber() > 0)
 						line.append("(Line " + ste.getLineNumber() + ")");
 					else
