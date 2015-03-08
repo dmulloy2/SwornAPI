@@ -28,6 +28,7 @@ public abstract class AbstractWrapper
 	{
 		try
 		{
+			method.setAccessible(true);
 			return method.invoke(nmsHandle, args);
 		}
 		catch (Throwable ex)

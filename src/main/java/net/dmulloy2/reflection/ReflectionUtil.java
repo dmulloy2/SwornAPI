@@ -30,14 +30,15 @@ public class ReflectionUtil
 	private static String VERSION;
 
 	/**
-	 * Attempts to get the NMS (net.minecraft.server) class with a given name.<br>
-	 * While in theory this allows the crossing of versions, it is important to
-	 * note that internal classes are frequently removed and/or reofbuscated.
+	 * Attempts to get a Minecraft (net.minecraft.server) class with a given
+	 * name. While in theory this allows the crossing of versions, it is
+	 * important to note that internal classes are frequently removed and/or
+	 * reofbuscated.
 	 *
 	 * @param name Class Name
-	 * @return NMS class, or null if none exists
+	 * @return Minecraft class, or null if none exists
 	 */
-	public static Class<?> getNMSClass(String name)
+	public static Class<?> getMinecraftClass(String name)
 	{
 		Validate.notNull(name, "name cannot be null!");
 
@@ -58,12 +59,42 @@ public class ReflectionUtil
 	}
 
 	/**
-	 * Attempts to get the OBC (org.bukkit.craftbukkit) class with a given name.
+	 * Attempts to get a Minecraft (net.minecraft.server) class with a given
+	 * name or alias. While in theory this allows the crossing of versions,
+	 * it is important to note that internal classes are frequently moved
+	 * and/or reofbsucated.
+	 *
+	 * @param name Class name
+	 * @param aliases Aliases
+	 * @return Minecraft class, or null if none exists
+	 */
+	public static Class<?> getMinecraftClass(String name, String... aliases)
+	{
+		Validate.notNull(name, "name cannot be null!");
+		Validate.noNullElements(aliases, "aliases cannot contain null elements!");
+
+		Class<?> clazz = getMinecraftClass(name);
+		if (clazz != null)
+		{
+			for (String alias : aliases)
+			{
+				clazz = getMinecraftClass(alias);
+				if (clazz != null)
+					return clazz;
+			}
+		}
+
+		return clazz;
+	}
+
+	/**
+	 * Attempts to get the CraftBukkit (org.bukkit.craftbukkit) class with a
+	 * given name.
 	 *
 	 * @param name Class Name
-	 * @return OBC class, or null if none exists
+	 * @return CraftBukkit class, or null if none exists
 	 */
-	public static Class<?> getOBCClass(String name)
+	public static Class<?> getCraftBukkitClass(String name)
 	{
 		Validate.notNull(name, "name cannot be null!");
 
