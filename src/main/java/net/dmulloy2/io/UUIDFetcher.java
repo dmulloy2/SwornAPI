@@ -57,11 +57,11 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	public Map<String, UUID> call() throws IOException, ParseException
 	{
 		Map<String, UUID> uuidMap = new HashMap<>();
-		for (List<String> names : namesList)
+		for (List<String> names : new ArrayList<>(namesList))
 		{
 			if (cachingEnabled)
 			{
-				for (String name : names.toArray(new String[0]))
+				for (String name : new ArrayList<>(names))
 				{
 					if (cache.containsKey(name))
 					{

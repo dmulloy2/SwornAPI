@@ -87,7 +87,7 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		for (String element : list)
+		for (String element : list.toArray(new String[0]))
 		{
 			if (string.equalsIgnoreCase(element))
 				return true;
@@ -106,7 +106,7 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		for (String element : list)
+		for (String element : list.toArray(new String[0]))
 		{
 			if (string.equalsIgnoreCase(element))
 				list.remove(element);
