@@ -7,6 +7,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
@@ -114,6 +116,46 @@ public class ReflectionUtil
 		return null;
 	}
 
+	@SafeVarargs
+	private static <T> Set<T> setUnion(T[]... array)
+	{
+		Set<T> result = new LinkedHashSet<T>();
+
+		for (T[] elements : array)
+		{
+			for (T element : elements)
+			{
+				result.add(element);
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Retrieves all fields in declared order.
+	 * 
+	 * @param clazz Class to get the fields for
+	 * @return Every field
+	 */
+	public static Set<Field> getFields(Class<?> clazz)
+	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		return setUnion(clazz.getDeclaredFields(), clazz.getFields());
+	}
+
+	/**
+	 * Retrieves all methods in declared order.
+	 * 
+	 * @param clazz Class to get the methods for
+	 * @return Every method
+	 */
+	public static Set<Method> getMethods(Class<?> clazz)
+	{
+		Validate.notNull(clazz, "clazz cannot be null!");
+		return setUnion(clazz.getDeclaredMethods(), clazz.getMethods());
+	}
+
 	/**
 	 * Gets a {@link Field} in a given {@link Class} object.
 	 *
@@ -128,11 +170,11 @@ public class ReflectionUtil
 
 		try
 		{
-			Field field = clazz.getDeclaredField(name);
-			if (field != null)
-				return field;
-
-			return clazz.getField(name);
+			for (Field field : getFields(clazz))
+			{
+				if (field.getName().equals(name))
+					return field;
+			}
 		} catch (Throwable ex) { }
 		return null;
 	}
@@ -153,7 +195,7 @@ public class ReflectionUtil
 		if (params == null)
 			params = new Class<?>[0];
 
-		for (Method method : clazz.getMethods())
+		for (Method method : getMethods(clazz))
 		{
 			if (method.getName().equals(name) && Arrays.equals(params, method.getParameterTypes()))
 				return method;
@@ -174,7 +216,7 @@ public class ReflectionUtil
 		Validate.notNull(clazz, "clazz cannot be null!");
 		Validate.notNull(name, "name cannot be null!");
 
-		for (Method method : clazz.getMethods())
+		for (Method method : getMethods(clazz))
 		{
 			if (method.getName().equals(name))
 				return method;
@@ -214,7 +256,7 @@ public class ReflectionUtil
 		Class<?> clazz = obj.getClass();
 		out.println(clazz.getSimpleName() + "[");
 
-		for (Field field : clazz.getFields())
+		for (Field field : getFields(clazz))
 		{
 			try
 			{
@@ -222,7 +264,7 @@ public class ReflectionUtil
 			} catch (Throwable ex) { }
 		}
 
-		for (Method method : clazz.getMethods())
+		for (Method method : getMethods(clazz))
 		{
 			if (method.getParameterTypes().length == 0 && method.getReturnType() != Void.TYPE)
 			{
