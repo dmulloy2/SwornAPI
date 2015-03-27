@@ -31,6 +31,7 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
@@ -474,5 +475,26 @@ public class Util
 			newDamage = Double.isNaN(newDamage) ? 0.0D : newDamage;
 			event.setDamage(modifier, newDamage);
 		}
+	}
+
+	/**
+	 * Retrieves an Entity's location safely, avoiding IllegalArgumentExceptions
+	 * with pitch and yaw. Therefore, the pitch and yaw aren't guaranteed to be
+	 * correct, but it can be assumed that the world and basic coordinates will
+	 * be.
+	 * 
+	 * @param entity Entity to get location for
+	 * @return The Entity's location
+	 */
+	public static Location getLocationSafely(Entity entity)
+	{
+		Location loc = new Location(null, 0, 0, 0);
+
+		try
+		{
+			entity.getLocation(loc);
+		} catch (Throwable ex) { }
+
+		return loc;
 	}
 }
