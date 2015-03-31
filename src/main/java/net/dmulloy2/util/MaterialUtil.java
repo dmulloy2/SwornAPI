@@ -75,21 +75,6 @@ public class MaterialUtil
 	}
 
 	/**
-	 * Gets the Item ID for a Bukkit Material.
-	 *
-	 * @param mat Bukkit material
-	 * @return Item ID, or -1 if not found
-	 */
-	public static final int getItemId(org.bukkit.Material bukkitMaterial)
-	{
-		Material mat = Material.getByBukkitMaterial(bukkitMaterial);
-		if (mat != null)
-			return mat.getId();
-
-		return -1;
-	}
-
-	/**
 	 * Gets the friendly name of a Material.
 	 *
 	 * @param mat Material
@@ -109,21 +94,6 @@ public class MaterialUtil
 	public static final String getMaterialName(String name)
 	{
 		org.bukkit.Material mat = getMaterial(name);
-		if (mat == null)
-			return "null";
-
-		return getMaterialName(mat);
-	}
-
-	/**
-	 * Gets the friendly name of a Material.
-	 *
-	 * @param id Item ID
-	 * @return Friendly name, or "null" if not found
-	 */
-	public static final String getMaterialName(int id)
-	{
-		org.bukkit.Material mat = getMaterial(id);
 		if (mat == null)
 			return "null";
 

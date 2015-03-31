@@ -165,7 +165,7 @@ public class FormatUtil
 		Validate.notNull(string, "string cannot be null!");
 
 		amount = Math.abs(amount);
-		if (amount == 0 || amount > 1)
+		if (amount != 1)
 		{
 			if (! string.toLowerCase().endsWith("s"))
 				return string + "s";

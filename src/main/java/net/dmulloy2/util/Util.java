@@ -31,10 +31,7 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.block.NoteBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.material.MaterialData;
 
 /**
@@ -434,67 +431,5 @@ public class Util
 		{
 			return "BlockState[type=" + FormatUtil.getFriendlyName(state.getType()) + "]";
 		}
-	}
-
-	/**
-	 * Properly sets the damage of an EntityDamageEvent. Certain modifiers,
-	 * especially MAGIC, do not scale properly. This method directly applies
-	 * the BASE modifier and scales the rest proportionally.
-	 * <p>
-	 * Inspired by MCore and mcMMO
-	 *
-	 * @param event Event to set damage for
-	 * @param damage New damage
-	 */
-	public static void setDamage(EntityDamageEvent event, double damage)
-	{
-		Validate.isTrue(! Double.isNaN(damage), "damage must be a real number!");
-
-		double oldDamage = event.getDamage(DamageModifier.BASE);
-		if (oldDamage == damage)
-			return;
-
-		// Determine the factor
-		final double factor = damage / oldDamage;
-
-		// Scale all damage modifiers
-		for (DamageModifier modifier : DamageModifier.values())
-		{
-			if (! event.isApplicable(modifier))
-				continue;
-
-			// Directly set BASE
-			if (modifier == DamageModifier.BASE)
-			{
-				event.setDamage(modifier, damage);
-				continue;
-			}
-
-			// Scale the rest; ensure it isn't NaN
-			double newDamage = factor * event.getDamage(modifier);
-			newDamage = Double.isNaN(newDamage) ? 0.0D : newDamage;
-			event.setDamage(modifier, newDamage);
-		}
-	}
-
-	/**
-	 * Retrieves an Entity's location safely, avoiding IllegalArgumentExceptions
-	 * with pitch and yaw. Therefore, the pitch and yaw aren't guaranteed to be
-	 * correct, but it can be assumed that the world and basic coordinates will
-	 * be.
-	 * 
-	 * @param entity Entity to get location for
-	 * @return The Entity's location
-	 */
-	public static Location getLocationSafely(Entity entity)
-	{
-		Location loc = new Location(null, 0, 0, 0);
-
-		try
-		{
-			entity.getLocation(loc);
-		} catch (Throwable ex) { }
-
-		return loc;
 	}
 }

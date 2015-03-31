@@ -4,7 +4,6 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,23 +19,6 @@ import org.apache.commons.lang.Validate;
 public class ListUtil
 {
 	private static final Object EMPTY = new Object();
-
-	/**
-	 * Constructs a new {@link List} from an existing {@link Collection}. This
-	 * helps with concurrency problems. Changes to the returned list will not be
-	 * reflected in the original collection. The use of this method is generally
-	 * not performance-effective.
-	 * <p>
-	 * TODO: Find a better solution.
-	 *
-	 * @param coll Base Collection
-	 * @return The List
-	 */
-	public static <T> List<T> newList(Collection<? extends T> coll)
-	{
-		Validate.notNull(coll, "coll cannot be null!");
-		return new ArrayList<>(coll);
-	}
 
 	/**
 	 * Removes duplicate entries from a {@link List}. Retains order.
