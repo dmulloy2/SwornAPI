@@ -17,6 +17,7 @@
  */
 package net.dmulloy2.types;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -26,9 +27,6 @@ import net.dmulloy2.util.ItemUtil;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.inventory.ItemStack;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 /**
  * @author dmulloy2
@@ -67,25 +65,27 @@ public class ItemParser
 
 	public final List<ItemStack> parse(List<String> strings)
 	{
-		return Lists.transform(strings, new Function<String, ItemStack>()
+		List<ItemStack> ret = new ArrayList<>();
+		for (String string : strings)
 		{
-			@Override
-			public ItemStack apply(String string)
-			{
-				return parse(string);
-			}
-		});
+			ItemStack item = parse(string);
+			if (item != null)
+				ret.add(item);
+		}
+
+		return ret;
 	}
 
 	public static final List<ItemStack> parse(final SwornPlugin plugin, List<String> strings)
 	{
-		return Lists.transform(strings, new Function<String, ItemStack>()
+		List<ItemStack> ret = new ArrayList<>();
+		for (String string : strings)
 		{
-			@Override
-			public ItemStack apply(String string)
-			{
-				return parse(plugin, string);
-			}
-		});
+			ItemStack item = parse(plugin, string);
+			if (item != null)
+				ret.add(item);
+		}
+
+		return ret;
 	}
 }
