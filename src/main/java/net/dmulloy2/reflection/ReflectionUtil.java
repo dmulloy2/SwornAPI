@@ -41,9 +41,8 @@ public class ReflectionUtil
 {
 	private ReflectionUtil() { }
 
-	private static final String NMS = "net.minecraft.server";
-	private static final String OBC = "org.bukkit.craftbukkit";
-	private static String VERSION;
+	private static String NMS;
+	private static String OBC;
 
 	/**
 	 * Attempts to get a Minecraft (net.minecraft.server) class with a given
@@ -58,18 +57,17 @@ public class ReflectionUtil
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (VERSION == null)
+		if (NMS == null)
 		{
-			// Lazy-load VERSION
+			// Lazy-load NMS package
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			NMS = "net.minecraft.server." + version + ".";
 		}
-
-		name = NMS + "." + VERSION + "." + name;
 
 		try
 		{
-			return Class.forName(name);
+			return Class.forName(NMS + name);
 		} catch (Throwable ex) { }
 		return null;
 	}
@@ -114,18 +112,17 @@ public class ReflectionUtil
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (VERSION == null)
+		if (OBC == null)
 		{
-			// Lazy-load VERSION
+			// Lazy-load OBC package
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			OBC = "org.bukkit.craftbukkit." + version + ".";
 		}
-
-		name = OBC + "." + VERSION + "." + name;
 
 		try
 		{
-			return Class.forName(name);
+			return Class.forName(OBC + name);
 		} catch (Throwable ex) { }
 		return null;
 	}
@@ -274,7 +271,7 @@ public class ReflectionUtil
 		{
 			try
 			{
-				out.println("  " + field.getName() + " = " + field.get(field));
+				out.println("  " + field.getName() + " = " + field.get(obj));
 			} catch (Throwable ex) { }
 		}
 

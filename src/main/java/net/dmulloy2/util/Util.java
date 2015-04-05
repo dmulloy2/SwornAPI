@@ -373,9 +373,7 @@ public class Util
 
 	/**
 	 * Sets a {@link Block}'s {@link MaterialData}. Exists because Bukkit's
-	 * MaterialData API can be difficult to work with.<br>
-	 * This method is deprecated and is not guaranteed to work (and will
-	 * probably break completely with 1.8)
+	 * BlockState API is not easily cloneable.
 	 *
 	 * @param block Block to set data of
 	 * @param data Data to set

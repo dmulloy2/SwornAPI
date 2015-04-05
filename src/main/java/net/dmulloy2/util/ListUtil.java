@@ -45,7 +45,6 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 
 		Map<T, Object> map = new LinkedHashMap<>();
-
 		for (T element : list)
 			map.put(element, EMPTY);
 
@@ -63,11 +62,9 @@ public class ListUtil
 	{
 		Validate.notNull(elements, "elements cannot be null!");
 
-		List<T> list = new ArrayList<T>();
+		List<T> list = new ArrayList<>(elements.length);
 		for (T element : elements)
-		{
 			list.add(element);
-		}
 
 		return list;
 	}
