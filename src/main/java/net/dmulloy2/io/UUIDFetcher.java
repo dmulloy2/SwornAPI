@@ -110,10 +110,10 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 	private static void writeBody(HttpURLConnection connection, String body) throws IOException
 	{
-		DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-		writer.write(body.getBytes());
-		writer.flush();
-		writer.close();
+		try (DataOutputStream writer = new DataOutputStream(connection.getOutputStream()))
+		{
+			writer.write(body.getBytes());
+		}
 	}
 
 	private static HttpURLConnection createConnection() throws IOException

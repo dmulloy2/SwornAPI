@@ -51,9 +51,7 @@ public class IOUtil
 	{
 		Validate.notNull(file, "file cannot be null!");
 
-		Closer closer = new Closer();
-
-		try
+		try (Closer closer = new Closer())
 		{
 			FileInputStream fis = closer.register(new FileInputStream(file));
 			DataInputStream dis = closer.register(new DataInputStream(fis));
@@ -67,10 +65,6 @@ public class IOUtil
 				lines.add(line);
 
 			return lines;
-		}
-		finally
-		{
-			closer.close();
 		}
 	}
 
@@ -86,19 +80,13 @@ public class IOUtil
 		Validate.notNull(file, "file cannot be null!");
 		Validate.notNull(lines, "lines cannot be null!");
 
-		Closer closer = new Closer();
-
-		try
+		try (Closer closer = new Closer())
 		{
 			FileWriter fw = closer.register(new FileWriter(file));
 			PrintWriter pw = closer.register(new PrintWriter(fw));
 
 			for (String line : lines)
 				pw.println(line);
-		}
-		finally
-		{
-			closer.close();
 		}
 	}
 
