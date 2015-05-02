@@ -230,4 +230,16 @@ public class NumberUtil
 		DecimalFormat f = new DecimalFormat(format.toString());
 		return toDouble(f.format(d));
 	}
+
+	/**
+	 * Rounds a given number up to the nearest multiple of another number.
+	 * 
+	 * @param number Number to round up
+	 * @param multipleOf Rounds to a multiple of this number
+	 * @return The rounded number
+	 */
+	public static int roundUp(double number, int multipleOf)
+	{
+		return (int) Math.ceil(number / multipleOf) * multipleOf;
+	}
 }
