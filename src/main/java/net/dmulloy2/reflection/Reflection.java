@@ -38,6 +38,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.injector.PacketConstructor;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 /**
@@ -394,8 +396,10 @@ public final class Reflection
 					try
 					{
 						ProtocolManager manager = ProtocolLibrary.getProtocolManager();
-						PacketContainer packet = manager.createPacket(PacketType.Play.Server.CHAT);
-						packet.getChatComponents().write(0, WrappedChatComponent.fromJson(ComponentSerializer.toString(components)));
+						PacketConstructor constructor = manager.createPacketConstructor(PacketType.Play.Server.CHAT,
+								MinecraftReflection.getIChatBaseComponentClass());
+						WrappedChatComponent component = WrappedChatComponent.fromJson(ComponentSerializer.toString(components));
+						PacketContainer packet = constructor.createPacket(component);
 						manager.sendServerPacket(player, packet);
 					}
 					catch (Throwable ex)
