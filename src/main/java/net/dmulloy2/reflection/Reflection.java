@@ -399,7 +399,7 @@ public final class Reflection
 						PacketConstructor constructor = manager.createPacketConstructor(PacketType.Play.Server.CHAT,
 								MinecraftReflection.getIChatBaseComponentClass());
 						WrappedChatComponent component = WrappedChatComponent.fromJson(ComponentSerializer.toString(components));
-						PacketContainer packet = constructor.createPacket(component);
+						PacketContainer packet = constructor.createPacket(component.getHandle());
 						manager.sendServerPacket(player, packet);
 					}
 					catch (Throwable ex)
