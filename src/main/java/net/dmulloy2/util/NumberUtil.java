@@ -236,7 +236,7 @@ public class NumberUtil
 	 * 
 	 * @param number Number to round up
 	 * @param multipleOf Rounds to a multiple of this number
-	 * @return The rounded number
+	 * @return The nearest multiple
 	 */
 	public static int roundUp(double number, int multipleOf)
 	{

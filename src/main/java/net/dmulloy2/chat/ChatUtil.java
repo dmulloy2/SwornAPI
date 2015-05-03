@@ -18,8 +18,8 @@
 package net.dmulloy2.chat;
 
 import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.reflection.WrappedChatPacket;
-import net.dmulloy2.reflection.WrappedChatSerializer;
+import net.dmulloy2.reflection.Packet;
+import net.dmulloy2.reflection.Reflection;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
@@ -51,13 +51,7 @@ public class ChatUtil
 		{
 			try
 			{
-				Player player = (Player) sender;
-
-				WrappedChatSerializer serializer = new WrappedChatSerializer();
-				Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
-
-				WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
-				packet.send(player);
+				sendMessageRaw(sender, message);
 				return;
 			} catch (Throwable ex) { }
 		}
@@ -79,13 +73,8 @@ public class ChatUtil
 
 		if (sender instanceof Player)
 		{
-			Player player = (Player) sender;
-
-			WrappedChatSerializer serializer = new WrappedChatSerializer();
-			Object chatComponent = serializer.serialize(ComponentSerializer.toString(message));
-
-			WrappedChatPacket packet = new WrappedChatPacket(chatComponent);
-			packet.send(player);
+			Packet packet = Reflection.getChatPacket(message);
+			packet.send((Player) sender);
 		}
 		else
 		{

@@ -19,6 +19,7 @@ package net.dmulloy2.gui;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
+import net.dmulloy2.util.NumberUtil;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -48,10 +49,9 @@ public abstract class AbstractGUI
 	protected final void setup()
 	{
 		// Size checks
-		int size = getSize();
+		int size = NumberUtil.roundUp(getSize(), 9);
 		Validate.isTrue(size > 0, "Inventory size must not be negative!");
-		Validate.isTrue(size <= 54, "Inventory size is too large!");
-		Validate.isTrue(size % 9 == 0, "Inventory size must be divisible by 9!");
+		Validate.isTrue(size <= 54, "Inventory size is too large! (" + size + " > 54)");
 
 		// Validate title
 		String title = getTitle();

@@ -17,29 +17,18 @@
  */
 package net.dmulloy2.reflection;
 
-import net.dmulloy2.exception.ReflectionException;
+import org.bukkit.entity.Player;
 
 /**
+ * Represents a packet that can be sent to a Player.
  * @author dmulloy2
  */
 
-// TODO: Keep up to date with MC versions. 1.8.3
-public class WrappedChatPacket extends WrappedPacket
+public interface Packet
 {
-	private static final String CLASS_NAME = "PacketPlayOutChat";
-	private static final Class<?> CHAT_COMPONENT = Reflection.getMinecraftClass("IChatBaseComponent");
-
-	public WrappedChatPacket(Object chatComponent) throws ReflectionException
-	{
-		try
-		{
-			this.nmsClass = Reflection.getMinecraftClass(CLASS_NAME);
-			this.constructor = nmsClass.getConstructor(CHAT_COMPONENT);
-			this.nmsHandle = constructor.newInstance(chatComponent);
-		}
-		catch (Throwable ex)
-		{
-			throw new ReflectionException("Constructing wrapped chat packet", ex);
-		}
-	}
+	/**
+	 * Sends this packet to a given Player.
+	 * @param player Player to send to
+	 */
+	public void send(Player player);
 }

@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import net.dmulloy2.chat.BaseComponent;
+import net.dmulloy2.chat.ComponentSerializer;
+import net.dmulloy2.exception.ReflectionException;
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
 
@@ -31,18 +34,21 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+
 /**
- * Util for dealing with Java Reflection.
- *
  * @author dmulloy2
- * @deprecated Replaced with {@link Reflection}
  */
 
-@Deprecated
-public class ReflectionUtil
+public final class Reflection
 {
-	private ReflectionUtil() { }
+	private Reflection() { }
 
+	// ---- General Reflection
 	private static String NMS;
 	private static String OBC;
 
@@ -344,5 +350,65 @@ public class ReflectionUtil
 			}
 		} catch (Throwable ex) { }
 		return Version.UNKNOWN;
+	}
+
+	// ---- ProtocolLib
+	private static boolean triedProtocolLib, protocolLibEnabled;
+
+	private static boolean isProtocolLibEnabled()
+	{
+		if (! triedProtocolLib)
+		{
+			triedProtocolLib = true;
+
+			try
+			{
+				ProtocolLibrary.getProtocolManager();
+				return protocolLibEnabled = true;
+			} catch (Throwable ex) { }
+		}
+
+		return protocolLibEnabled;
+	}
+
+	// ---- Packets
+
+	/**
+	 * Gets a chat packet with a given message using ProtocolLib or our
+	 * wrappers.
+	 * 
+	 * @param components Chat message
+	 * @return The chat packet
+	 * @throws ReflectionException If reflection fails
+	 */
+	public static Packet getChatPacket(final BaseComponent... components) throws ReflectionException
+	{
+		// Try to use ProtocolLib
+		if (isProtocolLibEnabled())
+		{
+			return new Packet()
+			{
+				@Override
+				public void send(Player player) throws ReflectionException
+				{
+					try
+					{
+						ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+						PacketContainer packet = manager.createPacket(PacketType.Play.Server.CHAT);
+						packet.getChatComponents().write(0, WrappedChatComponent.fromJson(ComponentSerializer.toString(components)));
+						manager.sendServerPacket(player, packet);
+					}
+					catch (Throwable ex)
+					{
+						throw new ReflectionException("Failed to send chat packet to " + player.getName(), ex);
+					}
+				}
+			};
+		}
+
+		// Fall back to our less reliable wrappers
+		WrappedChatSerializer serializer = new WrappedChatSerializer();
+		Object chatComponent = serializer.serialize(ComponentSerializer.toString(components));
+		return new WrappedChatPacket(chatComponent);
 	}
 }

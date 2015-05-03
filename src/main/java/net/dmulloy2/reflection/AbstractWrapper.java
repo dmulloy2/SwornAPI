@@ -55,7 +55,7 @@ public abstract class AbstractWrapper
 	{
 		try
 		{
-			Field field = ReflectionUtil.getField(nmsClass, name);
+			Field field = Reflection.getField(nmsClass, name);
 			field.setAccessible(true);
 			return field.get(nmsHandle);
 		}

@@ -36,11 +36,11 @@ public class WrappedChatSerializer extends AbstractWrapper
 	{
 		try
 		{
-			this.nmsClass = ReflectionUtil.getMinecraftClass(CLASS_NAME, ALIASES);
+			this.nmsClass = Reflection.getMinecraftClass(CLASS_NAME, ALIASES);
 			this.constructor = null;
 			this.nmsHandle = null;
 
-			this.serialize = ReflectionUtil.getMethod(nmsClass, "a", String.class);
+			this.serialize = Reflection.getMethod(nmsClass, "a", String.class);
 		}
 		catch (Throwable ex)
 		{

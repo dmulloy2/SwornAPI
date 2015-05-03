@@ -22,7 +22,6 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import net.dmulloy2.reflection.ReflectionUtil;
 import net.dmulloy2.types.StringJoiner;
 
 import org.apache.commons.lang.Validate;
@@ -124,7 +123,7 @@ public class FormatUtil
 		try
 		{
 			// Clever little method to check if the method isn't declared by a class other than Object.
-			Method method = ReflectionUtil.getMethod(obj.getClass(), "toString");
+			Method method = obj.getClass().getMethod("toString");
 			if (method.getDeclaringClass().getSuperclass() == null)
 				return obj.getClass().getSimpleName();
 		} catch (Throwable ex) { }
