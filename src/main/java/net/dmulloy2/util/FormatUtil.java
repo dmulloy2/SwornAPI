@@ -19,8 +19,7 @@ package net.dmulloy2.util;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Pattern;
 
 import net.dmulloy2.types.StringJoiner;
 
@@ -140,12 +139,10 @@ public class FormatUtil
 	{
 		Validate.notNull(string, "string cannot be null!");
 
-		String ret = string.toLowerCase();
-		ret = ret.replaceAll("_", " ");
-		return WordUtils.capitalize(ret);
+		return WordUtils.capitalize(string.toLowerCase().replaceAll("_", " "));
 	}
 
-	private static final List<String> VOWELS = Arrays.asList("a", "e", "i", "o", "u");
+	private static Pattern VOWELS = null;
 
 	/**
 	 * Returns the proper article of a given string
@@ -157,14 +154,11 @@ public class FormatUtil
 	{
 		Validate.notNull(string, "string cannot be null!");
 
-		string = string.toLowerCase();
-		for (String vowel : VOWELS)
-		{
-			if (string.startsWith(vowel))
-				return "an";
-		}
+		if (VOWELS == null)
+			VOWELS = Pattern.compile("[aeiou]");
 
-		return "a";
+		string = string.toLowerCase();
+		return VOWELS.matcher(string).matches() ? "an" : "a";
 	}
 
 	/**
