@@ -55,4 +55,11 @@ public class BadTimeException extends RuntimeException
 	{
 		super(message, cause);
 	}
+
+	@Override
+	public String toString()
+	{
+		Throwable cause = getCause();
+		return cause != null ? cause.toString() : getMessage();
+	}
 }
