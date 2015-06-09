@@ -18,8 +18,10 @@
 package net.dmulloy2.chat;
 
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.reflection.Packet;
 import net.dmulloy2.reflection.Reflection;
+import net.dmulloy2.util.Util;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
@@ -53,7 +55,12 @@ public class ChatUtil
 			{
 				sendMessageRaw(sender, message);
 				return;
-			} catch (Throwable ex) { }
+			}
+			catch (Throwable ex)
+			{
+				LogHandler.globalDebug(Util.getUsefulStack(ex, "sending message {0} to {1}", ComponentSerializer.toString(message),
+						sender.getName()));
+			}
 		}
 
 		sender.sendMessage(BaseComponent.toLegacyText(message));

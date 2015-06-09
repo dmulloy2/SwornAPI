@@ -22,7 +22,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
+import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.EnchantmentType;
 import net.dmulloy2.types.StringJoiner;
 
@@ -74,7 +76,7 @@ public class ItemUtil
 		final String meta = string;
 		Map<Enchantment, Integer> enchantments = new LinkedHashMap<>();
 
-		string = string.replaceAll(" ", "");
+		string = string.replaceAll("\\s", "");
 		if (string.contains(","))
 		{
 			String str = string.substring(0, string.indexOf(","));
@@ -141,6 +143,48 @@ public class ItemUtil
 
 		// Parse meta
 		parseItemMeta(ret, meta);
+		return ret;
+	}
+
+	/**
+	 * Safely reads an item, logging any exceptions.
+	 * 
+	 * @param string String to parse
+	 * @param plugin Plugin instance
+	 * @return ItemStack, or null if parsing failed
+	 * @see #readItem(String)
+	 */
+	public static ItemStack readItem(String string, SwornPlugin plugin)
+	{
+		try
+		{
+			return ItemUtil.readItem(string);
+		}
+		catch (Throwable ex)
+		{
+			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "parsing item \"" + string + "\""));
+			return null;
+		}
+	}
+
+	/**
+	 * Safely reads a list of items, logging any exceptions.
+	 * 
+	 * @param strings Strings to parse
+	 * @param plugin Plugin instance
+	 * @return List of ItemStacks
+	 * @see #readItem(String)
+	 */
+	public static final List<ItemStack> readItems(List<String> strings, SwornPlugin plugin)
+	{
+		List<ItemStack> ret = new ArrayList<>();
+		for (String string : strings)
+		{
+			ItemStack item = readItem(string, plugin);
+			if (item != null)
+				ret.add(item);
+		}
+
 		return ret;
 	}
 
@@ -235,9 +279,8 @@ public class ItemUtil
 				int commaIndex = name.indexOf(",");
 				if (commaIndex != -1)
 					name = name.substring(0, commaIndex);
-				name = name.replaceAll("_", " ");
-				name = FormatUtil.format(name);
-				meta.setDisplayName(name);
+
+				meta.setDisplayName(FormatUtil.format(name.replace('_', ' ')));
 			}
 
 			// Lore
@@ -248,7 +291,7 @@ public class ItemUtil
 				int commaIndex = str.indexOf(",");
 				if (commaIndex != -1)
 					str.substring(0, commaIndex);
-				str = str.replaceAll("_", " ");
+				str = str.replace('_', ' ');
 
 				List<String> lore = new ArrayList<>();
 				for (String split : str.split("\\|"))
@@ -314,10 +357,9 @@ public class ItemUtil
 		ItemMeta meta = stack.getItemMeta();
 		if (meta.hasDisplayName())
 		{
-			String name = meta.getDisplayName();
-			name = name.replaceAll(ChatColor.COLOR_CHAR + "", "&");
-			name = name.replaceAll(" ", "_");
-			ret.append(", name:" + name);
+			ret.append(", name:" + meta.getDisplayName()
+					.replace(ChatColor.COLOR_CHAR, '&')
+					.replace(' ', '_'));
 		}
 
 		if (meta.hasLore())
@@ -325,9 +367,9 @@ public class ItemUtil
 			StringJoiner lore = new StringJoiner("|");
 			for (String line : meta.getLore())
 			{
-				line = line.replaceAll(ChatColor.COLOR_CHAR + "", "&");
-				line = line.replaceAll(" ", "_");
-				lore.append(line);
+				lore.append(line
+						.replace(ChatColor.COLOR_CHAR, '&')
+						.replace(' ', '_'));
 			}
 
 			ret.append(", lore:" + lore.toString());

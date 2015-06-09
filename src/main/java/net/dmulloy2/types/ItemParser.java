@@ -17,14 +17,11 @@
  */
 package net.dmulloy2.types;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import lombok.AllArgsConstructor;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.ItemUtil;
-import net.dmulloy2.util.Util;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -32,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
  * @author dmulloy2
  */
 
+@Deprecated
 @AllArgsConstructor
 public class ItemParser
 {
@@ -39,53 +37,21 @@ public class ItemParser
 
 	public final ItemStack parse(String string)
 	{
-		try
-		{
-			return ItemUtil.readItem(string);
-		}
-		catch (Throwable ex)
-		{
-			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "parsing item \"" + string + "\""));
-			return null;
-		}
+		return parse(plugin, string);
 	}
 
 	public static final ItemStack parse(SwornPlugin plugin, String string)
 	{
-		try
-		{
-			return ItemUtil.readItem(string);
-		}
-		catch (Throwable ex)
-		{
-			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "parsing item \"" + string + "\""));
-			return null;
-		}
+		return ItemUtil.readItem(string, plugin);
 	}
 
 	public final List<ItemStack> parse(List<String> strings)
 	{
-		List<ItemStack> ret = new ArrayList<>();
-		for (String string : strings)
-		{
-			ItemStack item = parse(string);
-			if (item != null)
-				ret.add(item);
-		}
-
-		return ret;
+		return parse(plugin, strings);
 	}
 
 	public static final List<ItemStack> parse(final SwornPlugin plugin, List<String> strings)
 	{
-		List<ItemStack> ret = new ArrayList<>();
-		for (String string : strings)
-		{
-			ItemStack item = parse(plugin, string);
-			if (item != null)
-				ret.add(item);
-		}
-
-		return ret;
+		return ItemUtil.readItems(strings, plugin);
 	}
 }

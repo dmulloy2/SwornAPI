@@ -24,6 +24,7 @@ import net.dmulloy2.commands.Command;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
+import net.dmulloy2.types.Reloadable;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,29 +35,51 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author dmulloy2
  */
 
-public abstract class SwornPlugin extends JavaPlugin
+public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 {
 	protected @Getter PermissionHandler permissionHandler;
 	protected @Getter CommandHandler commandHandler;
 	protected @Getter LogHandler logHandler;
 
+	/**
+	 * Gets this plugin's prefix. Defaults to {@link ChatColor#YELLOW}.
+	 * @return This plugin's prefix
+	 */
 	public String getPrefix()
 	{
 		return ChatColor.YELLOW.toString();
 	}
 
+	/**
+	 * Gets any extra lines to be displayed in the help menu.
+	 * @return Any extra lines, or null if none
+	 */
 	public List<String> getExtraHelp()
 	{
 		return null;
 	}
 
+	/**
+	 * Gets this plugin's custom help command, if applicable.
+	 * @return Custom help command, or null if not applicable
+	 */
 	public Command getHelpCommand()
 	{
 		return null;
 	}
 
+	/**
+	 * Exposes this plugin's ClassLoader.
+	 * @see JavaPlugin#getClassLoader()
+	 */
 	public ClassLoader classLoader()
 	{
 		return super.getClassLoader();
+	}
+
+	@Override
+	public void reload()
+	{
+		
 	}
 }

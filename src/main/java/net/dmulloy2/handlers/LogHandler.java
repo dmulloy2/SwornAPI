@@ -17,6 +17,7 @@
  */
 package net.dmulloy2.handlers;
 
+import java.text.MessageFormat;
 import java.util.logging.Level;
 
 import lombok.AllArgsConstructor;
@@ -67,10 +68,8 @@ public class LogHandler
 	 */
 	public final void debug(Level level, String msg, Object... objects)
 	{
-		if (plugin.getConfig().getBoolean("debug", false))
-		{
+		if (Boolean.getBoolean("swornapi.debug") || plugin.getConfig().getBoolean("debug", false))
 			log(level, "[Debug] " + msg, objects);
-		}
 	}
 
 	/**
@@ -83,5 +82,18 @@ public class LogHandler
 	public final void debug(String msg, Object... objects)
 	{
 		debug(Level.INFO, msg, objects);
+	}
+
+	/**
+	 * Logs a debug message to the console if the system property
+	 * <code>swornapi.debug</code> is true.
+	 * 
+	 * @param msg Message to log.
+	 * @param objects Objects to format in.
+	 */
+	public static void globalDebug(String msg, Object... objects)
+	{
+		if (Boolean.getBoolean("swornapi.debug"))
+			System.out.println("[Debug] " + MessageFormat.format(msg, objects));
 	}
 }

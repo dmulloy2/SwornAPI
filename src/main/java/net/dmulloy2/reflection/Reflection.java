@@ -27,8 +27,10 @@ import java.util.Set;
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentSerializer;
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.types.Versioning;
 import net.dmulloy2.types.Versioning.Version;
+import net.dmulloy2.util.Util;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -78,8 +80,12 @@ public final class Reflection
 		try
 		{
 			return Class.forName(NMS + name);
-		} catch (Throwable ex) { }
-		return null;
+		}
+		catch (Throwable ex)
+		{
+			LogHandler.globalDebug("Could not find Minecraft class {0}", NMS + name);
+			return null;
+		}
 	}
 
 	/**
@@ -133,8 +139,12 @@ public final class Reflection
 		try
 		{
 			return Class.forName(OBC + name);
-		} catch (Throwable ex) { }
-		return null;
+		}
+		catch (Throwable ex)
+		{
+			LogHandler.globalDebug("Could not find CraftBukkit class {0}", NMS + name);
+			return null;
+		}
 	}
 
 	@SafeVarargs
@@ -263,8 +273,12 @@ public final class Reflection
 		try
 		{
 			return getHandle.invoke(object, new Object[0]);
-		} catch (Throwable ex) { }
-		return null;
+		}
+		catch (Throwable ex)
+		{
+			LogHandler.globalDebug(Util.getUsefulStack(ex, "obtaining handle for {0}", object));
+			return null;
+		}
 	}
 
 	/**
@@ -350,8 +364,12 @@ public final class Reflection
 				default:
 					return Version.UNKNOWN;
 			}
-		} catch (Throwable ex) { }
-		return Version.UNKNOWN;
+		}
+		catch (Throwable ex)
+		{
+			LogHandler.globalDebug(Util.getUsefulStack(ex, "obtaining version for {0}", player.getName()));
+			return Version.UNKNOWN;
+		}
 	}
 
 	// ---- ProtocolLib
@@ -367,7 +385,11 @@ public final class Reflection
 			{
 				ProtocolLibrary.getProtocolManager();
 				return protocolLibEnabled = true;
-			} catch (Throwable ex) { }
+			}
+			catch (Throwable ex)
+			{
+				LogHandler.globalDebug(Util.getUsefulStack(ex, "checking for ProtocolLib"));
+			}
 		}
 
 		return protocolLibEnabled;
@@ -411,6 +433,7 @@ public final class Reflection
 		}
 
 		// Fall back to our less reliable wrappers
+		LogHandler.globalDebug("Falling back to SwornAPI wrappers");
 		WrappedChatSerializer serializer = new WrappedChatSerializer();
 		Object chatComponent = serializer.serialize(ComponentSerializer.toString(components));
 		return new WrappedChatPacket(chatComponent);

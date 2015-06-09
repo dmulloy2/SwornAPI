@@ -23,7 +23,7 @@ import net.dmulloy2.exception.ReflectionException;
  * @author dmulloy2
  */
 
-// TODO: Keep up to date with MC versions. 1.8.3
+// TODO: Keep up to date with MC versions. 1.8.7
 public class WrappedChatPacket extends WrappedPacket
 {
 	private static final String CLASS_NAME = "PacketPlayOutChat";

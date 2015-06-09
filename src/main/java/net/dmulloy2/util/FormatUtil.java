@@ -182,6 +182,18 @@ public class FormatUtil
 	}
 
 	/**
+	 * Capitalizes the first letter of a given string.
+	 * 
+	 * @param string String to capitalize
+	 * @return The resulting String
+	 */
+	public static String capitalizeFirst(String string)
+	{
+		Validate.notEmpty(string, "string cannot be null");
+		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+	}
+
+	/**
 	 * Joins together multiple given strings with the given glue using the
 	 * {@link StringJoiner} class.
 	 *

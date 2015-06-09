@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.commands.Command;
 import net.dmulloy2.util.FormatUtil;
@@ -125,7 +126,7 @@ public class CommandHandler implements CommandExecutor
 	{
 		Validate.notEmpty(commandPrefix, "prefix cannot be null or empty!");
 		this.commandPrefix = commandPrefix;
-		this.registeredPrefixedCommands = new ArrayList<Command>();
+		this.registeredPrefixedCommands = new ArrayList<>();
 
 		plugin.getCommand(commandPrefix).setExecutor(this);
 	}
@@ -164,9 +165,6 @@ public class CommandHandler implements CommandExecutor
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args)
 	{
@@ -184,13 +182,14 @@ public class CommandHandler implements CommandExecutor
 
 			if (sender instanceof Player)
 			{
+				List<BaseComponent[]> templates = getHelpCommand().getFancyUsageTemplate();
 				String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
-				new ComponentBuilder(error).addAll(getHelpCommand().getFancyUsageTemplate()).send(sender);
+				new ComponentBuilder(error).addAll(templates.get(0)).send(sender);
 			}
 			else
 			{
-				sender.sendMessage(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try {1}", name,
-						getHelpCommand().getUsageTemplate(false)));
+				List<String> templates = getHelpCommand().getUsageTemplate(false);
+				sender.sendMessage(FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try {1}", name, templates.get(0)));
 			}
 		}
 		else

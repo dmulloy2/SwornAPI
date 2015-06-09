@@ -48,6 +48,7 @@ public enum PotionType
 	SPEED("speed"),
 	STRENGTH("strength"),
 	WATER("water"),
+	WATER_BREATHING("waterbreath"),
 	WEAKNESS("weak");
 
 	private final String name;

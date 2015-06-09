@@ -19,12 +19,11 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ChatUtil;
@@ -57,7 +56,7 @@ import org.bukkit.entity.Player;
 
 public abstract class Command implements CommandExecutor
 {
-	protected SwornPlugin plugin;
+	protected final SwornPlugin plugin;
 
 	protected CommandSender sender;
 	protected Player player;
@@ -69,18 +68,22 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	protected SyntaxMap syntax;
+	protected List<SubCommand> subCommands;
+	protected Command parent;
+
+	protected List<Syntax> syntaxes;
 	protected List<String> aliases;
 
-	protected boolean hasSubCommands;
 	protected boolean mustBePlayer;
 	protected boolean usesPrefix;
 
 	public Command(SwornPlugin plugin)
 	{
 		this.plugin = plugin;
-		this.syntax = new SyntaxMap();
-		this.aliases = new ArrayList<String>(2);
+		this.aliases = new ArrayList<>();
+		this.subCommands = new ArrayList<>();
+		this.syntaxes = new ArrayList<>();
+		syntaxes.add(new Syntax());
 	}
 
 	// ---- Execution
@@ -94,6 +97,18 @@ public abstract class Command implements CommandExecutor
 
 	public final void execute(CommandSender sender, String[] args)
 	{
+		if (! subCommands.isEmpty() && args.length != 0)
+		{
+			for (SubCommand subCommand : subCommands)
+			{
+				if (subCommand.argMatchesIdentifier(args[0]))
+				{
+					subCommand.execute(sender, args);
+					return;
+				}
+			}
+		}
+
 		this.sender = sender;
 		this.args = args;
 		if (sender instanceof Player)
@@ -105,12 +120,15 @@ public abstract class Command implements CommandExecutor
 			return;
 		}
 
-		if (syntax.requiredSize() > args.length)
+		syntax:
 		{
-			StringJoiner joiner = new StringJoiner("&c, &3");
-			joiner.appendAll(syntax.missingSyntax(args.length));
+			for (Syntax syntax : syntaxes)
+			{
+				if (syntax.requiredSize() <= args.length)
+					break syntax;
+			}
 
-			err("Invalid syntax! Missing arguments: &3{0}", joiner.toString());
+			invalidSyntax(args);
 			return;
 		}
 
@@ -252,66 +270,114 @@ public abstract class Command implements CommandExecutor
 		return aliases;
 	}
 
-	public final String getUsageTemplate(boolean displayHelp)
+	public List<String> getUsageTemplate(boolean displayHelp)
 	{
-		StringBuilder ret = new StringBuilder();
-		ret.append("&b/");
+		List<String> ret = new ArrayList<>();
 
-		if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
-			ret.append(plugin.getCommandHandler().getCommandPrefix() + " ");
-
-		ret.append(name);
-
-		for (Entry<String, Boolean> entry : syntax)
+		for (int i = 0; i < syntaxes.size(); i++)
 		{
-			if (entry.getValue())
-				ret.append(String.format(" &3<%s>", entry.getKey()));
-			else
-				ret.append(String.format(" &3[%s]", entry.getKey()));
+			Syntax syntax = syntaxes.get(i);
+			StringBuilder line = new StringBuilder();
+			line.append("&b/");
+
+			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
+				line.append(plugin.getCommandHandler().getCommandPrefix() + " ");
+
+			line.append(name);
+
+			for (Argument arg : syntax)
+			{
+				if (arg.isRequired())
+					line.append(String.format(" &3<%s>", arg.getArgument()));
+				else
+					line.append(String.format(" &3[%s]", arg.getArgument()));
+			}
+
+			if (displayHelp && i == 0)
+				line.append(" &e" + description);
+
+			ret.add(FormatUtil.format(line.toString()));
 		}
 
-		if (displayHelp)
-			ret.append(" &e" + description);
-
-		return FormatUtil.format(ret.toString());
+		return ret;
 	}
 
-	public final BaseComponent[] getFancyUsageTemplate()
+	public List<BaseComponent[]> getFancyUsageTemplate()
 	{
 		return getFancyUsageTemplate(false);
 	}
 
-	public final BaseComponent[] getFancyUsageTemplate(boolean list)
+	public List<BaseComponent[]> getFancyUsageTemplate(boolean list)
 	{
-		String prefix = list ? "- " : "";
-		String usageTemplate = getUsageTemplate(false);
+		List<BaseComponent[]> ret = new ArrayList<>();
 
-		ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + usageTemplate);
-
-		StringBuilder hoverTextBuilder = new StringBuilder();
-		hoverTextBuilder.append(usageTemplate + ":\n");
-
-		StringJoiner description = new StringJoiner("\n");
-		for (String s : getDescription())
-			description.append(ChatColor.YELLOW + s);
-		hoverTextBuilder.append(FormatUtil.format(description.toString()));
-
-		if (permission != null)
+		for (int i = 0; i < syntaxes.size(); i++)
 		{
-			hoverTextBuilder.append("\n\n");
-			hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:");
-			hoverTextBuilder.append("\n" + getPermissionString());
+			Syntax syntax = syntaxes.get(i);
+			StringBuilder templateBuilder = new StringBuilder();
+			templateBuilder.append("&b/");
+
+			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
+				templateBuilder.append(plugin.getCommandHandler().getCommandPrefix() + " ");
+
+			templateBuilder.append(name);
+
+			for (Argument arg : syntax)
+			{
+				if (arg.isRequired())
+					templateBuilder.append(String.format(" &3<%s>", arg.getArgument()));
+				else
+					templateBuilder.append(String.format(" &3[%s]", arg.getArgument()));
+			}
+
+			String template = FormatUtil.format(templateBuilder.toString());
+			String prefix = list ? i == 0 ? "- " : "  " : "";
+			ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + template);
+
+			StringBuilder hoverTextBuilder = new StringBuilder();
+			hoverTextBuilder.append(template + ":\n");
+
+			for (int a = 0; a < syntax.size(); a++)
+			{
+				Argument arg = syntax.get(a);
+				String explanation = arg.getExplanation();
+				if (explanation != null)
+				{
+					String argument = arg.getArgument();
+					if (arg.isRequired())
+						hoverTextBuilder.append(FormatUtil.format("&3  <{0}>: &e{1}\n", argument, explanation));
+					else
+						hoverTextBuilder.append(FormatUtil.format("&3  [{0}]: &e{1}\n", argument, explanation));
+				}
+
+				if (a != 0 && a == syntax.size() - 1)
+					hoverTextBuilder.append("\n");
+			}
+
+			StringJoiner description = new StringJoiner("\n");
+			for (String s : getDescription())
+				description.append(ChatColor.YELLOW + s);
+			hoverTextBuilder.append(FormatUtil.format(capitalizeFirst(description.toString())));
+
+			if (permission != null)
+			{
+				hoverTextBuilder.append("\n\n");
+				hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:");
+				hoverTextBuilder.append("\n" + getPermissionString());
+			}
+
+			String hoverText = hoverTextBuilder.toString();
+
+			HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText));
+			builder.event(hoverEvent);
+
+			ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(template));
+			builder.event(clickEvent);
+
+			ret.add(builder.create());
 		}
 
-		String hoverText = hoverTextBuilder.toString();
-
-		HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText));
-		builder.event(hoverEvent);
-
-		ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(usageTemplate));
-		builder.event(clickEvent);
-
-		return builder.create();
+		return ret;
 	}
 
 	private List<String> descriptionList;
@@ -325,23 +391,33 @@ public abstract class Command implements CommandExecutor
 
 	// ---- Sub Commands
 
-	public final boolean hasSubCommands()
+	protected final void addSubCommand(SubCommand command)
 	{
-		return hasSubCommands;
+		subCommands.add(command);
 	}
 
-	public List<? extends Command> getSubCommands()
+	protected final Command getParentCommand()
 	{
-		return null;
+		return parent;
 	}
 
-	public final List<String> getSubCommandHelp(boolean displayHelp)
+	protected final boolean hasSubCommands()
+	{
+		return ! subCommands.isEmpty();
+	}
+
+	protected final List<SubCommand> getSubCommands()
+	{
+		return subCommands;
+	}
+
+	protected final List<String> getSubCommandHelp(boolean displayHelp)
 	{
 		List<String> ret = new ArrayList<>();
 
-		for (Command cmd : getSubCommands())
+		for (SubCommand cmd : getSubCommands())
 		{
-			ret.add(cmd.getUsageTemplate(displayHelp));
+			ret.addAll(cmd.getUsageTemplate(displayHelp));
 		}
 
 		return ret;
@@ -356,9 +432,9 @@ public abstract class Command implements CommandExecutor
 	{
 		List<BaseComponent[]> ret = new ArrayList<>();
 
-		for (Command cmd : getSubCommands())
+		for (SubCommand cmd : getSubCommands())
 		{
-			ret.add(cmd.getFancyUsageTemplate(list));
+			ret.addAll(cmd.getFancyUsageTemplate(list));
 		}
 
 		return ret;
@@ -425,6 +501,11 @@ public abstract class Command implements CommandExecutor
 		return ret.toString();
 	}
 
+	protected String capitalizeFirst(String string)
+	{
+		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+	}
+
 	// ---- Utility
 
 	protected final String getName(CommandSender sender)
@@ -449,82 +530,192 @@ public abstract class Command implements CommandExecutor
 
 	protected final void invalidSyntax()
 	{
-		String invalidSyntax = FormatUtil.format("&cError: &4Invalid syntax! Try: ");
-		sendMessage(new ComponentBuilder(invalidSyntax).addAll(getFancyUsageTemplate()).create());
+		invalidSyntax(args);
+	}
+
+	protected final void invalidSyntax(String[] args)
+	{
+		Syntax closest = findClosest(args);
+		String invalidSyntax = FormatUtil.format("&cError: &4Invalid syntax! Missing: &c");
+		ComponentBuilder builder = new ComponentBuilder(invalidSyntax);
+
+		List<Argument> missing = closest.missingSyntax(args.length);
+		for (int i = 0; i < missing.size(); i++)
+		{
+			Argument arg = missing.get(i);
+			String line = "&c" + arg.getArgument();
+			if (i != 0)
+				line = "&4, " + line;
+
+			builder.append(FormatUtil.format(line));
+			String explanation = arg.getExplanation();
+			if (explanation != null)
+				builder.event(new HoverEvent(Action.SHOW_TEXT, FormatUtil.format("&4{0}:\n&f{1}", arg.getArgument(), explanation)));
+		}
+
+		sendMessage(builder.create());
+	}
+
+	private final Syntax findClosest(String[] args)
+	{
+		if (syntaxes.size() == 1 || args.length == 0)
+			return defaultSyntax();
+
+		// Find the closest match
+		Syntax closest = null;
+		int delta = -1;
+
+		for (Syntax syntax : syntaxes)
+		{
+			int curDelta = Math.abs(syntax.size() - args.length);
+			if (curDelta < delta || curDelta == -1)
+			{
+				closest = syntax;
+				delta = curDelta;
+			}
+
+			if (curDelta == 0)
+				break;
+		}
+
+		return closest != null ? closest : defaultSyntax();
+	}
+
+	private final Syntax defaultSyntax()
+	{
+		return syntaxes.get(0);
+	}
+
+	protected final void addArgument(String arg, String explanation, boolean required)
+	{
+		Syntax syntax = syntaxes.get(syntaxes.size() - 1);
+		syntax.add(new Argument(arg, explanation, required));
 	}
 
 	protected final void addRequiredArg(String arg)
 	{
-		syntax.addRequired(arg);
+		addArgument(arg, null, true);
+	}
+
+	protected final void addRequiredArg(String arg, String explanation)
+	{
+		addArgument(arg, explanation, true);
 	}
 
 	protected final void addOptionalArg(String arg)
 	{
-		syntax.addOptional(arg);
+		addArgument(arg, null, false);
 	}
 
-	public class SyntaxMap extends LinkedHashMap<String, Boolean> implements Iterable<Entry<String, Boolean>>
+	protected final void addOptionalArg(String arg, String explanation)
+	{
+		addArgument(arg, explanation, false);
+	}
+
+	@Data
+	@AllArgsConstructor
+	public class Argument
+	{
+		private final String argument;
+		private final String explanation;
+		private final boolean required;
+	}
+
+	public class Syntax extends ArrayList<Argument>
 	{
 		private static final long serialVersionUID = 1L;
-
-		public final void addRequired(String syntax)
-		{
-			super.put(syntax, true);
-		}
-
-		public final void addOptional(String syntax)
-		{
-			super.put(syntax, false);
-		}
 
 		public final int requiredSize()
 		{
 			int required = 0;
-			for (Entry<String, Boolean> entry : this)
+			for (Argument arg : this)
 			{
-				if (entry.getValue())
+				if (arg.isRequired())
 					required++;
 			}
+
 			return required;
 		}
 
-		public final List<String> missingSyntax(int size)
+		public final List<Argument> missingSyntax(int size)
 		{
-			List<String> ret = new ArrayList<>();
+			List<Argument> ret = new ArrayList<>();
 
 			int required = requiredSize();
 			for (int i = size; i < required; i++)
-				ret.add(get(i));
+				ret.add(get(i, true));
 
 			return ret;
 		}
 
-		public final String get(int index)
-		{
-			return get(index, true);
-		}
-
-		public final String get(int index, boolean required)
+		public final Argument get(int index, boolean required)
 		{
 			int i = 0;
 
-			for (Entry<String, Boolean> entry : this)
+			for (Argument arg : this)
 			{
-				if (entry.getValue() == required)
+				if (arg.isRequired() == required)
 				{
 					if (i == index)
-						return entry.getKey();
+						return arg;
 					i++;
 				}
 			}
 
 			return null;
 		}
+	}
 
-		@Override
-		public Iterator<Entry<String, Boolean>> iterator()
+	public class SyntaxBuilder
+	{
+		private final List<Syntax> syntaxes;
+
+		public SyntaxBuilder()
 		{
-			return entrySet().iterator();
+			this.syntaxes = new ArrayList<>();
+			syntaxes.add(new Syntax());
+		}
+
+		public SyntaxBuilder newSyntax()
+		{
+			syntaxes.add(new Syntax());
+			return this;
+		}
+
+		public SyntaxBuilder requiredArg(String arg)
+		{
+			add(arg, null, true);
+			return this;
+		}
+
+		public SyntaxBuilder requiredArg(String arg, String explanation)
+		{
+			add(arg, explanation, true);
+			return this;
+		}
+
+		public SyntaxBuilder optionalArg(String arg)
+		{
+			add(arg, null, false);
+			return this;
+		}
+
+		public SyntaxBuilder optionalArg(String arg, String explanation)
+		{
+			add(arg, explanation, false);
+			return this;
+		}
+
+		public SyntaxBuilder add(String arg, String explanation, boolean required)
+		{
+			Syntax current = syntaxes.get(syntaxes.size() - 1);
+			current.add(new Argument(arg, explanation, required));
+			return this;
+		}
+
+		public List<Syntax> build()
+		{
+			return syntaxes;
 		}
 	}
 }

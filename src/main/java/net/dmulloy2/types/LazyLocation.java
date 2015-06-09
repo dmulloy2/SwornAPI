@@ -168,9 +168,6 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		return new LazyLocation(l1.worldName, Math.min(l1.x, l2.x), Math.min(l1.y, l2.y), Math.min(l1.z, l2.z));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Map<String, Object> serialize()
 	{
@@ -182,9 +179,6 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -197,9 +191,6 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode()
 	{
@@ -211,18 +202,12 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 		return hash;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString()
 	{
 		return "LastLocation[worldName=" + worldName + ", x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public LazyLocation clone()
 	{

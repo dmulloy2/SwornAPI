@@ -103,9 +103,6 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 
 	// ---- Serialization
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Map<String, Object> serialize()
 	{
@@ -116,18 +113,12 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 
 	// ---- Generic Methods
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString()
 	{
 		return x + "," + y + "," + z;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -140,9 +131,6 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode()
 	{
@@ -153,9 +141,6 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 		return hash;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public SimpleVector clone()
 	{

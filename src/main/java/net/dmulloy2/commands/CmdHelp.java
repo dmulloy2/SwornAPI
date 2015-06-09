@@ -195,7 +195,7 @@ public class CmdHelp extends Command
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getFancySubCommandHelp(true));
 				else
-					ret.add(cmd.getFancyUsageTemplate(true));
+					ret.addAll(cmd.getFancyUsageTemplate(true));
 			}
 		}
 
@@ -206,7 +206,7 @@ public class CmdHelp extends Command
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getFancySubCommandHelp(true));
 				else
-					ret.add(cmd.getFancyUsageTemplate(true));
+					ret.addAll(cmd.getFancyUsageTemplate(true));
 			}
 		}
 
@@ -224,7 +224,7 @@ public class CmdHelp extends Command
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getSubCommandHelp(true));
 				else
-					ret.add(cmd.getUsageTemplate(true));
+					ret.addAll(cmd.getUsageTemplate(true));
 			}
 		}
 
@@ -235,7 +235,7 @@ public class CmdHelp extends Command
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getSubCommandHelp(true));
 				else
-					ret.add(cmd.getUsageTemplate(true));
+					ret.addAll(cmd.getUsageTemplate(true));
 			}
 		}
 

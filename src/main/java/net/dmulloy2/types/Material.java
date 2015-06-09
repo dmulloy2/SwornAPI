@@ -21,7 +21,7 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
-import org.bukkit.map.MapView;
+import org.bukkit.material.Banner;
 import org.bukkit.material.Bed;
 import org.bukkit.material.Button;
 import org.bukkit.material.Cake;
@@ -69,7 +69,6 @@ import org.bukkit.material.TripwireHook;
 import org.bukkit.material.Vine;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
-import org.bukkit.potion.Potion;
 import org.bukkit.util.Java15Compat;
 
 import com.google.common.collect.Maps;
@@ -146,6 +145,7 @@ public enum Material
     FURNACE(61, Furnace.class),
     BURNING_FURNACE(62, Furnace.class),
     SIGN_POST(63, 64, Sign.class),
+    // WOODEN_DOOR(64, Door.class),
     WOODEN_DOOR(64),
     LADDER(65, Ladder.class),
     RAILS(66, Rails.class),
@@ -153,6 +153,7 @@ public enum Material
     WALL_SIGN(68, 64, Sign.class),
     LEVER(69, Lever.class),
     STONE_PLATE(70, PressurePlate.class),
+    // IRON_DOOR_BLOCK(71, Door.class),
     IRON_DOOR_BLOCK(71),
     WOOD_PLATE(72, PressurePlate.class),
     REDSTONE_ORE(73),
@@ -245,14 +246,41 @@ public enum Material
     STAINED_GLASS_PANE(160),
     LEAVES_2(161),
     LOG_2(162),
-    ACACIA_STAIRS(163),
-    DARK_OAK_STAIRS(164),
+    ACACIA_STAIRS(163, Stairs.class),
+    DARK_OAK_STAIRS(164, Stairs.class),
+    SLIME_BLOCK(165),
+    BARRIER(166),
+    IRON_TRAPDOOR(167, TrapDoor.class),
+    PRISMARINE(168),
+    SEA_LANTERN(169),
     HAY_BLOCK(170),
     CARPET(171),
     HARD_CLAY(172),
     COAL_BLOCK(173),
     PACKED_ICE(174),
     DOUBLE_PLANT(175),
+    STANDING_BANNER(176, Banner.class),
+    WALL_BANNER(177, Banner.class),
+    DAYLIGHT_DETECTOR_INVERTED(178),
+    RED_SANDSTONE(179),
+    RED_SANDSTONE_STAIRS(180, Stairs.class),
+    DOUBLE_STONE_SLAB2(181),
+    STONE_SLAB2(182),
+    SPRUCE_FENCE_GATE(183, Gate.class),
+    BIRCH_FENCE_GATE(184, Gate.class),
+    JUNGLE_FENCE_GATE(185, Gate.class),
+    DARK_OAK_FENCE_GATE(186, Gate.class),
+    ACACIA_FENCE_GATE(187, Gate.class),
+    SPRUCE_FENCE(188),
+    BIRCH_FENCE(189),
+    JUNGLE_FENCE(190),
+    DARK_OAK_FENCE(191),
+    ACACIA_FENCE(192),
+    SPRUCE_DOOR(193),
+    BIRCH_DOOR(194),
+    JUNGLE_DOOR(195),
+    ACACIA_DOOR(196),
+    DARK_OAK_DOOR(197),
     // ----- Item Separator -----
     IRON_SPADE(256, 1, 250),
     IRON_PICKAXE(257, 1, 250),
@@ -322,13 +350,13 @@ public enum Material
     PAINTING(321),
     GOLDEN_APPLE(322),
     SIGN(323, 16),
-    WOOD_DOOR(324, 1),
+    WOOD_DOOR(324, 64),
     BUCKET(325, 16),
     WATER_BUCKET(326, 1),
     LAVA_BUCKET(327, 1),
     MINECART(328, 1),
     SADDLE(329, 1),
-    IRON_DOOR(330, 1),
+    IRON_DOOR(330, 64),
     REDSTONE(331),
     SNOW_BALL(332, 16),
     BOAT(333, 1),
@@ -356,9 +384,6 @@ public enum Material
     BED(355, 1),
     DIODE(356),
     COOKIE(357),
-    /**
-     * @see MapView
-     */
     MAP(358, MaterialData.class),
     SHEARS(359, 1, 238),
     MELON(360),
@@ -374,9 +399,6 @@ public enum Material
     GHAST_TEAR(370),
     GOLD_NUGGET(371),
     NETHER_STALK(372),
-    /**
-     * @see Potion
-     */
     POTION(373, 1, MaterialData.class),
     GLASS_BOTTLE(374),
     SPIDER_EYE(375),
@@ -413,12 +435,28 @@ public enum Material
     QUARTZ(406),
     EXPLOSIVE_MINECART(407, 1),
     HOPPER_MINECART(408, 1),
+    PRISMARINE_SHARD(409),
+    PRISMARINE_CRYSTALS(410),
+    RABBIT(411),
+    COOKED_RABBIT(412),
+    RABBIT_STEW(413, 1),
+    RABBIT_FOOT(414),
+    RABBIT_HIDE(415),
+    ARMOR_STAND(416, 16),
     IRON_BARDING(417, 1),
     GOLD_BARDING(418, 1),
     DIAMOND_BARDING(419, 1),
     LEASH(420),
     NAME_TAG(421),
     COMMAND_MINECART(422, 1),
+    MUTTON(423),
+    COOKED_MUTTON(424),
+    BANNER(425, 16),
+    SPRUCE_DOOR_ITEM(427),
+    BIRCH_DOOR_ITEM(428),
+    JUNGLE_DOOR_ITEM(429),
+    ACACIA_DOOR_ITEM(430),
+    DARK_OAK_DOOR_ITEM(431),
     GOLD_RECORD(2256, 1),
     GREEN_RECORD(2257, 1),
     RECORD_3(2258, 1),

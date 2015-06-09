@@ -32,6 +32,8 @@ import org.apache.commons.lang.Validate;
 
 public class ListUtil
 {
+	private ListUtil() { }
+
 	private static final Object EMPTY = new Object();
 
 	/**
