@@ -17,7 +17,6 @@
  */
 package net.dmulloy2.handlers;
 
-import java.text.MessageFormat;
 import java.util.logging.Level;
 
 import lombok.AllArgsConstructor;
@@ -94,6 +93,6 @@ public class LogHandler
 	public static void globalDebug(String msg, Object... objects)
 	{
 		if (Boolean.getBoolean("swornapi.debug"))
-			System.out.println("[Debug] " + MessageFormat.format(msg, objects));
+			System.out.println("[Debug] " + FormatUtil.format(msg, objects));
 	}
 }
