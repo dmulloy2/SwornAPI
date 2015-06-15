@@ -165,7 +165,7 @@ public abstract class Command implements CommandExecutor
 			String error = FormatUtil.format("&cError: &4Encountered an exception executing this command: ");
 
 			ComponentBuilder builder = new ComponentBuilder(error);
-			builder.append(FormatUtil.format("&c{0}", ex.toString())).event(new HoverEvent(Action.SHOW_TEXT, stack));
+			builder.append(FormatUtil.format("&c{0}", ex.toString())).event(new HoverEvent(Action.SHOW_TEXT, stack.replace("\t", "    ")));
 			sendMessage(builder.create());
 		}
 	}
