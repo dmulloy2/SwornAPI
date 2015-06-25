@@ -53,8 +53,24 @@ public final class Reflection
 	private Reflection() { }
 
 	// ---- General Reflection
+	private static String VERSION;
 	private static String NMS;
 	private static String OBC;
+
+	private static boolean initialized;
+
+	private static void initialize()
+	{
+		if (! initialized)
+		{
+			initialized = true;
+
+			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
+			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			NMS = "net.minecraft.server." + VERSION + ".";
+			OBC = "org.bukkit.craftbukkit." + VERSION + ".";
+		}
+	}
 
 	/**
 	 * Attempts to get a Minecraft (net.minecraft.server) class with a given
@@ -69,13 +85,7 @@ public final class Reflection
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (NMS == null)
-		{
-			// Lazy-load NMS package
-			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-			NMS = "net.minecraft.server." + version + ".";
-		}
+		initialize();
 
 		try
 		{
@@ -128,13 +138,7 @@ public final class Reflection
 	{
 		Validate.notNull(name, "name cannot be null!");
 
-		if (OBC == null)
-		{
-			// Lazy-load OBC package
-			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-			OBC = "org.bukkit.craftbukkit." + version + ".";
-		}
+		initialize();
 
 		try
 		{
@@ -145,6 +149,36 @@ public final class Reflection
 			LogHandler.globalDebug("Could not find CraftBukkit class {0}", NMS + name);
 			return null;
 		}
+	}
+
+	/**
+	 * Retrieve the current package version.
+	 * @return The current package version.
+	 */
+	public static String getVersion()
+	{
+		initialize();
+		return VERSION;
+	}
+
+	/**
+	 * Retrieve the current NMS (net.minecraft.server) package including the version.
+	 * @return The current NMS package.
+	 */
+	public static String getMinecraftPackage()
+	{
+		initialize();
+		return NMS;
+	}
+
+	/**
+	 * Retrieve the current OBC (org.bukkit.craftbukkit) package including the version.
+	 * @return The current OBC package.
+	 */
+	public static String getCraftBukkitPackage()
+	{
+		initialize();
+		return OBC;
 	}
 
 	@SafeVarargs

@@ -200,7 +200,7 @@ public class CommandHandler implements CommandExecutor
 		return true;
 	}
 
-	private final Command getHelpCommand()
+	public final Command getHelpCommand()
 	{
 		if (plugin.getHelpCommand() != null)
 			return plugin.getHelpCommand();
