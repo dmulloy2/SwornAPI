@@ -171,6 +171,7 @@ public class CommandHandler implements CommandExecutor
 		if (args.length > 0)
 		{
 			String name = args[0];
+			String[] originalArgs = args;
 			args = Arrays.copyOfRange(args, 1, args.length);
 
 			Command command = getCommand(name);
@@ -183,7 +184,7 @@ public class CommandHandler implements CommandExecutor
 			Command def = plugin.getDefaultCommand();
 			if (def != null)
 			{
-				def.execute(sender, args);
+				def.execute(sender, originalArgs);
 				return true;
 			}
 
