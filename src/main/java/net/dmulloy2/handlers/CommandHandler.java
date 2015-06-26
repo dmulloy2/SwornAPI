@@ -180,6 +180,13 @@ public class CommandHandler implements CommandExecutor
 				return true;
 			}
 
+			Command def = plugin.getDefaultCommand();
+			if (def != null)
+			{
+				def.execute(sender, args);
+				return true;
+			}
+
 			if (sender instanceof Player)
 			{
 				List<BaseComponent[]> templates = getHelpCommand().getFancyUsageTemplate();

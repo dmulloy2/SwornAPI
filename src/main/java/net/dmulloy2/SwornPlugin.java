@@ -61,9 +61,20 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 
 	/**
 	 * Gets this plugin's custom help command, if applicable.
-	 * @return Custom help command, or null if not applicable
+	 * @return Custom help command, or null if unapplicable.
 	 */
 	public Command getHelpCommand()
+	{
+		return null;
+	}
+
+	/**
+	 * Gets this plugin's default command if applicable. The default command is
+	 * run if the first argument is not a valid command. This has no effect when
+	 * prefixed commands are not used.
+	 * @return The default command, or null if unapplicable.
+	 */
+	public Command getDefaultCommand()
 	{
 		return null;
 	}
