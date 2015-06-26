@@ -12,14 +12,15 @@ SwornAPI is built using Maven. It requires Spigot and the Spigot API, which can 
 SwornAPI is currently licensed under the GPL v3.
 
 ### Utilizing SwornAPI
-SwornAPI is best utilized as a Maven dependency like so:
+SwornAPI is best utilized as a Maven dependency:
+
 ````xml
 <repositories>
   <repository>
     <id>dmulloy2-repo</id>
     <url>http://repo.dmulloy2.net/content/groups/public/</url>
   </repository>
-  ...
+  <!-- And so on -->
 </repository>
 
 <dependencies>
@@ -28,6 +29,7 @@ SwornAPI is best utilized as a Maven dependency like so:
     <artifactId>swornapi</artifactId>
     <version>1.1-SNAPSHOT</version>
   </dependency>
+  <!-- And so on -->
 </dependencies>
 ````
 
