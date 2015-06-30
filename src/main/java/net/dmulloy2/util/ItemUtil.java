@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.types.CustomSkullType;
 import net.dmulloy2.types.EnchantmentType;
 import net.dmulloy2.types.StringJoiner;
 
@@ -265,7 +266,12 @@ public class ItemUtil
 		return ret;
 	}
 
-	private static void parseItemMeta(ItemStack item, String string)
+	/**
+	 * Parses ItemMeta from a given string, then applies it to a given item.
+	 * @param item Item to apply meta to
+	 * @param string String to parse meta from
+	 */
+	public static void parseItemMeta(ItemStack item, String string)
 	{
 		try
 		{
@@ -319,10 +325,29 @@ public class ItemUtil
 			if (meta instanceof SkullMeta)
 			{
 				String ownerKey = "owner:";
+				String typeKey = "type:";
+
 				if (string.contains(ownerKey))
 				{
 					String owner = string.substring(string.indexOf(ownerKey) + ownerKey.length());
-					((SkullMeta) meta).setOwner(owner);
+
+					// Attempt to use CustomSkullType
+					CustomSkullType type = CustomSkullType.get(owner);
+					if (type != null)
+						((SkullMeta) meta).setOwner(type.getOwner());
+					else
+						((SkullMeta) meta).setOwner(owner);
+				}
+				else if (string.contains(typeKey))
+				{
+					String type = string.substring(string.indexOf(typeKey) + typeKey.length());
+
+					// Attempt to use CustomSkullType
+					CustomSkullType customType = CustomSkullType.get(type);
+					if (type != null)
+						((SkullMeta) meta).setOwner(customType.getOwner());
+					else
+						((SkullMeta) meta).setOwner(type);
 				}
 			}
 
