@@ -6,6 +6,8 @@
   <version>1.1-SNAPSHOT</version>
   <name>SwornAPI</name>
 
+  <inceptionYear>2014</inceptionYear>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -71,6 +73,17 @@
           <sourceDirectory>src/main/java</sourceDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <encoding>ISO-8859-1</encoding>
+          <doctitle>SwornAPI JavaDocs</doctitle>
+          <windowtitle>SwornAPI JavaDocs</windowtitle>
+          <bottom>Copyright &#169; {inceptionYear}&#x2013;{currentYear} dmulloy2. Licensed under the GNU GPL v3.</bottom>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
@@ -132,7 +145,7 @@
     <dependency>
       <groupId>com.comphenix.protocol</groupId>
       <artifactId>ProtocolLib</artifactId>
-      <version>3.6.3-SNAPSHOT</version>
+      <version>3.6.4-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

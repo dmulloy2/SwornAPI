@@ -43,23 +43,23 @@ final public class ClickEvent
 	public enum Action
 	{
 		/**
-		 * Open a url at the path given by {@link ClickEvent#getValue()}
+		 * Open a url at the path given by {@code getValue()}
 		 */
 		OPEN_URL,
 
 		/**
-		 * Open a file at the path given by {@link ClickEvent#getValue()}
+		 * Open a file at the path given by {@code getValue()}
 		 */
 		OPEN_FILE,
 
 		/**
-		 * Run the command given by {@link ClickEvent#getValue()}
+		 * Run the command given by {@code getValue()}
 		 */
 		RUN_COMMAND,
 
 		/**
-		 * Inserts the string given by {@link ClickEvent#getValue()} into the
-		 * player's text box
+		 * Inserts the string given by {@code getValue()} into the player's text
+		 * box
 		 */
 		SUGGEST_COMMAND
 	}

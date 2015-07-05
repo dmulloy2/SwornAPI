@@ -337,9 +337,9 @@ public abstract class BaseComponent
 	}
 
 	/**
-	 * Returns whether the component has any formatting or events applied to it
+	 * Whether the component has any formatting or events applied to it
 	 *
-	 * @return
+	 * @return True if it does, false if not
 	 */
 	public boolean hasFormatting()
 	{
