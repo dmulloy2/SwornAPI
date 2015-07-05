@@ -82,7 +82,7 @@ public class MyMaterial
 	 * @param data Data to check
 	 * @return True if they matche, false if not
 	 */
-	public boolean isSimilar(Material material, short data)
+	public boolean matches(Material material, short data)
 	{
 		return this.material == material && (ignoreData || this.data == data);
 	}
