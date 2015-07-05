@@ -20,9 +20,8 @@ package net.dmulloy2.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.dmulloy2.types.Material;
-
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 /**
  * Util dealing with the loss of item id's.
@@ -35,37 +34,32 @@ public class MaterialUtil
 	private MaterialUtil() { }
 
 	/**
-	 * Gets the {@link org.bukkit.Material} from a given string.
+	 * Gets the {Material} from a given string. This is essentially a wrapper
+	 * for {@link Material#matchMaterial(String)}
 	 *
 	 * @param string String to get the Material from
 	 * @return The material, or null if not found
+	 * @see Material#matchMaterial(String)
 	 */
-	public static final org.bukkit.Material getMaterial(String string)
+	public static final Material getMaterial(String string)
 	{
-		org.bukkit.Material ret = matchMaterial(string);
-		if (ret == null && NumberUtil.isInt(string))
-			ret = getMaterial(NumberUtil.toInt(string));
-
-		return ret;
-	}
-
-	@SuppressWarnings("deprecation") // Bukkit.getUnsafe()
-	private static final org.bukkit.Material matchMaterial(String string)
-	{
-		org.bukkit.Material material = null;
+		Material material = null;
 
 		try
 		{
-			material = org.bukkit.Material.matchMaterial(string);
+			material = Material.matchMaterial(string);
 		} catch (Throwable ex) { }
 
 		if (material == null)
 		{
 			try
 			{
-				// This method never returns null, but if a result is not found, it returns AIR
-				org.bukkit.Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
-				if (internal != org.bukkit.Material.AIR)
+				// Attempt to grab it unsafely. The call will never return null,
+				// but if nothing is found, it will return air.
+
+				@SuppressWarnings("deprecation")
+				Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
+				if (internal != Material.AIR)
 					material = internal;
 			} catch (Throwable ex) { }
 		}
@@ -78,14 +72,12 @@ public class MaterialUtil
 	 *
 	 * @param id Integer to get the Material from
 	 * @return Material, or null if not found
+	 * @deprecated Blah blah magic value
 	 */
-	public static final org.bukkit.Material getMaterial(int id)
+	@Deprecated
+	public static final Material getMaterial(int id)
 	{
-		Material mat = Material.getMaterial(id);
-		if (mat != null)
-			return mat.getBukkitMaterial();
-
-		return null;
+		return Material.getMaterial(id);
 	}
 
 	/**
@@ -94,7 +86,7 @@ public class MaterialUtil
 	 * @param mat Material
 	 * @return Friendly name
 	 */
-	public static final String getMaterialName(org.bukkit.Material mat)
+	public static final String getMaterialName(Material mat)
 	{
 		return FormatUtil.getFriendlyName(mat);
 	}
@@ -107,7 +99,7 @@ public class MaterialUtil
 	 */
 	public static final String getMaterialName(String name)
 	{
-		org.bukkit.Material mat = getMaterial(name);
+		Material mat = getMaterial(name);
 		if (mat == null)
 			return "null";
 
@@ -120,13 +112,13 @@ public class MaterialUtil
 	 * @param strings List to convert
 	 * @return Converted list
 	 */
-	public static final List<org.bukkit.Material> fromStrings(List<String> strings)
+	public static final List<Material> fromStrings(List<String> strings)
 	{
-		List<org.bukkit.Material> ret = new ArrayList<>();
+		List<Material> ret = new ArrayList<>();
 
 		for (String string : strings)
 		{
-			org.bukkit.Material material = getMaterial(string);
+			Material material = getMaterial(string);
 			if (material != null)
 				ret.add(material);
 		}
