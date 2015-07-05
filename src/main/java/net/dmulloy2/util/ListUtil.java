@@ -18,6 +18,7 @@
 package net.dmulloy2.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,8 +83,10 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		for (String element : list.toArray(new String[0]))
+		Iterator<String> iter = list.iterator();
+		while (iter.hasNext())
 		{
+			String element = iter.next();
 			if (string.equalsIgnoreCase(element))
 				return true;
 		}
@@ -101,10 +104,12 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		for (String element : list.toArray(new String[0]))
+		Iterator<String> iter = list.iterator();
+		while (iter.hasNext())
 		{
+			String element = iter.next();
 			if (string.equalsIgnoreCase(element))
-				list.remove(element);
+				iter.remove();
 		}
 	}
 }

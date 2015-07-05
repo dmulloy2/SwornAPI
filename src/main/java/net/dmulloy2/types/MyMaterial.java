@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 /**
- * Represents a Material and data combination
+ * A serializable Material and data combination.
  *
  * @author dmulloy2
  */
@@ -76,6 +76,18 @@ public class MyMaterial
 	}
 
 	/**
+	 * Whether or not this MyMaterial matches the given Material and data.
+	 * 
+	 * @param material Material to check
+	 * @param data Data to check
+	 * @return True if they matche, false if not
+	 */
+	public boolean isSimilar(Material material, short data)
+	{
+		return this.material == material && (ignoreData || this.data == data);
+	}
+
+	/**
 	 * Creates a new {@link ItemStack} based around this MyMaterial.
 	 *
 	 * @param amount Amount, defaults to 1
@@ -116,9 +128,6 @@ public class MyMaterial
 
 	// ---- Generic Methods
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String toString()
 	{
@@ -128,24 +137,18 @@ public class MyMaterial
 		return "MyMaterial[material=" + material + ", data=" + data + "]";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object obj)
 	{
 		if (obj instanceof MyMaterial)
 		{
 			MyMaterial that = (MyMaterial) obj;
-			return this.material == that.material && (ignoreData ? true : this.data == that.data);
+			return this.material == that.material && (ignoreData || this.data == that.data);
 		}
 
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode()
 	{
@@ -156,7 +159,22 @@ public class MyMaterial
 	}
 
 	/**
-	 * Attempts to get a MyMaterial from a given string.
+	 * Retrieves the equivalent MyMaterial from a given ItemStack using its type
+	 * and durability.
+	 * 
+	 * @param item ItemStack
+	 * @return The equivalent MyMaterial
+	 */
+	public static MyMaterial fromItem(ItemStack item)
+	{
+		if (item.getDurability() == 0)
+			return new MyMaterial(item.getType(), item.getDurability());
+		else
+			return new MyMaterial(item.getType());
+	}
+
+	/**
+	 * Attempts to parse a MyMaterial from a given string.
 	 * <p>
 	 * Format: <code>Material:Data</code>
 	 *
