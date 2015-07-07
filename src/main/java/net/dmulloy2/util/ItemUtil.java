@@ -202,7 +202,7 @@ public class ItemUtil
 		ItemStack ret = null;
 
 		// Normalize string
-		string = string.replaceAll(" ", "");
+		string = string.replaceAll("\\s", "");
 		string = string.substring(string.indexOf(":") + 1);
 
 		String[] split = string.split(",");

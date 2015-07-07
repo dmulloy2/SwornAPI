@@ -50,6 +50,9 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 		return ChatColor.YELLOW.toString();
 	}
 
+	// TODO: Returning null, especially with API methods, is generally a bad idea
+	// I'd like to move to something like Optional, but it would cause some serious breakage.
+
 	/**
 	 * Gets any extra lines to be displayed in the help menu.
 	 * @return Any extra lines, or null if none
@@ -60,12 +63,13 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	}
 
 	/**
-	 * Gets this plugin's custom help command, if applicable.
-	 * @return Custom help command, or null if unapplicable.
+	 * Gets this plugin's help command. Unless this is overriden, it will be
+	 * null before commands are registered.
+	 * @return Custom help command, or the default if unapplicable.
 	 */
 	public Command getHelpCommand()
 	{
-		return null;
+		return commandHandler.getCommand("help");
 	}
 
 	/**

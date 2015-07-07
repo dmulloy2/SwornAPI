@@ -68,19 +68,6 @@ public class MaterialUtil
 	}
 
 	/**
-	 * Returns the {@link org.bukkit.Material} from a given integer.
-	 *
-	 * @param id Integer to get the Material from
-	 * @return Material, or null if not found
-	 * @deprecated Blah blah magic value
-	 */
-	@Deprecated
-	public static final Material getMaterial(int id)
-	{
-		return Material.getMaterial(id);
-	}
-
-	/**
 	 * Gets the friendly name of a Material.
 	 *
 	 * @param mat Material

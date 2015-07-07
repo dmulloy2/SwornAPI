@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,7 +53,7 @@ public class Util
 	 * Gets the {@link Player} from a given name or {@link UUID}.
 	 *
 	 * @param identifier Player name or UUID
-	 * @return Player from the given name or UUID, null if none exists.
+	 * @return Player from the given name or UUID, or null if none exists.
 	 * @see {@link Bukkit#getPlayer(UUID)}
 	 * @see {@link Bukkit#getPlayer(String)}
 	 */
@@ -71,10 +71,10 @@ public class Util
 
 	/**
 	 * Gets the {@link OfflinePlayer} from a given name or {@link UUID}.<br>
-	 * This method is potentially blocking, especially with names.
+	 * This method is potentially blocking, especially when using names.
 	 *
 	 * @param identifier Player name or UUID
-	 * @return OfflinePlayer from the given name or UUID, null if none exists
+	 * @return OfflinePlayer from the given name or UUID, or null if none exists
 	 * @see {@link #matchPlayer(String)}
 	 * @see {@link Bukkit#getOfflinePlayer(UUID)}
 	 * @see {@link Bukkit#getOfflinePlayer(String)}
@@ -94,17 +94,16 @@ public class Util
 			return Bukkit.getOfflinePlayer(UUID.fromString(identifier));
 
 		// Last, get by name
-		OfflinePlayer op = Bukkit.getOfflinePlayer(identifier);
-		return op.hasPlayedBefore() ? op : null;
+		return Bukkit.getOfflinePlayer(identifier);
 	}
 
 	private static Method getOnlinePlayers;
 
 	/**
-	 * Gets a list of online Players. This also provides backwards compatibility
-	 * as Bukkit changed <code>getOnlinePlayers</code>.
+	 * Gets a list of currently online Players. This also provides backwards
+	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
 	 *
-	 * @return A list of online Players
+	 * @return A list of currently online Players
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Player> getOnlinePlayers()
@@ -135,47 +134,50 @@ public class Util
 
 		for (Player player : getOnlinePlayers())
 		{
-			if (player.getWorld().getUID().equals(loc.getWorld().getUID()))
+			if (player.getWorld().equals(loc.getWorld()))
 				player.playEffect(loc, effect, data);
 		}
 	}
 
 	/**
-	 * Whether or not two locations share the same x, y, and z coordinates.<br>
-	 * This method does not take pitch or yaw into account.
-	 * 
-	 * @param loc First location
-	 * @param loc2 Second location
-	 * @return True if the locations share x, y, and z coords, false if not
+	 * @deprecated Replaced by {@link coordsEqual(Location, Location)}
 	 */
-	public static boolean checkLocation(Location loc, Location loc2)
+	@Deprecated
+	public static boolean checkLocation(Location loc1, Location loc2)
 	{
-		Validate.notNull(loc, "loc cannot be null!");
-		Validate.notNull(loc2, "loc2 cannot be null!");
-
-		if (loc.equals(loc2))
-			return true;
-
-		return loc.getBlockX() == loc2.getBlockX()
-				&& loc.getBlockY() == loc2.getBlockY()
-				&& loc.getBlockZ() == loc2.getBlockZ()
-				&& loc.getWorld().getUID().equals(loc2.getWorld().getUID());
+		return coordsEqual(loc1, loc2);
 	}
 
 	/**
-	 * Turns a {@link Location} into a string for debug purposes.
+	 * Whether or not two locations share the same coordinates.<br>
+	 * This method does not take pitch or yaw into account.
 	 *
-	 * @param loc {@link Location} to convert
-	 * @return String for debug purpouses
+	 * @param first First location
+	 * @param second Second location
+	 * @return True if they share coordinates, false if not.
+	 */
+	public static boolean coordsEqual(Location first, Location second)
+	{
+		Validate.notNull(first, "first location cannot be null!");
+		Validate.notNull(second, "second location cannot be null!");
+
+		return first.equals(second) || first.getBlock().equals(second.getBlock());
+	}
+
+	/**
+	 * Converts a {@link Location} to a String for debugging purposes.
+	 * 
+	 * @param loc Location to convert
+	 * @return String for debugging purposes
 	 */
 	public static String locationToString(Location loc)
 	{
 		Validate.notNull(loc, "loc cannot be null!");
 
-		return "Location[world=" + loc.getWorld().getName()
-				+ ", x=" + loc.getBlockX()
-				+ ", y=" + loc.getBlockY()
-				+ ", z=" + loc.getBlockZ() + "]";
+		return "Location[world=" + loc.getWorld().getName() +
+				", x=" + loc.getBlockX() +
+				", y=" + loc.getBlockY() +
+				", z=" + loc.getBlockZ() + "]";
 	}
 
 	private static Random random;
@@ -327,15 +329,18 @@ public class Util
 		Validate.notNull(map, "map cannot be null!");
 		Validate.notNull(original, "original cannot be null!");
 
-		for (Entry<K, V> entry : new LinkedHashMap<>(map).entrySet())
+		Iterator<Entry<K, V>> iter = map.entrySet().iterator();
+		while (iter.hasNext())
 		{
+			Entry<K, V> entry = iter.next();
+
 			K key = entry.getKey();
 			if (original.containsKey(key))
 			{
 				V val = entry.getValue();
 				V def = original.get(key);
 				if (val.equals(def))
-					map.remove(key);
+					iter.remove();
 			}
 		}
 

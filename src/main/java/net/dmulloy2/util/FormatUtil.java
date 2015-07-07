@@ -174,8 +174,9 @@ public class FormatUtil
 		amount = Math.abs(amount);
 		if (amount != 1)
 		{
-			if (! string.toLowerCase().endsWith("s"))
-				return string + "s";
+			char end = string.charAt(string.length() - 1);
+			if (end != 's')
+				return Character.isUpperCase(end) ? string + "S" : string + "s";
 		}
 
 		return string;

@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.Util;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -35,7 +36,7 @@ import com.google.common.base.Preconditions;
  * <p>
  * In order to avoid a hard dependency, the following precautions should be taken: <br>
  * <ul>
- *   <li>Initialization of Objects of this Class should be wrapped in a try-catchblock.</li>
+ *   <li>Initialization of Objects of this Class should be wrapped in a try-catch block.</li>
  *   <li>Methods in this class should return Objects that will definitely exist at runtime.</li>
  *     <ul>
  *       <li>Like Bukkit objects, Strings, and Java primitives.</li>
@@ -57,6 +58,9 @@ public class DependencyProvider<T extends Plugin>
 	@SuppressWarnings("unchecked")
 	public DependencyProvider(final SwornPlugin handler, final String name)
 	{
+		Validate.notNull(handler, "handler cannot be null!");
+		Validate.notNull(name, "name cannot be null!");
+
 		this.handler = handler;
 		this.name = name;
 
@@ -139,11 +143,10 @@ public class DependencyProvider<T extends Plugin>
 	 * Gets this dependency's name.
 	 * 
 	 * @return The dependency's name
-	 * @throws NullPointerException if the name does not exist.
 	 */
 	public String getName()
 	{
-		return Preconditions.checkNotNull(name, "name cannot be null.");
+		return name;
 	}
 
 	/**

@@ -503,7 +503,7 @@ public abstract class Command implements CommandExecutor
 
 	protected String capitalizeFirst(String string)
 	{
-		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
+		return FormatUtil.capitalizeFirst(string);
 	}
 
 	// ---- Utility

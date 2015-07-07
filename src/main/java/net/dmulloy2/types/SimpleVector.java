@@ -19,6 +19,7 @@ package net.dmulloy2.types;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import lombok.Getter;
 import net.dmulloy2.util.NumberUtil;
@@ -134,11 +135,7 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 	@Override
 	public int hashCode()
 	{
-		int hash = 40;
-		hash *= 1 + x;
-		hash *= 1 + y;
-		hash *= 1 + z;
-		return hash;
+		return Objects.hash(x, y, z);
 	}
 
 	@Override

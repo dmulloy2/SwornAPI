@@ -19,6 +19,7 @@ package net.dmulloy2.types;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -194,12 +195,7 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	@Override
 	public int hashCode()
 	{
-		int hash = 39;
-		hash *= 1 + x;
-		hash *= 1 + y;
-		hash *= 1 + z;
-		hash *= 1 + worldName.hashCode();
-		return hash;
+		return Objects.hash(x, y, z, worldName);
 	}
 
 	@Override

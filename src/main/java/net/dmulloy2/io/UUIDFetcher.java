@@ -25,10 +25,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 
 import net.dmulloy2.types.Versioning;
@@ -41,6 +41,9 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 /**
  * Fetches UUIDs for a list of names
  *
@@ -51,7 +54,7 @@ import org.json.simple.parser.ParseException;
 public class UUIDFetcher implements Callable<Map<String, UUID>>
 {
 	private static boolean cachingEnabled = Versioning.getVersion() == Version.MC_16;
-	private static final Map<String, UUID> cache = new WeakHashMap<>();
+	private static final Cache<String, UUID> cache = CacheBuilder.newBuilder().weakKeys().weakValues().build();
 
 	private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";
 	private static final JSONParser jsonParser = new JSONParser();
@@ -74,17 +77,20 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	public Map<String, UUID> call() throws IOException, ParseException
 	{
 		Map<String, UUID> uuidMap = new HashMap<>();
-		for (List<String> names : new ArrayList<>(namesList))
+
+		Iterator<List<String>> iter = namesList.iterator();
+		while (iter.hasNext())
 		{
-			if (cachingEnabled)
+			List<String> names = iter.next();
+			Iterator<String> iter1 = names.iterator();
+			while (iter1.hasNext())
 			{
-				for (String name : new ArrayList<>(names))
+				String name = iter1.next();
+				UUID uniqueId = cache.getIfPresent(name);
+				if (uniqueId != null)
 				{
-					if (cache.containsKey(name))
-					{
-						names.remove(name);
-						uuidMap.put(name, cache.get(name));
-					}
+					iter1.remove();
+					uuidMap.put(name, uniqueId);
 				}
 			}
 
@@ -141,8 +147,9 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 		if (cachingEnabled)
 		{
-			if (cache.containsKey(name))
-				return cache.get(name);
+			UUID uniqueId = cache.getIfPresent(name);
+			if (uniqueId != null)
+				return uniqueId;
 		}
 
 		UUIDFetcher fetcher = new UUIDFetcher(Arrays.asList(name));
@@ -151,7 +158,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 
 	public static UUID fromCache(String name)
 	{
-		return cache.get(name);
+		return cache.getIfPresent(name);
 	}
 
 	public static void setCachingEnabled(boolean enabled)
@@ -159,7 +166,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 		if (cachingEnabled != enabled)
 		{
 			if (! enabled)
-				cache.clear();
+				cache.invalidateAll();
 			cachingEnabled = enabled;
 		}
 	}

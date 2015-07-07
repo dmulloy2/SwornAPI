@@ -17,6 +17,8 @@
  */
 package net.dmulloy2.types;
 
+import java.util.Objects;
+
 import lombok.Data;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.MaterialUtil;
@@ -152,10 +154,7 @@ public class MyMaterial
 	@Override
 	public int hashCode()
 	{
-		int hash = 101;
-		hash *= 1 + material.hashCode();
-		hash *= 1 + (ignoreData ? data : 0);
-		return hash;
+		return Objects.hash(material, (ignoreData ? 0 : data));
 	}
 
 	/**

@@ -146,7 +146,7 @@ public final class Reflection
 		}
 		catch (Throwable ex)
 		{
-			LogHandler.globalDebug("Could not find CraftBukkit class {0}", NMS + name);
+			LogHandler.globalDebug("Could not find CraftBukkit class {0}", OBC + name);
 			return null;
 		}
 	}

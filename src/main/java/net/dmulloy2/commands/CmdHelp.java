@@ -40,6 +40,9 @@ public class CmdHelp extends Command
 	private static final int linesPerPage = 6;
 	private static final int pageArgIndex = 0;
 
+	private String header;
+	private String footer;
+
 	public CmdHelp(SwornPlugin plugin)
 	{
 		super(plugin);
@@ -48,6 +51,9 @@ public class CmdHelp extends Command
 		this.description = "Shows " + plugin.getName() + " help";
 		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;
+
+		this.header = "&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====";
+		this.footer = "";
 	}
 
 	@Override
@@ -88,6 +94,16 @@ public class CmdHelp extends Command
 		}
 	}
 
+	public String getHeader()
+	{
+		return header;
+	}
+
+	public void setHeader(String header)
+	{
+		this.header = header;
+	}
+
 	public int getPageCount()
 	{
 		return (getListSize() + linesPerPage - 1) / linesPerPage;
@@ -119,7 +135,6 @@ public class CmdHelp extends Command
 		lines.addAll(getLegacyHeader(index));
 		lines.addAll(getLegacyLines((index - 1) * linesPerPage, index * linesPerPage));
 
-		String footer = getLegacyFooter();
 		if (! footer.isEmpty())
 			lines.add(footer);
 
@@ -133,18 +148,19 @@ public class CmdHelp extends Command
 
 	public List<String> getLegacyHeader(int index)
 	{
-		List<String> header = new ArrayList<>();
+		List<String> ret = new ArrayList<>();
 
-		header.add(FormatUtil.format("&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====", plugin.getName(), index, getPageCount()));
+		ret.add(FormatUtil.format(header, plugin.getName(), index, getPageCount()));
 
-		if (plugin.getExtraHelp() != null)
+		List<String> extraHelp = plugin.getExtraHelp();
+		if (extraHelp != null)
 		{
-			for (String extra : plugin.getExtraHelp())
-				header.add(FormatUtil.format(extra));
+			for (String extra : extraHelp)
+				ret.add(FormatUtil.format(extra));
 		}
 
-		header.add(FormatUtil.format("&eKey: &3<required> [optional]"));
-		return header;
+		ret.add(FormatUtil.format("&eKey: &3<required> [optional]"));
+		return ret;
 	}
 
 	public List<BaseComponent[]> getLines(int startIndex, int endIndex)
@@ -176,12 +192,6 @@ public class CmdHelp extends Command
 	public BaseComponent[] getFooter()
 	{
 		return TextComponent.fromLegacyText(FormatUtil.format("&eHover to see command information. Click to insert into chat."));
-	}
-
-	public String getLegacyFooter()
-	{
-		// No footer
-		return "";
 	}
 
 	private final List<BaseComponent[]> getHelpMenu()

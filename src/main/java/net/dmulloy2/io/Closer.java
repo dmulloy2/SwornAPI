@@ -45,9 +45,6 @@ public class Closer implements Closeable
 		return closeable;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public final void close()
 	{
