@@ -66,6 +66,27 @@ public class InventoryUtil
 	}
 
 	/**
+	 * Completely clears an inventory, including armor, if applicable.
+	 * 
+	 * @param inventory Inventory to clear
+	 */
+	public static void clear(Inventory inventory)
+	{
+		Validate.notNull(inventory, "inventory cannot be null!");
+
+		inventory.clear();
+
+		if (inventory instanceof PlayerInventory)
+		{
+			PlayerInventory pInventory = (PlayerInventory) inventory;
+			pInventory.setHelmet(null);
+			pInventory.setChestplate(null);
+			pInventory.setLeggings(null);
+			pInventory.setBoots(null);
+		}
+	}
+
+	/**
 	 * Gives a {@link Player} an item.
 	 *
 	 * @param player {@link Player} to give them item to

@@ -37,7 +37,7 @@ public class Closer implements Closeable
 	 * @param closeable Object to register
 	 * @return The object
 	 */
-	public final <C extends Closeable> C register(C closeable)
+	public final <C extends AutoCloseable> C register(C closeable)
 	{
 		Validate.notNull(closeable, "closeable cannot be null!");
 
