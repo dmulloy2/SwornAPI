@@ -103,6 +103,7 @@ public abstract class Command implements CommandExecutor
 			{
 				if (subCommand.argMatchesIdentifier(args[0]))
 				{
+					args = Arrays.copyOfRange(args, 1, args.length);
 					subCommand.execute(sender, args);
 					return;
 				}
@@ -281,7 +282,10 @@ public abstract class Command implements CommandExecutor
 			line.append("&b/");
 
 			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
-				line.append(plugin.getCommandHandler().getCommandPrefix() + " ");
+				line.append(plugin.getCommandHandler().getCommandPrefix()).append(" ");
+
+			if (parent != null)
+				line.append(parent.getName()).append(" ");
 
 			line.append(name);
 
@@ -318,7 +322,10 @@ public abstract class Command implements CommandExecutor
 			templateBuilder.append("&b/");
 
 			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
-				templateBuilder.append(plugin.getCommandHandler().getCommandPrefix() + " ");
+				templateBuilder.append(plugin.getCommandHandler().getCommandPrefix()).append(" ");
+
+			if (parent != null)
+				templateBuilder.append(parent.getName()).append(" ");
 
 			templateBuilder.append(name);
 

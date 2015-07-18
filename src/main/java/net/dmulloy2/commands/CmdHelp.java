@@ -202,10 +202,10 @@ public class CmdHelp extends Command
 		{
 			if (cmd.isVisibleTo(sender))
 			{
+				ret.addAll(cmd.getFancyUsageTemplate(true));
+
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getFancySubCommandHelp(true));
-				else
-					ret.addAll(cmd.getFancyUsageTemplate(true));
 			}
 		}
 
@@ -213,10 +213,10 @@ public class CmdHelp extends Command
 		{
 			if (cmd.isVisibleTo(sender))
 			{
+				ret.addAll(cmd.getFancyUsageTemplate(true));
+
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getFancySubCommandHelp(true));
-				else
-					ret.addAll(cmd.getFancyUsageTemplate(true));
 			}
 		}
 
@@ -231,10 +231,10 @@ public class CmdHelp extends Command
 		{
 			if (cmd.isVisibleTo(sender))
 			{
+				ret.addAll(cmd.getUsageTemplate(true));
+
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getSubCommandHelp(true));
-				else
-					ret.addAll(cmd.getUsageTemplate(true));
 			}
 		}
 
@@ -242,10 +242,10 @@ public class CmdHelp extends Command
 		{
 			if (cmd.isVisibleTo(sender))
 			{
+				ret.addAll(cmd.getUsageTemplate(true));
+
 				if (cmd.hasSubCommands())
 					ret.addAll(cmd.getSubCommandHelp(true));
-				else
-					ret.addAll(cmd.getUsageTemplate(true));
 			}
 		}
 
