@@ -26,6 +26,7 @@ import net.dmulloy2.util.FormatUtil;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -75,30 +76,48 @@ public final class CustomScoreboard
 	}
 
 	/**
-	 * Adds an entry to the scoreboard. {@link #update()} should be called after
-	 * all entries are added.
+	 * Adds an entry to the scoreboard. {@link #update()} or {@link
+	 * updateValues()} should be called after all entries are added.
 	 * 
 	 * @param key Key
 	 * @param value Value
 	 */
 	public void addEntry(String key, Object value)
 	{
+		Validate.notNull(key, "key cannot be null!");
+		Validate.notNull(value, "value cannot be null!");
+
 		entries.put(key, String.valueOf(value));
 	}
 
 	/**
-	 * Updates this scoreboard.
+	 * Adds an entry to the scoreboard. {@link #update()} or {@link
+	 * updateValues()} should be called after all entries are added.
+	 * 
+	 * @param entries Entries to add
 	 */
-	public void update()
+	public void addEntries(Map<String, Object> entries)
 	{
-		board.clearSlot(slot);
+		Validate.notNull(entries, "entries cannot be null!");
 
+		for (Entry<String, Object> entry : entries.entrySet())
+		{
+			addEntry(entry.getKey(), entry.getValue());
+		}
+	}
+
+	/**
+	 * Attempts to only update values. If the objective does not exist, a full
+	 * update will be performed.
+	 */
+	public void updateValues()
+	{
 		Objective objective = board.getObjective(objectiveName);
-		if (objective != null)
-			objective.unregister();
-
-		objective = board.registerNewObjective(objectiveName, "dummy");
-		objective.setDisplayName(display);
+		if (objective == null)
+		{
+			update();
+			return;
+		}
 
 		int score = entries.size();
 		if (format == EntryFormat.NEW_LINE)
@@ -133,6 +152,77 @@ public final class CustomScoreboard
 				objective.getScore(string).setScore(score--);
 			}
 		}
+	}
+
+	/**
+	 * Updates this scoreboard.
+	 */
+	public void update()
+	{
+		board.clearSlot(slot);
+
+		Objective objective = board.getObjective(objectiveName);
+		if (objective != null)
+			objective.unregister();
+
+		objective = board.registerNewObjective(objectiveName, "dummy");
+		objective.setDisplayName(display);
+		objective.setDisplaySlot(slot);
+
+		int score = entries.size();
+		if (format == EntryFormat.NEW_LINE)
+			score *= 2;
+
+		for (Entry<String, String> entry : entries.entrySet())
+		{
+			String key = FormatUtil.format(entry.getKey());
+			if (keyPrefix != null)
+				key = keyPrefix + key;
+
+			String value = FormatUtil.format(entry.getValue());
+			if (valuePrefix != null)
+				value = valuePrefix + value;
+
+			if (format == EntryFormat.NEW_LINE)
+			{
+				if (objective.getScore(key).isScoreSet())
+					key += nextNull();
+				if (objective.getScore(value).isScoreSet())
+					value += nextNull();
+
+				objective.getScore(key).setScore(score--);
+				objective.getScore(value).setScore(score--);
+			}
+			else
+			{
+				String string = key + value;
+				if (objective.getScore(string).isScoreSet())
+					string += nextNull();
+
+				objective.getScore(string).setScore(score--);
+			}
+		}
+	}
+
+	/**
+	 * Disposes of this scoreboard.
+	 */
+	public void dispose()
+	{
+		Objective objective = board.getObjective(objectiveName);
+		if (objective != null)
+			objective.unregister();
+	}
+
+	/**
+	 * Applies this scoreboard to a given player, replacing any previous
+	 * scoreboard.
+	 * 
+	 * @param player Player to apply to
+	 */
+	public void applyTo(Player player)
+	{
+		player.setScoreboard(board);
 	}
 
 	private void validate()
@@ -219,13 +309,23 @@ public final class CustomScoreboard
 		 * @param key Key
 		 * @param value Value
 		 * @return This, for chaining
+		 * @see CustomScoreboard#addEntry(String, Object)
 		 */
 		public Builder addEntry(String key, Object value)
 		{
-			Validate.notNull(key, "key cannot be null!");
-			Validate.notNull(value, "value cannot be null!");
+			board.addEntry(key, value);
+			return this;
+		}
 
-			board.entries.put(key, String.valueOf(value));
+		/**
+		 * Adds a map of entries to this scoreboard.
+		 * @param entries Entries to add
+		 * @return This, for chaining
+		 * @see CustomScoreboard#addEntry(String, Object)
+		 */
+		public Builder addEntries(Map<String, Object> entries)
+		{
+			board.addEntries(entries);
 			return this;
 		}
 
