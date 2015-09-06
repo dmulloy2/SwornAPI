@@ -98,18 +98,31 @@ public class VaultHandler extends DependencyProvider<Vault>
 	 */
 	public String depositPlayer(Player player, double amount)
 	{
+		return deposit(player.getName(), amount);
+	}
+
+	/**
+	 * Attempts to deposit a given amount into a given account's balance. Returns
+	 * null if the transaction was a success.
+	 * 
+	 * @param account Account to give money to
+	 * @param amount Amount to give
+	 * @return Error message, if applicable
+	 */
+	public String deposit(String account, double amount)
+	{
 		if (econ == null)
 			return "Economy is disabled.";
 
 		try
 		{
 			@SuppressWarnings("deprecation")
-			EconomyResponse response = econ.depositPlayer(player.getName(), amount);
+			EconomyResponse response = econ.depositPlayer(account, amount);
 			return response.transactionSuccess() ? null : response.errorMessage;
 		}
 		catch (Throwable ex)
 		{
-			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "depositPlayer({0}, {1})", player.getName(), amount));
+			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "deposit({0}, {1})", account, amount));
 			return ex.toString();
 		}
 	}
@@ -124,18 +137,31 @@ public class VaultHandler extends DependencyProvider<Vault>
 	 */
 	public String withdrawPlayer(Player player, double amount)
 	{
+		return withdraw(player.getName(), amount);
+	}
+
+	/**
+	 * Attempts to withdraw a given amount from a given account's balance.
+	 * Returns null if the transaction was a success.
+	 * 
+	 * @param account Account to take money from
+	 * @param amount Amount to take
+	 * @return Error message, if applicable
+	 */
+	public String withdraw(String account, double amount)
+	{
 		if (econ == null)
 			return "Economy is disabled.";
 
 		try
 		{
 			@SuppressWarnings("deprecation")
-			EconomyResponse response = econ.withdrawPlayer(player.getName(), amount);
+			EconomyResponse response = econ.withdrawPlayer(account, amount);
 			return response.transactionSuccess() ? null : response.errorMessage;
 		}
 		catch (Throwable ex)
 		{
-			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "withdrawPlayer({0}, {1})", player.getName(), amount));
+			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "withdraw({0}, {1})", account, amount));
 			return ex.toString();
 		}
 	}
@@ -149,20 +175,47 @@ public class VaultHandler extends DependencyProvider<Vault>
 	 */
 	public boolean has(Player player, double amount)
 	{
+		return has(player.getName(), amount);
+	}
+
+	/**
+	 * Whether or not an account has a given amount.
+	 * 
+	 * @param account Account to check
+	 * @param amount Amount to check for
+	 * @return True if they do, false if not
+	 */
+	public boolean has(String account, double amount)
+	{
 		if (econ == null)
 			return false;
 
 		try
 		{
 			@SuppressWarnings("deprecation")
-			double balance = econ.getBalance(player.getName());
+			double balance = econ.getBalance(account);
 			return balance >= amount;
 		}
 		catch (Throwable ex)
 		{
-			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "has({0}, {1})", player.getName(), amount));
+			handler.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "has({0}, {1})", account, amount));
 			return false;
 		}
+	}
+
+	/**
+	 * Whether or not an account exists.
+	 * 
+	 * @param account Account to check for
+	 * @return True if it exists, false if not
+	 */
+	@SuppressWarnings("deprecation")
+	public boolean hasAccount(String account)
+	{
+		if (econ == null)
+			return false;
+
+		return econ.hasAccount(account);
 	}
 
 	/**
