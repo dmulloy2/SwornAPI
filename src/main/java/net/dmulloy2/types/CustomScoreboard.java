@@ -67,6 +67,7 @@ public final class CustomScoreboard
 	private String display;
 	private DisplaySlot slot;
 	private EntryFormat format = EntryFormat.ON_LINE;
+	private int minLength = -1;
 
 	private CustomScoreboard(Scoreboard board, String objective)
 	{
@@ -109,7 +110,10 @@ public final class CustomScoreboard
 	/**
 	 * Attempts to only update values. If the objective does not exist, a full
 	 * update will be performed.
+	 *
+	 * @deprecated Doesn't work as intended
 	 */
+	@Deprecated
 	public void updateValues()
 	{
 		Objective objective = board.getObjective(objectiveName);
@@ -185,6 +189,12 @@ public final class CustomScoreboard
 
 			if (format == EntryFormat.NEW_LINE)
 			{
+				if (minLength > 0)
+				{
+					key = fill(key, minLength);
+					value = fill(value, minLength);
+				}
+
 				if (objective.getScore(key).isScoreSet())
 					key += nextNull();
 				if (objective.getScore(value).isScoreSet())
@@ -196,6 +206,11 @@ public final class CustomScoreboard
 			else
 			{
 				String string = key + value;
+				if (minLength > 0)
+				{
+					string = fill(string, minLength);
+				}
+				
 				if (objective.getScore(string).isScoreSet())
 					string += nextNull();
 
@@ -305,6 +320,18 @@ public final class CustomScoreboard
 		}
 
 		/**
+		 * Sets the minimum length for entries.
+		 * @param minLength Minimum length
+		 * @return This, for chaining
+		 */
+		public Builder minLength(int minLength)
+		{
+			Validate.isTrue(minLength > 0, "minLength must be > 0");
+			board.minLength = minLength;
+			return this;
+		}
+
+		/**
 		 * Adds an entry to this scoreboard.
 		 * @param key Key
 		 * @param value Value
@@ -364,5 +391,17 @@ public final class CustomScoreboard
 			nextNull = 0;
 
 		return color.toString();
+	}
+
+	private static String fill(String str, int length)
+	{
+		if (str.length() >= length)
+			return str;
+
+		StringBuilder ret = new StringBuilder(str);
+		while (ret.length() < length)
+			ret.append(" ");
+
+		return ret.toString();
 	}
 }
