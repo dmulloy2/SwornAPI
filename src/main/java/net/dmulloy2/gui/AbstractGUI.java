@@ -101,7 +101,15 @@ public abstract class AbstractGUI
 
 	// ---- Events
 
+	/**
+	 * Called when an InventoryClickEvent is called.
+	 * @param event The event
+	 */
 	public void onInventoryClick(InventoryClickEvent event) { }
 
+	/**
+	 * Called when an InventoryCloseEvent is called.
+	 * @param event The event
+	 */
 	public void onInventoryClose(InventoryCloseEvent event) { }
 }

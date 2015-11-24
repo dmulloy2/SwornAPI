@@ -114,6 +114,8 @@ public final class ConfigParser
 									case SECOND_TO_MILLIS:
 										value = TimeUnit.SECONDS.toMillis(NumberUtil.toLong(value));
 										break;
+									default:
+										throw new IllegalArgumentException("Unsupported option: " + option);
 								}
 							}
 

@@ -165,43 +165,40 @@ public class InventoryUtil
 		Validate.isTrue(amt > 0, "amt cannot be less than 0!");
 
 		int start = amt;
-		if (inventory != null)
+		ItemStack[] items = inventory.getContents();
+		for (int slot = 0; slot < items.length; slot++)
 		{
-			ItemStack[] items = inventory.getContents();
-			for (int slot = 0; slot < items.length; slot++)
+			if (items[slot] != null)
 			{
-				if (items[slot] != null)
+				Material mat = items[slot].getType();
+				short duration = items[slot].getDurability();
+				int itmAmt = items[slot].getAmount();
+				if ((mat == type) && ((dat == duration) || (dat == -1)))
 				{
-					Material mat = items[slot].getType();
-					short duration = items[slot].getDurability();
-					int itmAmt = items[slot].getAmount();
-					if ((mat == type) && ((dat == duration) || (dat == - 1)))
+					if (amt > 0)
 					{
-						if (amt > 0)
+						if (itmAmt >= amt)
 						{
-							if (itmAmt >= amt)
-							{
-								itmAmt -= amt;
-								amt = 0;
-							}
-							else
-							{
-								amt = start - itmAmt;
-								itmAmt = 0;
-							}
-							if (itmAmt > 0)
-							{
-								inventory.getItem(slot).setAmount(itmAmt);
-							}
-							else
-							{
-								inventory.setItem(slot, null);
-							}
+							itmAmt -= amt;
+							amt = 0;
 						}
-
-						if (amt <= 0)
-							return;
+						else
+						{
+							amt = start - itmAmt;
+							itmAmt = 0;
+						}
+						if (itmAmt > 0)
+						{
+							inventory.getItem(slot).setAmount(itmAmt);
+						}
+						else
+						{
+							inventory.setItem(slot, null);
+						}
 					}
+
+					if (amt <= 0)
+						return;
 				}
 			}
 		}

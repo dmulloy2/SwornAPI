@@ -19,6 +19,10 @@ package net.dmulloy2.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -89,5 +93,70 @@ public class FileSerialization
 		}
 
 		config.save(file);
+	}
+
+	/**
+	 * Serializes all of an object's fields into a Map. This method ignores
+	 * transient, null, zero, and empty fields.
+	 * 
+	 * @param object Object to serialize
+	 * @return The map
+	 */
+	public static Map<String, Object> serialize(Object object)
+	{
+		Map<String, Object> data = new LinkedHashMap<>();
+
+		for (Field field : object.getClass().getDeclaredFields())
+		{
+			try
+			{
+				if (Modifier.isTransient(field.getModifiers()))
+					continue;
+
+				boolean accessible = field.isAccessible();
+
+				field.setAccessible(true);
+
+				if (field.getType().equals(Integer.TYPE))
+				{
+					if (field.getInt(object) != 0)
+						data.put(field.getName(), field.getInt(object));
+				}
+				else if (field.getType().equals(Long.TYPE))
+				{
+					if (field.getLong(object) != 0)
+						data.put(field.getName(), field.getLong(object));
+				}
+				else if (field.getType().equals(Boolean.TYPE))
+				{
+					if (field.getBoolean(object))
+						data.put(field.getName(), field.getBoolean(object));
+				}
+				else if (field.getType().isAssignableFrom(Collection.class))
+				{
+					if (! ((Collection<?>) field.get(object)).isEmpty())
+						data.put(field.getName(), field.get(object));
+				}
+				else if (field.getType().isAssignableFrom(String.class))
+				{
+					if ((String) field.get(object) != null)
+						data.put(field.getName(), field.get(object));
+				}
+				else if (field.getType().isAssignableFrom(Map.class))
+				{
+					if (! ((Map<?, ?>) field.get(object)).isEmpty())
+						data.put(field.getName(), field.get(object));
+				}
+				else
+				{
+					if (field.get(object) != null)
+						data.put(field.getName(), field.get(object));
+				}
+
+				field.setAccessible(accessible);
+			} catch (Throwable ex) { }
+		}
+
+		return data;
 	}
 }
