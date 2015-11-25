@@ -368,13 +368,14 @@ public class Util
 	}
 
 	/**
-	 * Sets a {@link Block}'s {@link MaterialData}. Exists because Bukkit's
-	 * BlockState API is not easily cloneable.
-	 *
-	 * @param block Block to set data of
+	 * Legacy method for setting MaterialData because I didn't know about the
+	 * right way to do it.
+	 * 
+	 * @param block Block to set data for
 	 * @param data Data to set
+	 * @deprecated Magic values
 	 */
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void setData(Block block, MaterialData data)
 	{
 		Validate.notNull(block, "block cannot be null!");
