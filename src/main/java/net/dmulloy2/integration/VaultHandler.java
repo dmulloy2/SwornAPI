@@ -27,8 +27,11 @@ import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.item.ItemInfo;
+import net.milkbowl.vault.item.Items;
 import net.milkbowl.vault.permission.Permission;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -400,5 +403,17 @@ public class VaultHandler extends DependencyProvider<Vault>
 			return false;
 
 		return chat.playerInGroup(player, group);
+	}
+
+	/**
+	 * Attempts to resolve a string into a Material using Vault's Items API.
+	 * 
+	 * @param string String to resolve
+	 * @return Material, or null if not found
+	 */
+	public static Material resolve(String string)
+	{
+		ItemInfo info = Items.itemByString(string);
+		return info != null ? info.getType() : null;
 	}
 }

@@ -20,6 +20,8 @@ package net.dmulloy2.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.dmulloy2.integration.VaultHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
@@ -34,8 +36,8 @@ public class MaterialUtil
 	private MaterialUtil() { }
 
 	/**
-	 * Gets the {Material} from a given string. This is essentially a wrapper
-	 * for {@link Material#matchMaterial(String)}
+	 * Gets the {@link Material} from a given string using Bukkit, Vault, or
+	 * internal Minecraft.
 	 *
 	 * @param string String to get the Material from
 	 * @return The material, or null if not found
@@ -43,28 +45,33 @@ public class MaterialUtil
 	 */
 	public static final Material getMaterial(String string)
 	{
-		Material material = null;
-
 		try
 		{
-			material = Material.matchMaterial(string);
+			return Material.matchMaterial(string);
 		} catch (Throwable ex) { }
 
-		if (material == null)
+		// Resolve using Vault, if applicable
+		if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
 		{
 			try
 			{
-				// Attempt to grab it unsafely. The call will never return null,
-				// but if nothing is found, it will return air.
-
-				@SuppressWarnings("deprecation")
-				Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
-				if (internal != Material.AIR)
-					material = internal;
+				Material material = VaultHandler.resolve(string);
+				if (material != null)
+					return material;
 			} catch (Throwable ex) { }
 		}
 
-		return material;
+		try
+		{
+			// Attempt to grab it unsafely. The call will never return null,
+			// but if nothing is found, it will return air.
+
+			@SuppressWarnings("deprecation")
+			Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
+			if (internal != Material.AIR)
+				return internal;
+		} catch (Throwable ex) { }
+		return null;
 	}
 
 	/**
