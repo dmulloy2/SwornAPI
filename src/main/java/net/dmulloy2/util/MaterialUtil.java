@@ -26,7 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 /**
- * Util dealing with the loss of item id's.
+ * Utility class for dealing with Materials.
  *
  * @author dmulloy2
  */
@@ -45,17 +45,16 @@ public class MaterialUtil
 	 */
 	public static final Material getMaterial(String string)
 	{
-		try
-		{
-			return Material.matchMaterial(string);
-		} catch (Throwable ex) { }
+		Material material = Material.matchMaterial(string);
+		if (material != null)
+			return material;
 
 		// Resolve using Vault, if applicable
 		if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
 		{
 			try
 			{
-				Material material = VaultHandler.resolve(string);
+				material = VaultHandler.resolve(string);
 				if (material != null)
 					return material;
 			} catch (Throwable ex) { }
