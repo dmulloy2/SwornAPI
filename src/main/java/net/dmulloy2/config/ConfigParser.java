@@ -43,6 +43,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 public final class ConfigParser
 {
+	public static final int TICKS_PER_SECOND = 20;
+	
 	/**
 	 * Parses an instance-based configuration.
 	 * 
@@ -118,6 +120,9 @@ public final class ConfigParser
 									case MINUTE_TO_MILLIS:
 										value = TimeUnit.MINUTES.toMillis(NumberUtil.toLong(value));
 										break;
+									case MINUTE_TO_TICKS:
+										value = TimeUnit.MINUTES.toSeconds(NumberUtil.toLong(value)) * TICKS_PER_SECOND;
+										break;
 									// Item parsing handles null values on its own
 									case PARSE_ITEM:
 										value = ItemUtil.readItem(value.toString(), plugin);
@@ -154,6 +159,9 @@ public final class ConfigParser
 										break;
 									case SECOND_TO_MILLIS:
 										value = TimeUnit.SECONDS.toMillis(NumberUtil.toLong(value));
+										break;
+									case SECOND_TO_TICKS:
+										value = NumberUtil.toLong(value) * TICKS_PER_SECOND;
 										break;
 									default:
 										throw new IllegalArgumentException("Unsupported option: " + option);
