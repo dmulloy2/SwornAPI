@@ -40,6 +40,13 @@ public @interface ValueOptions
 	ValueOption[] value();
 
 	/**
+	 * Whether or not to allow null values. Defaults to false.
+	 * 
+	 * @return True or false
+	 */
+	boolean allowNull() default false;
+
+	/**
 	 * An array of custom value options. Options provided here must have a
 	 * static method, <code>public static Object convert(Object)</code>, but
 	 * this is unenforcable due to how Java handles annotations.
@@ -61,6 +68,9 @@ public @interface ValueOptions
 		MINUTE_TO_MILLIS,
 		PARSE_ITEM,
 		PARSE_ITEMS,
-		SECOND_TO_MILLIS, ;
+		PARSE_MATERIAL,
+		PARSE_MATERIALS,
+		SECOND_TO_MILLIS,
+		;
 	}
 }

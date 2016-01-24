@@ -28,9 +28,11 @@ import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.config.ValueOptions.ValueOption;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.ItemUtil;
+import net.dmulloy2.util.MaterialUtil;
 import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -73,6 +75,17 @@ public final class ConfigParser
 			if (! field.isAccessible())
 				field.setAccessible(true);
 
+			Object def = null;
+
+			try
+			{
+				def = field.get(object);
+			}
+			catch (Throwable ex)
+			{
+				plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "accessing field {0}", field));
+			}
+
 			Key key = field.getAnnotation(Key.class);
 			if (key != null)
 			{
@@ -105,11 +118,39 @@ public final class ConfigParser
 									case MINUTE_TO_MILLIS:
 										value = TimeUnit.MINUTES.toMillis(NumberUtil.toLong(value));
 										break;
+									// Item parsing handles null values on its own
 									case PARSE_ITEM:
 										value = ItemUtil.readItem(value.toString(), plugin);
 										break;
 									case PARSE_ITEMS:
 										value = ItemUtil.readItems((List<String>) value, plugin);
+										break;
+									// Check for nulls with materials
+									case PARSE_MATERIAL:
+										value = MaterialUtil.getMaterial(value.toString());
+										if (value == null && ! options.allowNull())
+										{
+											plugin.getLogHandler().log(Level.WARNING, "Failed to read material \"{0}\" from {1}. Defaulting to {2}", value, path, def);
+											value = def;
+										}
+
+										break;
+									case PARSE_MATERIALS:
+										List<Material> materials = new ArrayList<>();
+										for (String string : (List<String>) value)
+										{
+											Material material = MaterialUtil.getMaterial(string);
+											if (material == null && ! options.allowNull())
+											{
+												plugin.getLogHandler().log(Level.WARNING, "Failed to read material \"{0}\" from {1}", string, path);
+											}
+											else
+											{
+												materials.add(material);
+											}
+										}
+
+										value = materials;
 										break;
 									case SECOND_TO_MILLIS:
 										value = TimeUnit.SECONDS.toMillis(NumberUtil.toLong(value));
@@ -131,6 +172,10 @@ public final class ConfigParser
 
 						field.set(object, value);
 					}
+				}
+				catch (ClassCastException ex)
+				{
+					
 				}
 				catch (Throwable ex)
 				{
