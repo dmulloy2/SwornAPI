@@ -22,7 +22,6 @@ import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.NumberUtil;
 
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -30,6 +29,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
 /**
+ * A clickable chest GUI
  * @author dmulloy2
  */
 
@@ -46,6 +46,13 @@ public abstract class AbstractGUI
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Sets up this inventory, handling the size and title. This method must be
+	 * called for the inventory to actually open.
+	 * 
+	 * @throws IllegalArgumentException if {@code size < 0}, {@code size > 54},
+	 *         or the title is null.
+	 */
 	protected final void setup()
 	{
 		// Size checks
@@ -57,15 +64,21 @@ public abstract class AbstractGUI
 		String title = getTitle();
 		Validate.notNull(title, "Inventory title cannot be null!");
 		title = FormatUtil.format(getTitle());
-		if (title.length() > 32)
+
+		Inventory inventory = null;
+
+		try
 		{
-			title = title.substring(0, 31);
-			title = title + "\u2026";
+			inventory = plugin.getServer().createInventory(player, size, title);
+		}
+		catch (IllegalArgumentException ex)
+		{
+			// Truncate the title and add the unicode ...
+			title = title.substring(0, 31) + "\u2026";
+			inventory = plugin.getServer().createInventory(player, size, title);
 		}
 
-		Inventory inventory = Bukkit.createInventory(player, size, title);
 		stock(inventory);
-
 		player.openInventory(inventory);
 	}
 
@@ -76,10 +89,26 @@ public abstract class AbstractGUI
 
 	// ---- Required Methods
 
+	/**
+	 * Gets the amount of items in this inventory. If this is not a multiple of
+	 * 9, it will be rounded up. This number must be less than or equal to 54.
+	 * 
+	 * @return The amount of items
+	 */
 	public abstract int getSize();
 
+	/**
+	 * Gets the title of this inventory. Before 1.8 this had to be less than 32
+	 * characters.
+	 * 
+	 * @return The title
+	 */
 	public abstract String getTitle();
 
+	/**
+	 * Stocks this inventory with items.
+	 * @param inventory Inventory to stock
+	 */
 	public abstract void stock(Inventory inventory);
 
 	// ---- Messaging
