@@ -107,22 +107,41 @@ public abstract class AbstractGUI
 
 	/**
 	 * Stocks this inventory with items.
+	 * 
 	 * @param inventory Inventory to stock
 	 */
 	public abstract void stock(Inventory inventory);
 
 	// ---- Messaging
 
-	protected final void err(String msg, Object... args)
+	/**
+	 * Sends an error message to the player.
+	 * 
+	 * @param message Message to send
+	 * @param args Objects to format in
+	 */
+	protected final void err(String message, Object... args)
 	{
-		sendMessage("&cError: &4" + FormatUtil.format(msg, args));
+		sendMessage("&cError: &4" + FormatUtil.format(message, args));
 	}
 
+	/**
+	 * Sends a prefixed message to the player.
+	 * 
+	 * @param message Message to send
+	 * @param args Objects to format in
+	 */
 	protected final void sendpMessage(String message, Object... objects)
 	{
 		sendMessage(plugin.getPrefix() + message, objects);
 	}
 
+	/**
+	 * Sends a message to the player.
+	 * 
+	 * @param message Message to send
+	 * @param args Objects to format in
+	 */
 	protected final void sendMessage(String message, Object... objects)
 	{
 		player.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, objects));
@@ -132,12 +151,14 @@ public abstract class AbstractGUI
 
 	/**
 	 * Called when an InventoryClickEvent is called.
+	 * 
 	 * @param event The event
 	 */
 	public void onInventoryClick(InventoryClickEvent event) { }
 
 	/**
 	 * Called when an InventoryCloseEvent is called.
+	 * 
 	 * @param event The event
 	 */
 	public void onInventoryClose(InventoryCloseEvent event) { }

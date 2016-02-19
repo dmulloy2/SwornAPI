@@ -1,5 +1,5 @@
 # SwornAPI
-A common API for MineSworn and Shadowvolt plugins.
+SwornAPI is a collection of useful classes that I use in most of my projects. It contains APIs for configuration, commands, chat, GUIs, reflection, integration, I/O, and more. 
 
 ### Resources
 * [Download](http://ci.dmulloy2.net/job/SwornAPI)

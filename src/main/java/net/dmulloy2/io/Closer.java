@@ -19,11 +19,14 @@ package net.dmulloy2.io;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
 /**
+ * Automatically closes a collection of closeable objects.
+ * 
  * @author dmulloy2
  */
 
@@ -51,12 +54,12 @@ public class Closer implements Closeable
 		if (list.isEmpty())
 			return;
 
-		for (AutoCloseable closeable : list)
+		Iterator<AutoCloseable> iter = list.iterator();
+		while (iter.hasNext())
 		{
-			closeQuietly(closeable);
+			closeQuietly(iter.next());
+			iter.remove();
 		}
-
-		list.clear();
 	}
 
 	/**

@@ -30,7 +30,8 @@ import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.Util;
 
 /**
- * Generic help command.
+ * Generic help command. This is a modified implementation of
+ * {@link PaginatedCommand} with support for fancy text formatting.
  *
  * @author dmulloy2
  */
@@ -52,7 +53,7 @@ public class CmdHelp extends Command
 		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;
 
-		this.header = "&3====[ &e{0} Commands &3(&e{1}&3/&e{2}&3) ]====";
+		this.header = "&3---- &e{0} Commands &3- &e{1}&3/&e{2} &3----";
 		this.footer = "";
 	}
 

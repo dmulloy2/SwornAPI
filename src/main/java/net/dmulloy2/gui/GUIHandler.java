@@ -70,6 +70,27 @@ public class GUIHandler implements Listener
 		open(gui.getPlayer(), gui);
 	}
 
+	/**
+	 * Closes all the currently open GUIs.
+	 */
+	public void closeAll()
+	{
+		for (AbstractGUI gui : open.values())
+		{
+			gui.getPlayer().closeInventory();
+		}
+	}
+
+	/**
+	 * Gets a map containing the currently open GUIs.
+	 * 
+	 * @return The map
+	 */
+	public Map<String, AbstractGUI> getOpen()
+	{
+		return open;
+	}
+
 	// ---- Listeners
 
 	@EventHandler(priority = EventPriority.HIGHEST)

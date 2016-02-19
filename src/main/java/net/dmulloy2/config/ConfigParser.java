@@ -92,10 +92,11 @@ public final class ConfigParser
 			if (key != null)
 			{
 				String path = key.value();
+				Object value = null;
 
 				try
 				{
-					Object value = config.get(path);
+					value = config.get(path);
 					if (value != null)
 					{
 						ValueOptions options = field.getAnnotation(ValueOptions.class);
@@ -183,7 +184,7 @@ public final class ConfigParser
 				}
 				catch (ClassCastException ex)
 				{
-					
+					plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", field.getType(), value.getClass());
 				}
 				catch (Throwable ex)
 				{

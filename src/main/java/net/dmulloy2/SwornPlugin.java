@@ -27,6 +27,7 @@ import net.dmulloy2.handlers.PermissionHandler;
 import net.dmulloy2.types.Reloadable;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -50,15 +51,17 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 		return ChatColor.YELLOW.toString();
 	}
 
-	// TODO: Returning null, especially with API methods, is generally a bad idea
-	// I'd like to move to something like Optional, but it would cause some serious breakage.
-
 	/**
-	 * Gets any extra lines to be displayed in the help menu.
+	 * Gets any extra lines to be displayed in the help menu. By default, this
+	 * method searches for extra help in the configuration.
+	 * 
 	 * @return Any extra lines, or null if none
 	 */
 	public List<String> getExtraHelp()
 	{
+		FileConfiguration config = getConfig();
+		if (config.isSet("extraHelp"))
+			return config.getStringList("extraHelp");
 		return null;
 	}
 
