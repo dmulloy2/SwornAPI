@@ -47,8 +47,8 @@ public class ReflectionProvider implements ChatProvider
 
 			Class<?> chatPacketClass = getMinecraftClass("PacketPlayOutChat");
 			Class<?> componentClass = getMinecraftClass("IChatBaseComponent");
-			Constructor<?> constructor = chatPacketClass.getConstructor(componentClass);
-			Object packet = constructor.newInstance(component);
+			Constructor<?> constructor = chatPacketClass.getConstructor(componentClass, byte.class);
+			Object packet = constructor.newInstance(component, position.getValue());
 
 			Method getHandle = player.getClass().getMethod("getHandle");
 			Object entityPlayer = getHandle.invoke(player);
@@ -100,7 +100,7 @@ public class ReflectionProvider implements ChatProvider
 	private static Class<?> getMinecraftClass(String name, String... aliases)
 	{
 		Class<?> clazz = getMinecraftClass(name);
-		if (clazz != null)
+		if (clazz == null)
 		{
 			for (String alias : aliases)
 			{
