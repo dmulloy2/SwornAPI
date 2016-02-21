@@ -17,7 +17,9 @@
  */
 package net.dmulloy2.types;
 
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 
 import org.bukkit.Bukkit;
@@ -30,20 +32,36 @@ public class Versioning
 {
 	private Versioning() { }
 
+	private static final List<Version> supported = new ArrayList<>();
+
 	/**
 	 * Represents a supported Minecraft version
 	 */
 	@Getter
-	@AllArgsConstructor
 	public static enum Version
 	{
 		UNKNOWN("Unknown"),
-		MC_16("Minecraft 1.6.x"),
-		MC_17("Minecraft 1.7.x"),
-		MC_18("Minecraft 1.8.x"),
+		MC_16("Minecraft 1.6.x", "1.6"),
+		MC_17("Minecraft 1.7.x", "1.7"),
+		MC_18("Minecraft 1.8.x", "1.8"),
+		MC_19("Minecraft 1.9.x", "1.9"),
 		;
 
 		private final String name;
+		private final String matcher;
+
+		private Version(String name)
+		{
+			this.name = name;
+			this.matcher = null;
+		}
+
+		private Version(String name, String matcher)
+		{
+			this.name = name;
+			this.matcher = matcher;
+			supported.add(this);
+		}
 	}
 
 	private static Version version;
@@ -57,15 +75,14 @@ public class Versioning
 	{
 		if (version == null)
 		{
-			String versionString = Bukkit.getVersion();
-			if (versionString.contains("1.8"))
-				version = Version.MC_18;
-			else if (versionString.contains("1.7"))
-				version = Version.MC_17;
-			else if (versionString.contains("1.6"))
-				version = Version.MC_16;
-			else
-				version = Version.UNKNOWN;
+			String serverVersion = Bukkit.getVersion();
+			for (Version ver : supported)
+			{
+				if (serverVersion.contains(ver.getMatcher()))
+					return version = ver;
+			}
+
+			return version = Version.UNKNOWN;
 		}
 
 		return version;

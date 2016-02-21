@@ -29,6 +29,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 
 /**
@@ -77,8 +78,8 @@ public final class CustomScoreboard
 	}
 
 	/**
-	 * Adds an entry to the scoreboard. {@link #update()} or {@link
-	 * updateValues()} should be called after all entries are added.
+	 * Adds an entry to the scoreboard. {@link #update()} should be called after
+	 * all entries are added.
 	 * 
 	 * @param key Key
 	 * @param value Value
@@ -92,8 +93,8 @@ public final class CustomScoreboard
 	}
 
 	/**
-	 * Adds an entry to the scoreboard. {@link #update()} or {@link
-	 * updateValues()} should be called after all entries are added.
+	 * Adds an entry to the scoreboard. {@link #update()} or should be called
+	 * after all entries are added.
 	 * 
 	 * @param entries Entries to add
 	 */
@@ -139,9 +140,9 @@ public final class CustomScoreboard
 
 			if (format == EntryFormat.NEW_LINE)
 			{
-				if (objective.getScore(key).isScoreSet())
+				if (isScoreSet(objective.getScore(key)))
 					key += nextNull();
-				if (objective.getScore(value).isScoreSet())
+				if (isScoreSet(objective.getScore(value)))
 					value += nextNull();
 
 				objective.getScore(key).setScore(score--);
@@ -150,7 +151,7 @@ public final class CustomScoreboard
 			else
 			{
 				String string = key + value;
-				if (objective.getScore(string).isScoreSet())
+				if (isScoreSet(objective.getScore(string)))
 					string += nextNull();
 
 				objective.getScore(string).setScore(score--);
@@ -195,9 +196,9 @@ public final class CustomScoreboard
 					value = fill(value, minLength);
 				}
 
-				if (objective.getScore(key).isScoreSet())
+				if (isScoreSet(objective.getScore(key)))
 					key += nextNull();
-				if (objective.getScore(value).isScoreSet())
+				if (isScoreSet(objective.getScore(value)))
 					value += nextNull();
 
 				objective.getScore(key).setScore(score--);
@@ -211,12 +212,25 @@ public final class CustomScoreboard
 					string = fill(string, minLength);
 				}
 				
-				if (objective.getScore(string).isScoreSet())
+				if (isScoreSet(objective.getScore(string)))
 					string += nextNull();
 
 				objective.getScore(string).setScore(score--);
 			}
 		}
+	}
+
+	/**
+	 * Check if the score's been set. If we can't determine it, just append the
+	 * next null anyways.
+	 */
+	private boolean isScoreSet(Score score)
+	{
+		try
+		{
+			return score.isScoreSet();
+		} catch (Throwable ex) { }
+		return true;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.dmulloy2.reflection;
+package net.dmulloy2.types;
 
-import org.bukkit.entity.Player;
+import lombok.Getter;
 
 /**
- * Represents a packet that can be sent to a Player.
+ * Represents the currently supported chat positions.
  * @author dmulloy2
  */
 
-public interface Packet
+@Getter
+public enum ChatPosition
 {
 	/**
-	 * Sends this packet to a given Player.
-	 * @param player Player to send to
+	 * Player chat (in chat box)
 	 */
-	public void send(Player player);
+	CHAT(0),
+
+	/**
+	 * System messages (in chat box)
+	 */
+	SYSTEM(1),
+
+	/**
+	 * Action bar (above hotbar)
+	 */
+	ACTION_BAR(2),
+	;
+
+	private final byte value;
+
+	private ChatPosition(int value)
+	{
+		this.value = (byte) value;
+	}
 }

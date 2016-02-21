@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.dmulloy2.reflection;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+package net.dmulloy2.chat;
 
 import net.dmulloy2.exception.ReflectionException;
+import net.dmulloy2.types.ChatPosition;
 
 import org.bukkit.entity.Player;
 
@@ -28,23 +26,7 @@ import org.bukkit.entity.Player;
  * @author dmulloy2
  */
 
-// TODO: Keep up to date with MC versions. 1.8.7
-public abstract class WrappedPacket extends AbstractWrapper implements Packet
+public interface ChatProvider
 {
-	@Override
-	public final void send(Player player) throws ReflectionException
-	{
-		try
-		{
-			Object nmsPlayer = Reflection.getHandle(player);
-			Field playerConnectionField = Reflection.getField(nmsPlayer.getClass(), "playerConnection");
-			Object playerConnection = playerConnectionField.get(nmsPlayer);
-			Method sendPacket = Reflection.getMethod(playerConnection.getClass(), "sendPacket");
-			sendPacket.invoke(playerConnection, nmsHandle);
-		}
-		catch (Throwable ex)
-		{
-			throw new ReflectionException(String.format("Sending packet to %s", player.getName()), ex);
-		}
-	}
+	void sendMessage(Player player, ChatPosition position, BaseComponent... message) throws ReflectionException;
 }
