@@ -208,7 +208,6 @@ public abstract class Command implements CommandExecutor
 	protected final boolean hasPermission(CommandSender sender, IPermission permission)
 	{
 		Validate.notNull(sender, "sender cannot be null!");
-		Validate.notNull(permission, "permission cannot be null!");
 
 		return plugin.getPermissionHandler().hasPermission(sender, permission);
 	}
