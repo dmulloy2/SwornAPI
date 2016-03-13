@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,7 @@
  */
 package net.dmulloy2.util;
 
-import java.lang.reflect.Method;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
 
 /**
  * General utility class.
@@ -97,25 +92,14 @@ public class Util
 		return Bukkit.getOfflinePlayer(identifier);
 	}
 
-	private static Method getOnlinePlayers;
-
 	/**
-	 * Gets a list of currently online Players. This also provides backwards
-	 * compatibility as Bukkit changed <code>getOnlinePlayers</code>.
+	 * Gets a list of currently online Players.
 	 *
 	 * @return A list of currently online Players
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Player> getOnlinePlayers()
 	{
-		try
-		{
-			// Provide backwards compatibility
-			if (getOnlinePlayers == null)
-				getOnlinePlayers = Bukkit.class.getMethod("getOnlinePlayers");
-			if (getOnlinePlayers.getReturnType() != Collection.class)
-				return Arrays.asList((Player[]) getOnlinePlayers.invoke(null));
-		} catch (Throwable ex) { }
 		return (List<Player>) Bukkit.getOnlinePlayers();
 	}
 
@@ -137,15 +121,6 @@ public class Util
 			if (player.getWorld().equals(loc.getWorld()))
 				player.playEffect(loc, effect, data);
 		}
-	}
-
-	/**
-	 * @deprecated Replaced by {@link coordsEqual(Location, Location)}
-	 */
-	@Deprecated
-	public static boolean checkLocation(Location loc1, Location loc2)
-	{
-		return coordsEqual(loc1, loc2);
 	}
 
 	/**
@@ -365,23 +340,5 @@ public class Util
 
 		String str = object.toString();
 		return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
-	}
-
-	/**
-	 * Legacy method for setting MaterialData because I didn't know about the
-	 * right way to do it.
-	 * 
-	 * @param block Block to set data for
-	 * @param data Data to set
-	 * @deprecated Magic values
-	 */
-	@Deprecated
-	public static void setData(Block block, MaterialData data)
-	{
-		Validate.notNull(block, "block cannot be null!");
-		Validate.notNull(data, "data cannot be null!");
-
-		block.setData(data.getData());
-		block.getState().update(true);
 	}
 }

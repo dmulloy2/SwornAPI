@@ -40,11 +40,32 @@ public class Versioning
 	@Getter
 	public static enum Version
 	{
-		UNKNOWN("Unknown"),
-		MC_16("Minecraft 1.6.x", "1.6"),
+		/**
+		 * Minecraft 1.7, the update that changed the world
+		 */
 		MC_17("Minecraft 1.7.x", "1.7"),
+
+		/**
+		 * Minecraft 1.8, the bountiful update
+		 */
 		MC_18("Minecraft 1.8.x", "1.8"),
+
+		/**
+		 * Minecraft 1.9, the combat update
+		 */
 		MC_19("Minecraft 1.9.x", "1.9"),
+
+		/**
+		 * Minecraft 1.6, the horse update
+		 * @deprecated No longer supported
+		 */
+		@Deprecated
+		MC_16("Minecraft 1.6.x"),
+
+		/**
+		 * An unsupported Minecraft version
+		 */
+		UNKNOWN("Unknown"),
 		;
 
 		private final String name;

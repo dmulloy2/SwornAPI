@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.CustomSkullType;
 import net.dmulloy2.types.EnchantmentType;
+import net.dmulloy2.types.PotionType;
 import net.dmulloy2.types.StringJoiner;
 
 import org.bukkit.ChatColor;
@@ -37,12 +38,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionType;
 
 /**
- * Util that deals with Items.
- *
+ * Utility for dealing with items and potions
  * @author dmulloy2
  */
 
@@ -191,79 +189,39 @@ public class ItemUtil
 
 	/**
 	 * Parses a potion from configuration.
+	 * <p>
+	 * The basic format is <code>potion: &lt;type&gt;,&lt;amount&gt;,&ltlevel&gt;,[splash]</code>
 	 *
 	 * @param string String to read
 	 * @return ItemStack from string, or null if parsing fails
 	 */
-	public static ItemStack readPotion(String string)
+	public static ItemStack readPotion(final String string)
 	{
-		// Meta
-		final String meta = string;
-		ItemStack ret = null;
-
 		// Normalize string
-		string = string.replaceAll("\\s", "");
-		string = string.substring(string.indexOf(":") + 1);
+		String normalized = string.replaceAll("\\s", "");
+		normalized = normalized.substring(string.indexOf(":") + 1);
 
-		String[] split = string.split(",");
-		if (split.length == 3)
-		{
-			// Get the type
-			PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
-			if (type != null)
-			{
-				// Get the amount
-				int amount = NumberUtil.toInt(split[1]);
-				if (amount != -1)
-				{
-					// Get the level
-					int level = NumberUtil.toInt(split[2]);
-					if (level != -1)
-					{
-						// Build potion / stack
-						Potion potion = new Potion(1);
-						potion.setType(type);
-						potion.setLevel(level);
-						potion.setSplash(false);
-						ret = potion.toItemStack(amount);
-					}
-				}
-			}
-		}
-		else if (split.length == 4)
-		{
-			// Get the type
-			PotionType type = net.dmulloy2.types.PotionType.toType(split[0]);
-			if (type != null)
-			{
-				// Get the amount
-				int amount = NumberUtil.toInt(split[1]);
-				if (amount != -1)
-				{
-					// Get the level
-					int level = NumberUtil.toInt(split[2]);
-					if (level != -1)
-					{
-						// Is splash
-						boolean splash = Util.toBoolean(split[3]);
+		String[] split = normalized.split(",");
 
-						// Build potion / stack
-						Potion potion = new Potion(1);
-						potion.setType(type);
-						potion.setLevel(level);
-						potion.setSplash(splash);
-						ret = potion.toItemStack(amount);
-					}
-				}
-			}
-		}
+		PotionType type = PotionType.find(split[0]);
+		if (type == null)
+			throw new NullPointerException("Null potion type \"" + split[0] + "\"");
 
-		if (ret == null)
-			return null;
+		int amount = NumberUtil.toInt(split[1]);
+		if (amount < 0)
+			throw new IllegalArgumentException("Invalid amount " + amount);
+
+		int level = NumberUtil.toInt(split[2]);
+		if (level < 0)
+			throw new IllegalArgumentException("Invalid level " + level);
+
+		boolean splash = split.length > 3 && Util.toBoolean(split[3]);
+
+		ItemStack potion = CompatUtil.createPotion(type, amount, level, splash);
 
 		// Parse meta
-		parseItemMeta(ret, meta);
-		return ret;
+		parseItemMeta(potion, normalized);
+		return potion;
 	}
 
 	/**

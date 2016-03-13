@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
-import net.dmulloy2.types.Versioning;
-import net.dmulloy2.types.Versioning.Version;
-
 import org.apache.commons.lang.Validate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -53,7 +50,7 @@ import com.google.common.cache.CacheBuilder;
 
 public class UUIDFetcher implements Callable<Map<String, UUID>>
 {
-	private static boolean cachingEnabled = Versioning.getVersion() == Version.MC_16;
+	private static boolean cachingEnabled = false;
 	private static final Cache<String, UUID> cache = CacheBuilder.newBuilder().weakKeys().weakValues().build();
 
 	private static final String PROFILE_URL = "https://api.mojang.com/profiles/minecraft";

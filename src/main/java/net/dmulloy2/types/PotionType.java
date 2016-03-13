@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import net.dmulloy2.util.FormatUtil;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 /**
  * Represents various potion types with friendlier names.
@@ -37,55 +36,58 @@ import org.bukkit.potion.PotionEffectType;
 @AllArgsConstructor
 public enum PotionType
 {
-	FIRE_RESISTANCE("fireres"),
-	INSTANT_DAMAGE("damage"),
-	INSTANT_HEAL("heal"),
-	INVISIBILITY("invis"),
-	NIGHT_VISION("nvg"),
-	POISON("poison"),
-	REGEN("regen"),
-	SLOWNESS("slow"),
-	SPEED("speed"),
-	STRENGTH("strength"),
-	WATER("water"),
-	WATER_BREATHING("waterbreath"),
-	WEAKNESS("weak");
+    WATER("water"),
+    MUNDANE("mundane"),
+    THICK("thick"),
+    AWKWARD("awkward"),
+    NIGHT_VISION("nvg"),
+    INVISIBILITY("invis"),
+    JUMP("jump"),
+    FIRE_RESISTANCE("fireres"),
+    SPEED("speed"),
+    SLOWNESS("slow"),
+    WATER_BREATHING("waterbreath"),
+    INSTANT_HEAL("heal"),
+    INSTANT_DAMAGE("damage"),
+    POISON("poison"),
+    REGEN("regen"),
+    STRENGTH("strength"),
+    WEAKNESS("weak"),
+    LUCK("luck"),
+	;
 
 	private final String name;
 
 	/**
-	 * Returns a friendlier name of a given {@link PotionEffectType}.
-	 *
-	 * @param effect Potion effect
-	 * @return Friendlier name.
+	 * Finds a PotionType from a given string matcher
+	 * @param matcher String matcher
+	 * @return The PotionType, or null if none exists
 	 */
-	public static String toName(PotionEffectType effect)
+	public static PotionType find(String matcher)
 	{
-		Validate.notNull(effect, "effect cannot be null!");
-		for (PotionType e : PotionType.values())
+		Validate.notNull(matcher, "Matcher cannot be null!");
+		matcher = matcher.toLowerCase();
+
+		for (PotionType type : values())
 		{
-			if (e.toString().equals(effect.getName()))
-				return e.name;
-		}
-
-		return FormatUtil.format(effect.getName());
-	}
-
-
-	public static org.bukkit.potion.PotionType toType(String string)
-	{
-		Validate.notNull(string, "string cannot be null!");
-		for (PotionType type : PotionType.values())
-		{
-			if (type.name.equalsIgnoreCase(string))
-				return org.bukkit.potion.PotionType.valueOf(type.toString());
+			if (type.getName().equals(matcher) || type.name().toLowerCase().equals(matcher))
+				return type;
 		}
 
 		return null;
 	}
 
 	/**
-	 * Returns a <code>String</code> representation of a {@link Collection} of
+	 * Gets the Bukkit PotionType equivalent of this PotionType
+	 * @return The Bukkit equivalent
+	 */
+	public org.bukkit.potion.PotionType getBukkit()
+	{
+		return org.bukkit.potion.PotionType.valueOf(name());
+	}
+
+	/**
+	 * Returns a String representation of a {@link Collection} of
 	 * PotionEffects
 	 *
 	 * @param effects Collection of potion effects.
@@ -97,7 +99,7 @@ public enum PotionType
 		StringJoiner joiner = new StringJoiner(", ");
 		for (PotionEffect effect : effects)
 		{
-			joiner.append(PotionType.toName(effect.getType()));
+			joiner.append(FormatUtil.getFriendlyName(effect.getType()));
 		}
 
 		return joiner.toString();

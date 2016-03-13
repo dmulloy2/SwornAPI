@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package net.dmulloy2;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import lombok.Getter;
 import net.dmulloy2.commands.Command;
@@ -25,6 +26,8 @@ import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
 import net.dmulloy2.types.Reloadable;
+import net.dmulloy2.types.Versioning;
+import net.dmulloy2.types.Versioning.Version;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -93,6 +96,17 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	public ClassLoader classLoader()
 	{
 		return super.getClassLoader();
+	}
+
+	/**
+	 * Checks if the currently running version of Minecraft is supported by
+	 * SwornAPI. If not, a message is printed using the logHandler.
+	 */
+	public void checkVersion()
+	{
+		Version current = Versioning.getVersion();
+		if (current == Version.UNKNOWN)
+			logHandler.log(Level.WARNING, "{0} does not support {1}. Check for an update!", getName(), current.getName());
 	}
 
 	@Override
