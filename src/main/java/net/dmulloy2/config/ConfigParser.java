@@ -165,7 +165,7 @@ public final class ConfigParser
 										value = NumberUtil.toLong(value) * TICKS_PER_SECOND;
 										break;
 									default:
-										throw new IllegalArgumentException("Unsupported option: " + option);
+										throw new IllegalStateException("Unsupported option: " + option);
 								}
 							}
 
@@ -174,17 +174,31 @@ public final class ConfigParser
 								Method convert = custom.getMethod("convert", Object.class);
 								if (convert.isAccessible())
 								{
-									value = convert.invoke(null, value);
+									try
+									{
+										value = convert.invoke(null, value);
+									}
+									catch (Throwable ex)
+									{
+										plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "converting {0} using {1}", path, custom.getName()));
+									}
 								}
 							}
 						}
 
-						field.set(object, value);
+						try
+						{
+							field.set(object, value);
+						}
+						catch (IllegalArgumentException ex)
+						{
+							plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
+						}
 					}
 				}
 				catch (ClassCastException ex)
 				{
-					plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", field.getType(), value.getClass());
+					plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
 				}
 				catch (Throwable ex)
 				{

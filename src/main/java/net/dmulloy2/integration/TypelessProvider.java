@@ -31,7 +31,8 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 
 /**
- * A dependency provider for optional {@link Plugin} dependencies.
+ * A dependency provider for optional {@link Plugin} dependencies that only checks for the existence of a plugin.
+ * This provider doesn't provide the Plugin object.
  * <p>
  * In order to avoid a hard dependency, the following precautions should be taken: <br>
  * <ul>
@@ -46,45 +47,28 @@ import org.bukkit.plugin.Plugin;
  * @author dmulloy2
  */
 
-public class DependencyProvider<T extends Plugin>
+public class TypelessProvider
 {
 	protected String name;
-	protected T dependency;
 	protected boolean enabled;
 
 	protected final SwornPlugin handler;
 
-	@SuppressWarnings("unchecked")
-	public DependencyProvider(final SwornPlugin handler, final String name)
+	public TypelessProvider(final SwornPlugin handler, final String name)
 	{
 		this.handler = checkNotNull(handler, "handler cannot be null!");
 		this.name = checkNotNull(name, "name cannot be null!");
-
-		try
-		{
-			dependency = (T) handler.getServer().getPluginManager().getPlugin(name);
-			if (dependency != null)
-			{
-				enabled = true;
-				onEnable();
-				handler.getLogHandler().log("{0} integration successful.", name);
-			}
-		}
-		catch (Throwable ex)
-		{
-			handler.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "hooking into " + name));
-		}
+		this.enabled = handler.getServer().getPluginManager().isPluginEnabled(name);
 
 		handler.getServer().getPluginManager().registerEvents(new Listener()
 		{
 			@EventHandler
 			public void onPluginEnable(PluginEnableEvent event)
 			{
-				if (dependency == null && event.getPlugin().getName().equals(name))
+				if (! enabled && event.getPlugin().getName().equals(name))
 				{
 					try
 					{
-						dependency = (T) event.getPlugin();
 						enabled = true;
 						onEnable();
 						handler.getLogHandler().log("{0} integration enabled.", name);
@@ -99,11 +83,10 @@ public class DependencyProvider<T extends Plugin>
 			@EventHandler
 			public void onPluginDisable(PluginDisableEvent event)
 			{
-				if (dependency != null && event.getPlugin().getName().equals(name))
+				if (enabled && event.getPlugin().getName().equals(name))
 				{
 					onDisable();
 					enabled = false;
-					dependency = null;
 					handler.getLogHandler().log("{0} integration disabled.", name);
 				}
 			}
@@ -122,17 +105,6 @@ public class DependencyProvider<T extends Plugin>
 	public void onDisable() { }
 
 	/**
-	 * Gets the dependency.
-	 * 
-	 * @return The dependency
-	 * @throws NullPointerException if the dependency does not exist.
-	 */
-	public T getDependency()
-	{
-		return checkNotNull(dependency, name + " dependency does not exist.");
-	}
-
-	/**
 	 * Gets this dependency's name.
 	 * 
 	 * @return The dependency's name
@@ -149,6 +121,6 @@ public class DependencyProvider<T extends Plugin>
 	 */
 	public boolean isEnabled()
 	{
-		return enabled && dependency != null;
+		return enabled;
 	}
 }

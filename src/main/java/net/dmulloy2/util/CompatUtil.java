@@ -35,7 +35,9 @@ import org.bukkit.potion.PotionData;
 public class CompatUtil
 {
 	/**
-	 * Creates a potion with the given attributes. Potions were changed in 1.9, necessitating this method.
+	 * Creates a potion with the given attributes. Potions were changed in 1.9,
+	 * necessitating this method.
+	 * 
 	 * @param type Potion type
 	 * @param amount ItemStack amount
 	 * @param level Potion level
@@ -65,7 +67,9 @@ public class CompatUtil
 	}
 
 	/**
-	 * Gets the item in a player's main hand. A second hand was added in 1.9, necessitating this method.
+	 * Gets the item in a player's main hand. The ability to use the other hand
+	 * was added in 1.9, necessitating this method.
+	 * 
 	 * @param player Player to get item from
 	 * @return The item
 	 */
@@ -78,6 +82,25 @@ public class CompatUtil
 		catch (LinkageError e)
 		{
 			return player.getItemInHand();
+		}
+	}
+
+	/**
+	 * Sets the item in a player's main hand to a given item stack. The ability
+	 * to use the other hand was added in 1.9, necessitating this method.
+	 * 
+	 * @param player Player to set item in hand
+	 * @param item Item to set
+	 */
+	public static void setItemInMainHand(Player player, ItemStack item)
+	{
+		try
+		{
+			player.getInventory().setItemInMainHand(item);
+		}
+		catch (LinkageError e)
+		{
+			player.setItemInHand(item);
 		}
 	}
 }

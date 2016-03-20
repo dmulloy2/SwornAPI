@@ -36,25 +36,24 @@ import org.bukkit.potion.PotionEffect;
 @AllArgsConstructor
 public enum PotionType
 {
-    WATER("water"),
-    MUNDANE("mundane"),
-    THICK("thick"),
-    AWKWARD("awkward"),
-    NIGHT_VISION("nvg"),
-    INVISIBILITY("invis"),
-    JUMP("jump"),
-    FIRE_RESISTANCE("fireres"),
-    SPEED("speed"),
-    SLOWNESS("slow"),
-    WATER_BREATHING("waterbreath"),
-    INSTANT_HEAL("heal"),
-    INSTANT_DAMAGE("damage"),
-    POISON("poison"),
-    REGEN("regen"),
-    STRENGTH("strength"),
-    WEAKNESS("weak"),
-    LUCK("luck"),
-	;
+	WATER("water"),
+	MUNDANE("mundane"),
+	THICK("thick"),
+	AWKWARD("awkward"),
+	NIGHT_VISION("nvg"),
+	INVISIBILITY("invis"),
+	JUMP("jump"),
+	FIRE_RESISTANCE("fireres"),
+	SPEED("speed"),
+	SLOWNESS("slow"),
+	WATER_BREATHING("waterbreath"),
+	INSTANT_HEAL("heal"),
+	INSTANT_DAMAGE("damage"),
+	POISON("poison"),
+	REGEN("regen"),
+	STRENGTH("strength"),
+	WEAKNESS("weak"),
+	LUCK("luck");
 
 	private final String name;
 
