@@ -193,12 +193,14 @@ public final class ConfigParser
 						catch (IllegalArgumentException ex)
 						{
 							plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
+							plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
 						}
 					}
 				}
 				catch (ClassCastException ex)
 				{
 					plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
+					plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
 				}
 				catch (Throwable ex)
 				{

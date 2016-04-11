@@ -19,6 +19,8 @@ package net.dmulloy2.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.Getter;
 
@@ -33,59 +35,73 @@ public class Versioning
 	private Versioning() { }
 
 	private static final List<Version> supported = new ArrayList<>();
+	private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\(.*MC.\\s*([a-zA-z0-9\\-\\.]+)\\s*\\)");
 
 	/**
 	 * Represents a supported Minecraft version
 	 */
 	@Getter
-	public static enum Version
+	public static class Version
 	{
 		/**
 		 * Minecraft 1.7, the update that changed the world
 		 */
-		MC_17("Minecraft 1.7.x", "1.7"),
+		public static final Version MC_17 = new Version("Minecraft 1.7.x", "1.7");
 
 		/**
 		 * Minecraft 1.8, the bountiful update
 		 */
-		MC_18("Minecraft 1.8.x", "1.8"),
+		public static final Version MC_18 = new Version("Minecraft 1.8.x", "1.8");
 
 		/**
 		 * Minecraft 1.9, the combat update
 		 */
-		MC_19("Minecraft 1.9.x", "1.9"),
+		public static final Version MC_19 = new Version("Minecraft 1.9.x", "1.9");
 
 		/**
 		 * Minecraft 1.6, the horse update
 		 * @deprecated No longer supported
 		 */
 		@Deprecated
-		MC_16("Minecraft 1.6.x"),
-
-		/**
-		 * An unsupported Minecraft version
-		 */
-		UNKNOWN("Unknown"),
-		;
+		public static final Version MC_16 = new Version("Minecraft 1.6.x");
 
 		private final String name;
 		private final String matcher;
+		private final boolean supported;
 
 		private Version(String name)
 		{
 			this.name = name;
 			this.matcher = null;
+			this.supported = false;
 		}
 
 		private Version(String name, String matcher)
 		{
 			this.name = name;
 			this.matcher = matcher;
-			supported.add(this);
+			this.supported = true;
+			Versioning.supported.add(this);
 		}
 	}
 
 	private static Version version;
+
+	// Adapted from ProtocolLib
+
+	private static Version fromCurrent()
+	{
+		String version = extractVersion(Bukkit.getVersion());
+		return version != null ? new Version("Minecraft " + version) : new Version("Unknown");
+	}
+
+	private static String extractVersion(String text)
+	{
+		Matcher version = VERSION_PATTERN.matcher(text);
+		if (version.matches() && version.group(1) != null)
+			return version.group(1);
+		return null;
+	}
 
 	/**
 	 * Gets the {@link Version} that this server is currently running.
@@ -103,7 +119,7 @@ public class Versioning
 					return version = ver;
 			}
 
-			return version = Version.UNKNOWN;
+			return version = fromCurrent();
 		}
 
 		return version;
@@ -126,6 +142,6 @@ public class Versioning
 	 */
 	public static final boolean isSupported()
 	{
-		return getVersion() != Version.UNKNOWN;
+		return getVersion().isSupported();
 	}
 }

@@ -105,7 +105,7 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	public void checkVersion()
 	{
 		Version current = Versioning.getVersion();
-		if (current == Version.UNKNOWN)
+		if (! current.isSupported())
 			logHandler.log(Level.WARNING, "{0} does not support {1}. Check for an update!", getName(), current.getName());
 	}
 
