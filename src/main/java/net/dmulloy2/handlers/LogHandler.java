@@ -18,8 +18,8 @@
 package net.dmulloy2.handlers;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import lombok.AllArgsConstructor;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.util.FormatUtil;
 
@@ -28,11 +28,21 @@ import net.dmulloy2.util.FormatUtil;
  *
  * @author dmulloy2
  */
-
-@AllArgsConstructor
 public class LogHandler
 {
 	private final SwornPlugin plugin;
+	private final Logger logger;
+
+	public LogHandler(SwornPlugin plugin, Logger logger)
+	{
+		this.plugin = plugin;
+		this.logger = logger;
+	}
+
+	public LogHandler(SwornPlugin plugin)
+	{
+		this(plugin, plugin.getLogger());
+	}
 
 	/**
 	 * Logs a formatted message to console with a given level.
@@ -43,7 +53,7 @@ public class LogHandler
 	 */
 	public final void log(Level level, String msg, Object... objects)
 	{
-		plugin.getLogger().log(level, FormatUtil.format(msg, objects));
+		logger.log(level, FormatUtil.format(msg, objects));
 	}
 
 	/**

@@ -1,0 +1,9 @@
+string: "succeeded"
+
+material: "golden_apple"
+
+materials:
+  - 322
+  - "diamond_block"
+
+item: "golden_apple, 5"

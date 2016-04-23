@@ -19,8 +19,6 @@ package net.dmulloy2.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import lombok.Getter;
 
@@ -34,15 +32,14 @@ public class Versioning
 {
 	private Versioning() { }
 
-	private static final List<Version> supported = new ArrayList<>();
-	private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\(.*MC.\\s*([a-zA-z0-9\\-\\.]+)\\s*\\)");
-
 	/**
 	 * Represents a supported Minecraft version
 	 */
 	@Getter
 	public static class Version
 	{
+		private static final List<Version> supported = new ArrayList<>();
+
 		/**
 		 * Minecraft 1.7, the update that changed the world
 		 */
@@ -67,21 +64,45 @@ public class Versioning
 
 		private final String name;
 		private final String matcher;
-		private final boolean supported;
+		private final boolean isSupported;
 
-		private Version(String name)
+		protected Version(String name)
 		{
 			this.name = name;
 			this.matcher = null;
-			this.supported = false;
+			this.isSupported = false;
 		}
 
-		private Version(String name, String matcher)
+		protected Version(String name, String matcher)
 		{
 			this.name = name;
 			this.matcher = matcher;
-			this.supported = true;
-			Versioning.supported.add(this);
+			this.isSupported = true;
+			supported.add(this);
+		}
+
+		/**
+		 * Whether or not SwornAPI supports this version.
+		 * @return True if it does, false if not
+		 */
+		public boolean isSupported()
+		{
+			return isSupported;
+		}
+
+		@Override
+		public String toString()
+		{
+			return name + (matcher != null ? "[matcher=" + matcher + "]" : "");
+		}
+
+		/**
+		 * Gets the list of supported Versions
+		 * @return The list
+		 */
+		public static List<Version> getSupported()
+		{
+			return supported;
 		}
 	}
 
@@ -91,16 +112,13 @@ public class Versioning
 
 	private static Version fromCurrent()
 	{
-		String version = extractVersion(Bukkit.getVersion());
+		String version = extractVersion(Bukkit.getBukkitVersion());
 		return version != null ? new Version("Minecraft " + version) : new Version("Unknown");
 	}
 
 	private static String extractVersion(String text)
 	{
-		Matcher version = VERSION_PATTERN.matcher(text);
-		if (version.matches() && version.group(1) != null)
-			return version.group(1);
-		return null;
+		return text.split("-")[0];
 	}
 
 	/**
@@ -108,12 +126,12 @@ public class Versioning
 	 *
 	 * @return The version
 	 */
-	public static final Version getVersion()
+	public static Version getVersion()
 	{
 		if (version == null)
 		{
-			String serverVersion = Bukkit.getVersion();
-			for (Version ver : supported)
+			String serverVersion = Bukkit.getBukkitVersion();
+			for (Version ver : Version.getSupported())
 			{
 				if (serverVersion.contains(ver.getMatcher()))
 					return version = ver;
@@ -123,6 +141,11 @@ public class Versioning
 		}
 
 		return version;
+	}
+
+	protected static void setVersion(Version version)
+	{
+		Versioning.version = version;
 	}
 
 	/**

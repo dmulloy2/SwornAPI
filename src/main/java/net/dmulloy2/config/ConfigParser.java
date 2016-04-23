@@ -143,8 +143,9 @@ public final class ConfigParser
 										break;
 									case PARSE_MATERIALS:
 										List<Material> materials = new ArrayList<>();
-										for (String string : (List<String>) value)
+										for (Object element : (List<Object>) value)
 										{
+											String string = element.toString();
 											Material material = MaterialUtil.getMaterial(string);
 											if (material == null && ! options.allowNull())
 											{
