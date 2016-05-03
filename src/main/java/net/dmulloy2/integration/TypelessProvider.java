@@ -21,14 +21,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.logging.Level;
 
-import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.util.Util;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+
+import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.util.Util;
 
 /**
  * A dependency provider for optional {@link Plugin} dependencies that only checks for the existence of a plugin.
@@ -58,7 +58,13 @@ public class TypelessProvider
 	{
 		this.handler = checkNotNull(handler, "handler cannot be null!");
 		this.name = checkNotNull(name, "name cannot be null!");
-		this.enabled = handler.getServer().getPluginManager().isPluginEnabled(name);
+
+		if (handler.getServer().getPluginManager().isPluginEnabled(name))
+		{
+			enabled = true;
+			onEnable();
+			handler.getLogHandler().log("{0} integration successful.", name);
+		}
 
 		handler.getServer().getPluginManager().registerEvents(new Listener()
 		{
