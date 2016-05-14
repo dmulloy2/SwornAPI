@@ -8,15 +8,15 @@ import static org.mockito.Mockito.when;
 
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_9_R1.DispenserRegistry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_9_R1.util.Versioning;
+import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_9_R2.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_9_R2.util.Versioning;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
+import net.minecraft.server.v1_9_R2.DispenserRegistry;
 
 /**
  * @author dmulloy2
