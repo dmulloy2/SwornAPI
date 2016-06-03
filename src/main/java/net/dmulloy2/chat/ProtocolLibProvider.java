@@ -17,9 +17,6 @@
  */
 package net.dmulloy2.chat;
 
-import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.types.ChatPosition;
-
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -27,6 +24,10 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+
+import net.dmulloy2.handlers.LogHandler;
+import net.dmulloy2.types.ChatPosition;
+import net.dmulloy2.util.Util;
 
 /**
  * @author dmulloy2
@@ -42,7 +43,7 @@ public class ProtocolLibProvider implements ChatProvider
 	}
 
 	@Override
-	public void sendMessage(Player player, ChatPosition position, BaseComponent... message) throws ReflectionException
+	public boolean sendMessage(Player player, ChatPosition position, BaseComponent... message)
 	{
 		try
 		{
@@ -60,10 +61,18 @@ public class ProtocolLibProvider implements ChatProvider
 
 			// Send the packet
 			manager.sendServerPacket(player, packet);
+			return true;
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending chat packet to " + player.getName(), ex);
+			LogHandler.globalDebug(Util.getUsefulStack(ex, "sending chat packet to {0}", player.getName()));
+			return false;
 		}
+	}
+
+	@Override
+	public String getName()
+	{
+		return "ProtocolLib";
 	}
 }

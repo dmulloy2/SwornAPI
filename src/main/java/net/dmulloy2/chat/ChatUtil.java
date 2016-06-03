@@ -17,16 +17,18 @@
  */
 package net.dmulloy2.chat;
 
-import net.dmulloy2.exception.ReflectionException;
+import org.apache.commons.lang.Validate;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.types.ChatPosition;
 import net.dmulloy2.util.Util;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 /**
- * Util for dealing with JSON-based chat.
+ * Utility class for sending JSON chat.
  *
  * @author dmulloy2
  */
@@ -39,13 +41,81 @@ public class ChatUtil
 
 	static
 	{
-		try
+		provider = findProvider();
+		LogHandler.globalDebug("Using {0} provider for JSON chat", provider.getName());
+	}
+
+	private static ChatProvider findProvider()
+	{
+		// See if the user has a preference first
+		String name = System.getProperty("swornapi.chatprovider");
+		if (name != null)
 		{
-			provider = new ProtocolLibProvider();
+			Provider preferred = Provider.fromName(name);
+			if (preferred != null)
+			{
+				try
+				{
+					return preferred.getClazz().newInstance();
+				}
+				catch (Throwable ex)
+				{
+					LogHandler.globalDebug(Util.getUsefulStack(ex, "using preferred provider {0}", name));
+				}
+			}
 		}
-		catch (Throwable ex)
+
+		// Go through ours
+		for (Provider available : Provider.values())
 		{
-			provider = new ReflectionProvider();
+			try
+			{
+				return available.getClazz().newInstance();
+			} catch (Throwable ex) { }
+		}
+
+		// Fall back to plain text
+		return new PlainTextProvider();
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static enum Provider
+	{
+		SPIGOT("Spigot", SpigotProvider.class),
+		PROTOCOLLIB("ProtocolLib", ProtocolLibProvider.class),
+		REFLECTION("Reflection", ReflectionProvider.class),
+		PLAINTEXT("Plaintext", PlainTextProvider.class);
+
+		private String name;
+		private Class<? extends ChatProvider> clazz;
+
+		private static Provider fromName(String name)
+		{
+			name = name.toLowerCase();
+			for (Provider provider : values())
+			{
+				if (provider.name.toLowerCase().equals(name))
+					return provider;
+			}
+
+			return null;
+		}
+	}
+
+	private static class PlainTextProvider implements ChatProvider
+	{
+		@Override
+		public boolean sendMessage(Player player, ChatPosition position, BaseComponent... message)
+		{
+			// Delegate to the last statement in sendMessage
+			return false;
+		}
+
+		@Override
+		public String getName()
+		{
+			return "Plain text";
 		}
 	}
 
@@ -68,48 +138,43 @@ public class ChatUtil
 	 */
 	public static void sendMessage(CommandSender sender, ChatPosition position, BaseComponent... message)
 	{
+		Validate.notNull(sender, "sender cannot be null!");
+		Validate.notNull(position, "position cannot be null!");
+		Validate.notNull(message, "message cannot be null!");
+
 		if (sender instanceof Player)
 		{
-			try
-			{
-				sendMessageRaw(sender, position, message);
+			// JSON messages can only be sent to players
+			if (sendMessageRaw((Player) sender, position, message))
 				return;
-			}
-			catch (Throwable ex)
-			{
-				LogHandler.globalDebug(Util.getUsefulStack(ex, "sending message {0} to {1}", ComponentSerializer.toString(message), sender.getName()));
-			}
 		}
 
+		// Fall back to plain text
 		sender.sendMessage(TextComponent.toLegacyText(message));
 	}
 
 	/**
-	 * Alias for {@link #sendMessageRaw(CommandSender, ChatPosition, BaseComponent...)}. Defaults to {@link ChatPosition#SYSTEM}
+	 * Alias for {@link #sendMessageRaw(Player, ChatPosition, BaseComponent...)}. Defaults to {@link ChatPosition#SYSTEM}
 	 */
-	public static void sendMessageRaw(CommandSender sender, BaseComponent... message) throws ReflectionException
+	public static boolean sendMessageRaw(Player player, BaseComponent... message)
 	{
-		sendMessageRaw(sender, ChatPosition.SYSTEM, message);
+		return sendMessageRaw(player, ChatPosition.SYSTEM, message);
 	}
 
 	/**
-	 * Sends a JSON chat message to a {@link CommandSender}. If message sending
-	 * fails, a {@link ReflectionException} will be thrown.
+	 * Sends a JSON chat message to a given Player
 	 *
-	 * @param sender CommandSender to send the message to
+	 * @param player Player to send the message to
 	 * @param position Message position
 	 * @param message Message to send
-	 * @throws ReflectionException If sending fails
+	 * @return True if it was sent, false if not
 	 */
-	public static void sendMessageRaw(CommandSender sender, ChatPosition position, BaseComponent... message) throws ReflectionException
+	public static boolean sendMessageRaw(Player player, ChatPosition position, BaseComponent... message)
 	{
-		if (sender instanceof Player)
-		{
-			provider.sendMessage((Player) sender, position, message);
-		}
-		else
-		{
-			throw new ReflectionException("JSON chat messages can only be sent to players.");
-		}
+		Validate.notNull(player, "player cannot be null!");
+		Validate.notNull(position, "position cannot be null!");
+		Validate.notNull(message, "message cannot be null!");
+
+		return provider.sendMessage(player, position, message);
 	}
 }

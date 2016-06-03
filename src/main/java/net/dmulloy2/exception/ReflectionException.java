@@ -21,8 +21,9 @@ package net.dmulloy2.exception;
  * An {@link Exception} that occurs when dealing with reflection.
  *
  * @author dmulloy2
+ * @deprecated Use {@link ReflectiveOperationException} instead
  */
-
+@Deprecated
 public class ReflectionException extends RuntimeException
 {
 	private static final long serialVersionUID = -355857662220280587L;

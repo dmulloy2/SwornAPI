@@ -1,6 +1,6 @@
 /**
  * SwornAPI - common API for MineSworn and Shadowvolt plugins
- * Copyright (C) 2015 dmulloy2
+ * Copyright (C) 2016 dmulloy2
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.chat.BaseComponent;
@@ -27,7 +26,6 @@ import net.dmulloy2.chat.ChatUtil;
 import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.util.FormatUtil;
-import net.dmulloy2.util.Util;
 
 /**
  * Generic help command. This is a modified implementation of
@@ -78,21 +76,21 @@ public class CmdHelp extends Command
 				return;
 			}
 		}
-
-		try
+		
+		if (isPlayer())
 		{
-			// Attempt to send fancy help
-			for (BaseComponent[] components : getPage(index))
-				ChatUtil.sendMessageRaw(sender, components);
+			fancy:
+			{
+				for (BaseComponent[] components : getPage(index))
+					if (! ChatUtil.sendMessageRaw(player, components))
+						break fancy;
+				return;
+			}
 		}
-		catch (Throwable ex)
-		{
-			// Fallback to legacy help
-			for (String line : getLegacyPage(index))
-				sendMessage(line);
 
-			plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "sending help to " + sender.getName()));
-		}
+		// Fall back to legacy help
+		for (String line : getLegacyPage(index))
+			sendMessage(line);
 	}
 
 	public String getHeader()
@@ -100,9 +98,16 @@ public class CmdHelp extends Command
 		return header;
 	}
 
-	public void setHeader(String header)
+	public CmdHelp setHeader(String header)
 	{
 		this.header = header;
+		return this;
+	}
+
+	public CmdHelp setFooter(String footer)
+	{
+		this.footer = footer;
+		return this;
 	}
 
 	public int getPageCount()

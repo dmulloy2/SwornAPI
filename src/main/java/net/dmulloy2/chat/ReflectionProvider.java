@@ -21,12 +21,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.handlers.LogHandler;
-import net.dmulloy2.types.ChatPosition;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import net.dmulloy2.handlers.LogHandler;
+import net.dmulloy2.types.ChatPosition;
+import net.dmulloy2.util.Util;
 
 /**
  * @author dmulloy2
@@ -34,35 +34,53 @@ import org.bukkit.entity.Player;
 
 public class ReflectionProvider implements ChatProvider
 {
-	protected ReflectionProvider() { }
+	private Method serialize;
+	private Constructor<?> packetConstructor;
+	private Field connectionField;
+	private Method sendPacket;
+
+	protected ReflectionProvider() throws ReflectiveOperationException
+	{
+		Class<?> serializerClass = getMinecraftClass("ChatSerializer", "IChatBaseComponent$ChatSerializer");
+		serialize = serializerClass.getMethod("a", String.class);
+
+		Class<?> chatPacketClass = getMinecraftClass("PacketPlayOutChat");
+		Class<?> componentClass = getMinecraftClass("IChatBaseComponent");
+		packetConstructor = chatPacketClass.getConstructor(componentClass, byte.class);
+
+		Class<?> entityPlayer = getMinecraftClass("EntityPlayer");
+		connectionField = entityPlayer.getField("playerConnection");
+		Class<?> playerConnection = connectionField.getType();
+		Class<?> packetClass = getMinecraftClass("Packet");
+		sendPacket = playerConnection.getMethod("sendPacket", packetClass);
+	}
 
 	@Override
-	public void sendMessage(Player player, ChatPosition position, BaseComponent... message) throws ReflectionException
+	public boolean sendMessage(Player player, ChatPosition position, BaseComponent... message)
 	{
 		try
 		{
-			Class<?> serializerClass = getMinecraftClass("ChatSerializer", "IChatBaseComponent$ChatSerializer");
-			Method serialize = serializerClass.getMethod("a", String.class);
 			Object component = serialize.invoke(null, ComponentSerializer.toString(message));
-
-			Class<?> chatPacketClass = getMinecraftClass("PacketPlayOutChat");
-			Class<?> componentClass = getMinecraftClass("IChatBaseComponent");
-			Constructor<?> constructor = chatPacketClass.getConstructor(componentClass, byte.class);
-			Object packet = constructor.newInstance(component, position.getValue());
+			Object packet = packetConstructor.newInstance(component, position.getValue());
 
 			Method getHandle = player.getClass().getMethod("getHandle");
 			Object entityPlayer = getHandle.invoke(player);
 
-			Field playerConnectionField = entityPlayer.getClass().getField("playerConnection");
-			Object playerConnection = playerConnectionField.get(entityPlayer);
-			Class<?> packetClass = getMinecraftClass("Packet");
-			Method sendPacket = playerConnection.getClass().getMethod("sendPacket", packetClass);
+			Object playerConnection = connectionField.get(entityPlayer);
 			sendPacket.invoke(playerConnection, packet);
+			return true;
 		}
 		catch (Throwable ex)
 		{
-			throw new ReflectionException("Sending chat packet to " + player.getName(), ex);
+			LogHandler.globalDebug(Util.getUsefulStack(ex, "sending chat packet to {0}", player.getName()));
+			return false;
 		}
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Reflection";
 	}
 
 	private static String VERSION;

@@ -17,10 +17,9 @@
  */
 package net.dmulloy2.chat;
 
-import net.dmulloy2.exception.ReflectionException;
-import net.dmulloy2.types.ChatPosition;
-
 import org.bukkit.entity.Player;
+
+import net.dmulloy2.types.ChatPosition;
 
 /**
  * @author dmulloy2
@@ -28,5 +27,19 @@ import org.bukkit.entity.Player;
 
 public interface ChatProvider
 {
-	void sendMessage(Player player, ChatPosition position, BaseComponent... message) throws ReflectionException;
+	/**
+	 * Sends a JSON chat message to a given player
+	 * 
+	 * @param player Player to send the message to
+	 * @param position Position to display the message
+	 * @param message Message to send
+	 * @return True if it was sent, false if not
+	 */
+	boolean sendMessage(Player player, ChatPosition position, BaseComponent... message);
+
+	/**
+	 * Gets the name of this provider
+	 * @return The name
+	 */
+	String getName();
 }
