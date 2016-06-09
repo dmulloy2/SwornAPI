@@ -56,6 +56,11 @@ public class Versioning
 		public static final Version MC_19 = new Version("Minecraft 1.9.x", "1.9");
 
 		/**
+		 * Minecraft 1.10, the frostburn update
+		 */
+		public static final Version MC_110 = new Version("Minecraft 1.10.x", "1.10");
+
+		/**
 		 * Minecraft 1.6, the horse update
 		 * @deprecated No longer supported
 		 */

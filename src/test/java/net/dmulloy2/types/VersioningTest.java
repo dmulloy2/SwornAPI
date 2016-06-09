@@ -28,7 +28,7 @@ public class VersioningTest
 	public void testSupported()
 	{
 		Versioning.setVersion(null);
-		assertEquals(Versioning.getVersion(), Version.MC_19);
+		assertEquals(Versioning.getVersion(), Version.MC_110);
 		assertTrue(Versioning.isSupported());
 	}
 
