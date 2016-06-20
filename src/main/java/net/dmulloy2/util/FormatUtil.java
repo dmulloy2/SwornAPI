@@ -19,13 +19,12 @@ package net.dmulloy2.util;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.regex.Pattern;
-
-import net.dmulloy2.types.StringJoiner;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+
+import net.dmulloy2.types.StringJoiner;
 
 /**
  * Util used for general formatting.
@@ -142,7 +141,7 @@ public class FormatUtil
 		return WordUtils.capitalize(string.toLowerCase().replaceAll("_", " "));
 	}
 
-	private static Pattern VOWELS = null;
+	private static final String VOWELS = "aeiou";
 
 	/**
 	 * Returns the proper article of a given string
@@ -152,13 +151,9 @@ public class FormatUtil
 	 */
 	public static String getArticle(String string)
 	{
-		Validate.notNull(string, "string cannot be null!");
+		Validate.notEmpty(string, "string cannot be null or empty!");
 
-		if (VOWELS == null)
-			VOWELS = Pattern.compile("[aeiou]");
-
-		string = string.toLowerCase();
-		return VOWELS.matcher(string).matches() ? "an" : "a";
+		return VOWELS.indexOf(Character.toLowerCase(string.charAt(0))) != -1 ? "an" : "a";
 	}
 
 	/**
@@ -169,7 +164,7 @@ public class FormatUtil
 	 */
 	public static String getPlural(String string, int amount)
 	{
-		Validate.notNull(string, "string cannot be null!");
+		Validate.notEmpty(string, "string cannot be null or empty!");
 
 		amount = Math.abs(amount);
 		if (amount != 1)
@@ -190,7 +185,7 @@ public class FormatUtil
 	 */
 	public static String capitalizeFirst(String string)
 	{
-		Validate.notEmpty(string, "string cannot be null");
+		Validate.notEmpty(string, "string cannot be null or empty!");
 		return Character.toUpperCase(string.charAt(0)) + string.substring(1);
 	}
 
