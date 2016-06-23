@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 import net.dmulloy2.types.StringJoiner;
 
@@ -139,6 +140,18 @@ public class FormatUtil
 		Validate.notNull(string, "string cannot be null!");
 
 		return WordUtils.capitalize(string.toLowerCase().replaceAll("_", " "));
+	}
+
+	/**
+	 * Returns a user-friendly version of a given Material.
+	 * 
+	 * @param material Material to get the user-friendly version of
+	 * @return The string
+	 * @see MaterialUtil#getMaterialName(Material)
+	 */
+	public static String getFriendlyName(Material material)
+	{
+		return MaterialUtil.getName(material);
 	}
 
 	private static final String VOWELS = "aeiou";

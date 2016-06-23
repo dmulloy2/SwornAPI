@@ -20,10 +20,11 @@ package net.dmulloy2.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.dmulloy2.integration.VaultHandler;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import net.dmulloy2.integration.VaultHandler;
 
 /**
  * Utility class for dealing with Materials.
@@ -70,33 +71,78 @@ public class MaterialUtil
 			if (internal != Material.AIR)
 				return internal;
 		} catch (Throwable ex) { }
+
 		return null;
 	}
 
 	/**
 	 * Gets the friendly name of a Material.
 	 *
-	 * @param mat Material
-	 * @return Friendly name
+	 * @param material Material to get the name of
+	 * @return The name
 	 */
-	public static final String getMaterialName(Material mat)
+	public static final String getName(Material material)
 	{
-		return FormatUtil.getFriendlyName(mat);
+		if (material == null)
+			return "null";
+
+		// Try first with Vault
+		try
+		{
+			String vault = VaultHandler.friendlyName(material);
+			if (vault != null) return vault;
+		} catch (Throwable ex) { }
+
+		// Fall back to our method in FormatUtil
+		return FormatUtil.getFriendlyName(material.name());
 	}
 
 	/**
-	 * Gets the friendly name of a Material.
-	 *
-	 * @param name Material name
-	 * @return Friendly name, or "null" if not found
+	 * Gets the friendly name of an ItemStack.
+	 * 
+	 * @param stack Stack to get the name of
+	 * @return The name
 	 */
+	public static final String getName(ItemStack stack)
+	{
+		if (stack == null)
+			return "null";
+		
+		// Try first with Vault
+		try
+		{
+			String vault = VaultHandler.friendlyName(stack);
+			if (vault != null) return vault;
+		} catch (Throwable ex) { }
+
+		// Throw out the item data
+		return getName(stack.getType());
+	}
+
+	/**
+	 * Gets the friendly name of an Item or Material.
+	 * @param string String to parse
+	 * @return The name, or {@code -string} if parsing fails
+	 */
+	public static final String getName(String string)
+	{
+		try
+		{
+			ItemStack stack = ItemUtil.readItem(string);
+			if (stack != null)
+				return getName(stack);
+		} catch (Throwable ex) { }
+
+		return "-" + string;
+	}
+
+	/**
+	 * @deprecated Renamed to {@link #getName(String)
+	 */
+	@Deprecated
 	public static final String getMaterialName(String name)
 	{
-		Material mat = getMaterial(name);
-		if (mat == null)
-			return "null";
-
-		return getMaterialName(mat);
+		return getName(name);
 	}
 
 	/**

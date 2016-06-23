@@ -90,7 +90,7 @@ public class MyMaterial
 	}
 
 	/**
-	 * Creates a new {@link ItemStack} based around this MyMaterial.
+	 * Creates a new {@link ItemStack} from this MyMaterial.
 	 *
 	 * @param amount Amount, defaults to 1
 	 * @return The new {@link ItemStack}
@@ -106,17 +106,17 @@ public class MyMaterial
 	// ---- Getters
 
 	/**
-	 * Gets the friendly name of the underlying material.
+	 * Gets the friendly name of the underlying item.
 	 *
-	 * @return Friendly name of the underlying Material
+	 * @return The name
 	 */
 	public final String getName()
 	{
-		return FormatUtil.getFriendlyName(material);
+		return FormatUtil.getFriendlyName(newItemStack(1));
 	}
 
 	/**
-	 * Serializes this MyMaterial. This is essentially the opposite of
+	 * Serializes this MyMaterial. This is essentially the inverse of
 	 * {@link #fromString(String)}
 	 * <p>
 	 * Format: {@code <Material>[:Data]}

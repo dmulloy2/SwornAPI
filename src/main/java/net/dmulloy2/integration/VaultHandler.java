@@ -34,6 +34,7 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicesManager;
 
@@ -415,5 +416,29 @@ public class VaultHandler extends DependencyProvider<Vault>
 	{
 		ItemInfo info = Items.itemByString(string);
 		return info != null ? info.getType() : null;
+	}
+
+	/**
+	 * Attempts to get the friendly name of an ItemStack with Vault.
+	 * 
+	 * @param stack ItemStack to get the name of
+	 * @return The name, or null
+	 */
+	public static String friendlyName(ItemStack stack)
+	{
+		ItemInfo info = Items.itemByStack(stack);
+		return info != null ? info.getName() : null;
+	}
+
+	/**
+	 * Attempts to get the friendly name of an ItemStack with Vault.
+	 * 
+	 * @param material Material to get the name of
+	 * @return The name, or null
+	 * @see #friendlyName(ItemStack)
+	 */
+	public static String friendlyName(Material material)
+	{
+		return friendlyName(new ItemStack(material));
 	}
 }
