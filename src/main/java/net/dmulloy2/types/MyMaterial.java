@@ -19,14 +19,13 @@ package net.dmulloy2.types;
 
 import java.util.Objects;
 
-import lombok.Data;
-import net.dmulloy2.util.FormatUtil;
-import net.dmulloy2.util.MaterialUtil;
-import net.dmulloy2.util.NumberUtil;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+
+import lombok.Data;
+import net.dmulloy2.util.MaterialUtil;
+import net.dmulloy2.util.NumberUtil;
 
 /**
  * A serializable Material and data combination.
@@ -112,7 +111,7 @@ public class MyMaterial
 	 */
 	public final String getName()
 	{
-		return FormatUtil.getFriendlyName(newItemStack(1));
+		return MaterialUtil.getName(newItemStack(1));
 	}
 
 	/**
