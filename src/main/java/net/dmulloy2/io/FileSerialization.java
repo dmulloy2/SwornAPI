@@ -44,19 +44,22 @@ public class FileSerialization
 	 * 
 	 * @param file File to load from
 	 * @param clazz Class the object should be of
+	 * @param exists Whether or not the file exists and the expensive
+	 *        {@link File#exists()} operation can be skipped
 	 * @return The deserialized object, or null if the file does not exist
 	 * @throws IllegalArgumentException If the file or class is null
 	 * @throws IOException If the file cannot be read
-	 * @throws InvalidConfigurationException If the given file is not a valid configuration
+	 * @throws InvalidConfigurationException If the given file is not a valid
+	 *         YAML configuration
 	 * @see #save(ConfigurationSerializable, File)
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends ConfigurationSerializable> T load(File file, Class<T> clazz) throws IOException, InvalidConfigurationException
+	public static <T extends ConfigurationSerializable> T load(File file, Class<T> clazz, boolean exists) throws IOException, InvalidConfigurationException
 	{
 		Validate.notNull(file, "file cannot be null!");
 		Validate.notNull(clazz, "clazz cannot be null!");
 
-		if (! file.exists())
+		if (! exists && ! file.exists())
 			return null;
 
 		YamlConfiguration config = new YamlConfiguration();
@@ -67,22 +70,31 @@ public class FileSerialization
 	}
 
 	/**
+	 * Loads a previously serialized object from a given file using YAML. Alias
+	 * for {@link #load(File, Class, boolean)}, exists defaults to false.
+	 * 
+	 * @see #save(ConfigurationSerializable, File)
+	 */
+	public static <T extends ConfigurationSerializable> T load(File file, Class<T> clazz) throws IOException, InvalidConfigurationException
+	{
+		return load(file, clazz, false);
+	}
+
+	/**
 	 * Saves a serializable object to a given file.
 	 * 
 	 * @param instance Object to seriaize
 	 * @param file File to save to
 	 * @throws IllegalArgumentException If the instance or file is null
 	 * @throws IOException If the file cannot be written to
-	 * @see #load(File, Class)
+	 * @see #load(File, Class, boolean)
 	 */
 	public static void save(ConfigurationSerializable instance, File file) throws IOException
 	{
 		Validate.notNull(instance, "instance cannot be null!");
 		Validate.notNull(file, "file cannot be null!");
 
-		if (file.exists())
-			file.delete();
-
+		file.delete();
 		file.createNewFile();
 
 		YamlConfiguration config = new YamlConfiguration();
