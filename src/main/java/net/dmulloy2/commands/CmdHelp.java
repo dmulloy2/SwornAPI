@@ -51,8 +51,8 @@ public class CmdHelp extends Command
 		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;
 
-		this.header = "&3---- &e{0} Commands &3- &e{1}&3/&e{2} &3----";
-		this.footer = "";
+		this.header = props.getHelpHeader();
+		this.footer = props.getHelpFooter();
 	}
 
 	@Override

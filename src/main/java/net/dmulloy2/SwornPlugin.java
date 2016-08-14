@@ -20,8 +20,8 @@ package net.dmulloy2;
 import java.util.List;
 import java.util.logging.Level;
 
-import lombok.Getter;
 import net.dmulloy2.commands.Command;
+import net.dmulloy2.commands.CommandProps;
 import net.dmulloy2.handlers.CommandHandler;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.handlers.PermissionHandler;
@@ -33,6 +33,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import lombok.Getter;
+
 /**
  * Main SwornAPI class. Plugins utilizing this API should extend this class.
  *
@@ -41,9 +43,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 {
-	protected @Getter PermissionHandler permissionHandler;
-	protected @Getter CommandHandler commandHandler;
-	protected @Getter LogHandler logHandler;
+	@Getter
+	protected PermissionHandler permissionHandler;
+	@Getter
+	protected CommandHandler commandHandler;
+	@Getter
+	protected LogHandler logHandler;
+
+	@Getter
+	protected final CommandProps commandProps = new CommandProps();
 
 	/**
 	 * Gets this plugin's prefix. Defaults to {@link ChatColor#YELLOW}.
@@ -112,6 +120,6 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	@Override
 	public void reload()
 	{
-		
+		reloadConfig();
 	}
 }

@@ -50,14 +50,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into an {@code int}.
+	 * Returns whether or not an Object can be parsed as an Integer.
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isInt(Object object)
 	{
-		return toInt(object) != -1;
+		try
+		{
+			Integer.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -81,14 +89,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into a {@code float}.
+	 * Returns whether or not an Object can be parsed as a Float.
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isFloat(Object object)
 	{
-		return toFloat(object) != -1;
+		try
+		{
+			Float.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -112,14 +128,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into a {@code double}.
+	 * Returns whether or not an Object can be parsed as a Double
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isDouble(Object object)
 	{
-		return toDouble(object) != -1;
+		try
+		{
+			Double.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -143,14 +167,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into a {@code long}.
+	 * Returns whether or not an Object can be parsed as a Long.
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isLong(Object object)
 	{
-		return toLong(object) != -1;
+		try
+		{
+			Long.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -174,14 +206,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into a {@code short}.
+	 * Returns whether or not an Object can be parsed as a Short.
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isShort(Object object)
 	{
-		return toShort(object) != -1;
+		try
+		{
+			Short.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**
@@ -205,14 +245,22 @@ public class NumberUtil
 	}
 
 	/**
-	 * Returns whether or not an Object can be parsed into a {@code byte}.
+	 * Returns whether or not an Object can be parsed as a Byte.
 	 *
 	 * @param object Object to parse
 	 * @return True if it can be parsed, false if not
 	 */
 	public static boolean isByte(Object object)
 	{
-		return toByte(object) != -1;
+		try
+		{
+			Byte.valueOf(object.toString());
+			return true;
+		}
+		catch (NumberFormatException ex)
+		{
+			return false;
+		}
 	}
 
 	/**

@@ -22,6 +22,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.dmulloy2.SwornPlugin;
@@ -32,25 +41,17 @@ import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.chat.HoverEvent;
 import net.dmulloy2.chat.HoverEvent.Action;
 import net.dmulloy2.chat.TextComponent;
+import net.dmulloy2.exception.CommandException;
+import net.dmulloy2.exception.CommandException.Reason;
 import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.types.IPermission;
 import net.dmulloy2.types.StringJoiner;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.ListUtil;
-import net.dmulloy2.util.NumberUtil;
 import net.dmulloy2.util.Util;
 
-import org.apache.commons.lang.Validate;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-
 /**
- * Represents a commmand. This class provides useful methods for execution,
+ * Represents a command. This class provides useful methods for execution,
  * permission and argument manipulation, and messaging.
  *
  * @author dmulloy2
@@ -59,6 +60,7 @@ import org.bukkit.entity.Player;
 public abstract class Command implements CommandExecutor
 {
 	protected final SwornPlugin plugin;
+	protected final CommandProps props;
 
 	protected CommandSender sender;
 	protected Player player;
@@ -76,12 +78,15 @@ public abstract class Command implements CommandExecutor
 	protected List<Syntax> syntaxes;
 	protected List<String> aliases;
 
+	protected Syntax syntax;
+
 	protected boolean mustBePlayer;
 	protected boolean usesPrefix;
 
 	public Command(SwornPlugin plugin)
 	{
 		this.plugin = plugin;
+		this.props = plugin.getCommandProps();
 		this.aliases = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
 		this.syntaxes = new ArrayList<>();
@@ -136,7 +141,10 @@ public abstract class Command implements CommandExecutor
 			for (Syntax syntax : syntaxes)
 			{
 				if (syntax.requiredSize() <= args.length)
+				{
+					this.syntax = syntax;
 					break syntax;
+				}
 			}
 
 			invalidSyntax(args);
@@ -167,6 +175,23 @@ public abstract class Command implements CommandExecutor
 		try
 		{
 			perform();
+		}
+		catch (CommandException ex)
+		{
+			switch (ex.getReason())
+			{
+				case INPUT:
+					err(ex.getMessage());
+					break;
+				case SYNTAX:
+					invalidSyntax(args);
+					break;
+				case VALIDATE:
+					err(ex.getMessage());
+					break;
+			}
+
+			return;
 		}
 		catch (Throwable ex)
 		{
@@ -283,7 +308,7 @@ public abstract class Command implements CommandExecutor
 	protected final void err(String message, Object... args)
 	{
 		Validate.notNull(message, "message cannot be null!");
-		sendMessage("&cError: &4" + FormatUtil.format(message, args));
+		sendMessage(props.getErrorPrefix() + FormatUtil.format(message, args));
 	}
 
 	/**
@@ -307,7 +332,7 @@ public abstract class Command implements CommandExecutor
 	protected final void sendMessage(String message, Object... args)
 	{
 		Validate.notNull(message, "message cannot be null");
-		sender.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, args));
+		sender.sendMessage(props.getDefaultColor() + FormatUtil.format(message, args));
 	}
 
 	/**
@@ -322,7 +347,7 @@ public abstract class Command implements CommandExecutor
 		Validate.notNull(sender, "sender cannot be null!");
 		Validate.notNull(message, "message cannot be null!");
 
-		sendMessage(sender, "&cError: &4" + FormatUtil.format(message, args));
+		sendMessage(sender, props.getErrorPrefix() + FormatUtil.format(message, args));
 	}
 
 	/**
@@ -352,7 +377,7 @@ public abstract class Command implements CommandExecutor
 		Validate.notNull(sender, "sender cannot be null!");
 		Validate.notNull(message, "message cannot be null!");
 
-		sender.sendMessage(ChatColor.YELLOW + FormatUtil.format(message, args));
+		sender.sendMessage(props.getDefaultColor() + FormatUtil.format(message, args));
 	}
 
 	// ---- Fancy Messaging
@@ -655,39 +680,51 @@ public abstract class Command implements CommandExecutor
 	/**
 	 * Gets an argument as an integer
 	 * 
-	 * @param arg Argument index
+	 * @param index Argument index
 	 * @param msg Whether or not to show an error
 	 * @return The integer, or -1 if parsing failed
 	 */
-	protected final int argAsInt(int arg, boolean msg)
+	protected final int argAsInt(int index, boolean msg)
 	{
-		int ret = -1;
-		if (args.length > arg)
-			ret = NumberUtil.toInt(args[arg]);
+		if (args.length <= index)
+			throw new CommandException(Reason.SYNTAX);
 
-		if (msg && ret == - 1)
-			err("&c{0} &4is not a number.", args[arg]);
+		String arg = args[index];
 
-		return ret;
+		try
+		{
+			return Integer.parseInt(arg);	
+		}
+		catch (NumberFormatException ex)
+		{
+			if (msg) throw new CommandException(Reason.INPUT, "&c{0} &4is not a number.", arg);
+			else return -1;
+		}
 	}
 
 	/**
 	 * Gets an argument as a double
 	 * 
-	 * @param arg Argument index
+	 * @param index Argument index
 	 * @param msg Whether or not to show an error
 	 * @return The double, or -1.0D if parsing failed
 	 */
-	protected final double argAsDouble(int arg, boolean msg)
+	protected final double argAsDouble(int index, boolean msg)
 	{
-		double ret = -1.0D;
-		if (args.length > arg)
-			ret = NumberUtil.toDouble(args[arg]);
+		if (args.length <= index)
+			throw new CommandException(Reason.SYNTAX);
+		
+		String arg = args[index];
 
-		if (msg && ret == -1.0D)
-			err("&c{0} &4is not a number.", args[arg]);
-
-		return ret;
+		try
+		{
+			return Double.parseDouble(arg);
+		}
+		catch (NumberFormatException ex)
+		{
+			if (msg) throw new CommandException(Reason.INPUT, "&c{0} &4is not a number.", arg);
+			else return -1.0D;
+		}
 	}
 
 	/**
@@ -712,6 +749,34 @@ public abstract class Command implements CommandExecutor
 	protected boolean argAsBoolean(int arg, boolean def)
 	{
 		return args.length > arg ? Util.toBoolean(args[arg]) : def;
+	}
+
+	protected Player getPlayer(int index)
+	{
+		return getPlayer(index, true);
+	}
+
+	protected Player getPlayer(int index, boolean message)
+	{
+		if (args.length <= index)
+			throw new CommandException(Reason.SYNTAX);
+
+		String arg = args[index];
+		Player player = Util.matchPlayer(arg);
+		return message ? checkNotNull(player, "Player \"&c{0}&4\" not found!", arg) : player;
+	}
+
+	protected <T> T checkNotNull(T value, String message, Object... args)
+	{
+		if (value == null)
+			throw new CommandException(Reason.VALIDATE, message, args);
+		return value;
+	}
+
+	protected void checkArgument(boolean argument, String message, Object... args)
+	{
+		if (! argument)
+			throw new CommandException(Reason.VALIDATE, message, args);
 	}
 
 	/**
