@@ -20,12 +20,14 @@ package net.dmulloy2.config;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.config.ValueOptions.ValueOption;
+import net.dmulloy2.types.MyMaterial;
 import net.dmulloy2.util.FormatUtil;
 import net.dmulloy2.util.ItemUtil;
 import net.dmulloy2.util.MaterialUtil;
@@ -53,7 +55,7 @@ public final class ConfigParser
 	 */
 	public static void parse(SwornPlugin plugin, Object object)
 	{
-		parse(plugin, object.getClass(), object);
+		parse(plugin, plugin.getConfig(), object.getClass(), object);
 	}
 
 	/**
@@ -64,14 +66,22 @@ public final class ConfigParser
 	 */
 	public static void parse(SwornPlugin plugin, Class<?> clazz)
 	{
-		parse(plugin, clazz, null);
+		parse(plugin, plugin.getConfig(), clazz, null);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void parse(SwornPlugin plugin, Class<?> clazz, Object object)
+	public static void parse(SwornPlugin plugin, FileConfiguration config, Object object)
 	{
-		FileConfiguration config = plugin.getConfig();
+		parse(plugin, config, object.getClass(), object);
+	}
 
+	public static void parse(SwornPlugin plugin, FileConfiguration config, Class<?> clazz)
+	{
+		parse(plugin, config, clazz, null);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static void parse(SwornPlugin plugin, FileConfiguration config, Class<?> clazz, Object object)
+	{
 		for (Field field : clazz.getDeclaredFields())
 		{
 			if (! field.isAccessible())
@@ -110,10 +120,28 @@ public final class ConfigParser
 										value = FormatUtil.format(value.toString());
 										break;
 									case LIST_LOWER_CASE:
-										List<String> list = new ArrayList<>();
-										for (String line : (List<String>) value)
-											list.add(line.toLowerCase());
-										value = list;
+										List<String> original = (List<String>) value;
+										List<String> lower = new ArrayList<>(original.size());
+										Iterator<String> iter = original.iterator();
+										while (iter.hasNext())
+										{
+											lower.add(iter.next().toLowerCase());
+											iter.remove();
+										}
+
+										value = lower;
+										break;
+									case LIST_UPPER_CASE:
+										original = (List<String>) value;
+										List<String> upper = new ArrayList<>(original.size());
+										iter = original.iterator();
+										while (iter.hasNext())
+										{
+											upper.add(iter.next().toLowerCase());
+											iter.remove();
+										}
+
+										value = upper;
 										break;
 									case LOWER_CASE:
 										value = value.toString().toLowerCase();
@@ -123,6 +151,9 @@ public final class ConfigParser
 										break;
 									case MINUTE_TO_TICKS:
 										value = TimeUnit.MINUTES.toSeconds(NumberUtil.toLong(value)) * TICKS_PER_SECOND;
+										break;
+									case PARSE_ENUM:
+										value = Enum.valueOf((Class<? extends Enum>) field.getType(), value.toString().toUpperCase().replace(" ", "_").replace(".", "_"));
 										break;
 									// Item parsing handles null values on its own
 									case PARSE_ITEM:
@@ -159,6 +190,13 @@ public final class ConfigParser
 
 										value = materials;
 										break;
+									case PARSE_MY_MATERIAL:
+										value = MyMaterial.fromString(value.toString());
+										if (value == null && ! options.allowNull())
+										{
+											plugin.getLogHandler().log(Level.WARNING, "Failed to read MyMaterial \"{0}\" from {1}. Defaulting to {2}", value, path, def);
+											value = def;
+										}
 									case SECOND_TO_MILLIS:
 										value = TimeUnit.SECONDS.toMillis(NumberUtil.toLong(value));
 										break;
