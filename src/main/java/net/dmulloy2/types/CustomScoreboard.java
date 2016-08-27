@@ -25,6 +25,7 @@ import lombok.Data;
 import net.dmulloy2.util.FormatUtil;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -417,5 +418,10 @@ public final class CustomScoreboard
 			ret.append(" ");
 
 		return ret.toString();
+	}
+
+	public static boolean isDefault(Scoreboard board)
+	{
+		return Bukkit.getScoreboardManager().getMainScoreboard().equals(board);
 	}
 }
