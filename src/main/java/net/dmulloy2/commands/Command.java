@@ -29,7 +29,9 @@ import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.CommandMinecart;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -154,22 +156,10 @@ public abstract class Command implements CommandExecutor
 		if (! isVisibleTo(sender))
 		{
 			if (visibility == CommandVisibility.PERMISSION)
-			{
-				StringJoiner hoverText = new StringJoiner("\n");
-				hoverText.append(FormatUtil.format("&4Permission:"));
-				hoverText.append(FormatUtil.format("&r{0}", getPermissionString()));
-
-				ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&cError: &4You do not have "));
-				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(Action.SHOW_TEXT, hoverText.toString()));
-				builder.append(FormatUtil.format(" &4to perform this command!"));
-				sendMessage(builder.create());
-				return;
-			}
+				hasPermission(permission, true);
 			else
-			{
 				err("You cannot use this command!");
-				return;
-			}
+			return;
 		}
 
 		try
@@ -180,14 +170,14 @@ public abstract class Command implements CommandExecutor
 		{
 			switch (ex.getReason())
 			{
+				case BREAK:
+					break;
 				case INPUT:
+				case VALIDATE:
 					err(ex.getMessage());
 					break;
 				case SYNTAX:
 					invalidSyntax(args);
-					break;
-				case VALIDATE:
-					err(ex.getMessage());
 					break;
 			}
 
@@ -228,13 +218,55 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @param sender Sender to check
 	 * @param permission Permission to check for
+	 * @param message Whether or not to send an error
+	 * @return True if they have it, false if not
+	 */
+	protected final boolean hasPermission(CommandSender sender, IPermission permission, boolean message)
+	{
+		Validate.notNull(sender, "sender cannot be null!");
+
+		if (! plugin.getPermissionHandler().hasPermission(sender, permission))
+		{
+			if (message)
+			{
+				StringJoiner hoverText = new StringJoiner("\n");
+				hoverText.append(FormatUtil.format("&4Permission:"));
+				hoverText.append(FormatUtil.format("&r{0}", getPermissionString(permission)));
+
+				ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&cError: &4You do not have "));
+				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(Action.SHOW_TEXT, hoverText.toString()));
+				builder.append(FormatUtil.format(" &4to perform this command!"));
+				sendMessage(sender, builder.create());
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Whether or not a given command sender has a given permission.
+	 * 
+	 * @param sender Sender to check
+	 * @param permission Permission to check for
 	 * @return True if they have it, false if not
 	 */
 	protected final boolean hasPermission(CommandSender sender, IPermission permission)
 	{
-		Validate.notNull(sender, "sender cannot be null!");
+		return hasPermission(sender, permission, false);
+	}
 
-		return plugin.getPermissionHandler().hasPermission(sender, permission);
+	/**
+	 * Whether or not the sender of this command has a given permission.
+	 * 
+	 * @param permission Permission to check for
+	 * @param message Whether or not to send an error
+	 * @return True if they have it, false if not.
+	 */
+	protected final boolean hasPermission(IPermission permission, boolean message)
+	{
+		return hasPermission(sender, permission, message);
 	}
 
 	/**
@@ -245,7 +277,7 @@ public abstract class Command implements CommandExecutor
 	 */
 	protected final boolean hasPermission(IPermission permission)
 	{
-		return hasPermission(sender, permission);
+		return hasPermission(sender, permission, false);
 	}
 
 	/**
@@ -287,7 +319,7 @@ public abstract class Command implements CommandExecutor
 			case ALL:
 				return true;
 			case PERMISSION:
-				return hasPermission(sender, permission);
+				return hasPermission(sender, permission, false);
 			case OPS:
 				return sender.isOp();
 			case NONE:
@@ -779,6 +811,12 @@ public abstract class Command implements CommandExecutor
 			throw new CommandException(Reason.VALIDATE, message, args);
 	}
 
+	protected void checkPermission(CommandSender sender, IPermission permission)
+	{
+		if (! hasPermission(sender, permission, true))
+			throw new CommandException(Reason.BREAK);
+	}
+
 	/**
 	 * Combines the arguments from {@code start} to {@code args.length} with
 	 * spaces
@@ -814,28 +852,65 @@ public abstract class Command implements CommandExecutor
 	// ---- Utility
 
 	/**
-	 * Gets the name of a given command sender. This method supports command
-	 * blocks, console, and players.
+	 * Gets the name of a given command sender from the sender's perspective.
+	 * This method supports all kinds of command senders.
 	 * 
-	 * @param sender Sender to get the name of
-	 * @return Their name
+	 * @param sender Sender of the command
+	 * @param targer Sender to get the name of
+	 * @param subject Whether or not it's the subject of the sentence
+	 * @return The name of the command sender
 	 */
-	protected final String getName(CommandSender sender)
+	protected final String getName(CommandSender sender, CommandSender target, boolean subject)
 	{
-		if (sender instanceof BlockCommandSender)
+		Validate.notNull(sender, "sender cannot be null!");
+		Validate.notNull(target, "targer cannot be null!");
+
+		if (sender.equals(target))
 		{
-			BlockCommandSender commandBlock = (BlockCommandSender) sender;
-			Location location = commandBlock.getBlock().getLocation();
-			return FormatUtil.format("CommandBlock ({0}, {1}, {2})", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+			return subject ? "You" : "yourself";
+		}
+
+		if (sender instanceof Player)
+		{
+			return sender.getName();
 		}
 		else if (sender instanceof ConsoleCommandSender)
 		{
 			return "Console";
 		}
+		else if (sender instanceof BlockCommandSender)
+		{
+			BlockCommandSender commandBlock = (BlockCommandSender) sender;
+			Location location = commandBlock.getBlock().getLocation();
+			return FormatUtil.format("CommandBlock ({0}, {1}, {2})", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		}
+		else if (sender instanceof CommandMinecart)
+		{
+			CommandMinecart minecart = (CommandMinecart) sender;
+			Location location = minecart.getLocation();
+			return FormatUtil.format("Minecart ({0}, {1}, {2})", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		}
+		else if (sender instanceof Entity)
+		{
+			return FormatUtil.getFriendlyName(((Entity) sender).getType());
+		}
 		else
 		{
 			return sender.getName();
 		}
+	}
+
+	/**
+	 * Gets the name of a given command sender from the sender's perspective.
+	 * This method supports all kinds of command senders.
+	 * 
+	 * @param target Sender to get the name of
+	 * @return The name of the command sender
+	 * @see #getName(CommandSender, CommandSender, boolean)
+	 */
+	protected final String getName(CommandSender target)
+	{
+		return getName(sender, target, false);
 	}
 
 	// ---- Syntax

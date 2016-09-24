@@ -3,8 +3,9 @@
  */
 package net.dmulloy2.exception;
 
-import lombok.Getter;
 import net.dmulloy2.util.FormatUtil;
+
+import lombok.Getter;
 
 /**
  * @author dmulloy2
@@ -34,8 +35,21 @@ public class CommandException extends RuntimeException
 
 	public static enum Reason
 	{
+		/**
+		 * Breaks out of command execution without a message
+		 */
+		BREAK,
+		/**
+		 * Invalid argument input
+		 */
 		INPUT,
+		/**
+		 * Invalid syntax supplied
+		 */
 		SYNTAX,
+		/**
+		 * Thrown by checkArgument and checkNotNull
+		 */
 		VALIDATE,
 		;
 	}
