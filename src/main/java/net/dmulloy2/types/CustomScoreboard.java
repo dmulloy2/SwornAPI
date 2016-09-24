@@ -17,11 +17,10 @@
  */
 package net.dmulloy2.types;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import lombok.Data;
 import net.dmulloy2.util.FormatUtil;
 
 import org.apache.commons.lang.Validate;
@@ -32,6 +31,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
+
+import lombok.Data;
 
 /**
  * A scoreboard with custom keys and values.
@@ -59,9 +60,51 @@ public final class CustomScoreboard
 		;
 	}
 
+	private static class Entry
+	{
+		private String key;
+		private String value;
+
+		private String line;
+
+		private Entry(String key, String value)
+		{
+			this.key = key;
+			this.value = value;
+		}
+
+		private Entry(String line)
+		{
+			this.line = line;
+		}
+
+		public int getSize(EntryFormat format)
+		{
+			return line == null && format == EntryFormat.NEW_LINE ? 2 : 1;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return line == null ? key.hashCode() : line.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj)
+		{
+			if (obj instanceof Entry)
+			{
+				Entry that = (Entry) obj;
+				return line == null ? this.key.equals(that.key) : this.line.equals(that.line);
+			}
+
+			return false;
+		}
+	}
+
 	private final Scoreboard board;
 	private final String objectiveName;
-	private final Map<String, String> entries;
+	private final List<Entry> entries;
 
 	private String keyPrefix;
 	private String valuePrefix;
@@ -75,7 +118,7 @@ public final class CustomScoreboard
 	{
 		this.board = board;
 		this.objectiveName = objective;
-		this.entries = new LinkedHashMap<>();
+		this.entries = new ArrayList<>();
 	}
 
 	/**
@@ -90,7 +133,27 @@ public final class CustomScoreboard
 		Validate.notNull(key, "key cannot be null!");
 		Validate.notNull(value, "value cannot be null!");
 
-		entries.put(key, String.valueOf(value));
+		addOrReplace(new Entry(key, String.valueOf(value)));
+	}
+
+	/**
+	 * Adds an entry to the scoreboard. {@link #update()} should be called after
+	 * all entries are added
+	 * 
+	 * @param line Line
+	 */
+	public void addEntry(String line)
+	{
+		Validate.notNull(line, "line cannot be null!");
+
+		addOrReplace(new Entry(line));
+	}
+
+	private void addOrReplace(Entry entry)
+	{
+		if (entries.contains(entry))
+			entries.remove(entry);
+		entries.add(entry);
 	}
 
 	/**
@@ -103,7 +166,7 @@ public final class CustomScoreboard
 	{
 		Validate.notNull(entries, "entries cannot be null!");
 
-		for (Entry<String, Object> entry : entries.entrySet())
+		for (Map.Entry<String, Object> entry : entries.entrySet())
 		{
 			addEntry(entry.getKey(), entry.getValue());
 		}
@@ -125,17 +188,27 @@ public final class CustomScoreboard
 			return;
 		}
 
-		int score = entries.size();
-		if (format == EntryFormat.NEW_LINE)
-			score *= 2;
+		int score = 0;
+		for (Entry entry : entries)
+			score += entry.getSize(format);
 
-		for (Entry<String, String> entry : entries.entrySet())
+		for (Entry entry : entries)
 		{
-			String key = FormatUtil.format(entry.getKey());
+			if (entry.line != null)
+			{
+				String string = FormatUtil.format(entry.line);
+				if (isScoreSet(objective.getScore(string)))
+					string += nextNull();
+
+				objective.getScore(string).setScore(score--);
+				continue;
+			}
+
+			String key = FormatUtil.format(entry.key);
 			if (keyPrefix != null)
 				key = keyPrefix + key;
 
-			String value = FormatUtil.format(entry.getValue());
+			String value = FormatUtil.format(entry.value);
 			if (valuePrefix != null)
 				value = valuePrefix + value;
 
@@ -179,13 +252,26 @@ public final class CustomScoreboard
 		if (format == EntryFormat.NEW_LINE)
 			score *= 2;
 
-		for (Entry<String, String> entry : entries.entrySet())
+		for (Entry entry : entries)
 		{
-			String key = FormatUtil.format(entry.getKey());
+			if (entry.line != null)
+			{
+				String string = FormatUtil.format(entry.line);
+				if (minLength > 0)
+					string = fill(string, minLength);
+
+				if (isScoreSet(objective.getScore(string)))
+					string += nextNull();
+
+				objective.getScore(string).setScore(score--);
+				continue;
+			}
+			
+			String key = FormatUtil.format(entry.key);
 			if (keyPrefix != null)
 				key = keyPrefix + key;
 
-			String value = FormatUtil.format(entry.getValue());
+			String value = FormatUtil.format(entry.value);
 			if (valuePrefix != null)
 				value = valuePrefix + value;
 
@@ -209,9 +295,7 @@ public final class CustomScoreboard
 			{
 				String string = key + value;
 				if (minLength > 0)
-				{
 					string = fill(string, minLength);
-				}
 				
 				if (isScoreSet(objective.getScore(string)))
 					string += nextNull();
@@ -356,6 +440,18 @@ public final class CustomScoreboard
 		public Builder addEntry(String key, Object value)
 		{
 			board.addEntry(key, value);
+			return this;
+		}
+
+		/**
+		 * Adds an entry to this scoreboard.
+		 * @param line Line
+		 * @return This, for chaining
+		 * @see CustomScoreboard#addEntry(String)
+		 */
+		public Builder addEntry(String line)
+		{
+			board.addEntry(line);
 			return this;
 		}
 
