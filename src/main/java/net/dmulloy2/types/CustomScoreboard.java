@@ -173,67 +173,6 @@ public final class CustomScoreboard
 	}
 
 	/**
-	 * Attempts to only update values. If the objective does not exist, a full
-	 * update will be performed.
-	 *
-	 * @deprecated Doesn't work as intended
-	 */
-	@Deprecated
-	public void updateValues()
-	{
-		Objective objective = board.getObjective(objectiveName);
-		if (objective == null)
-		{
-			update();
-			return;
-		}
-
-		int score = 0;
-		for (Entry entry : entries)
-			score += entry.getSize(format);
-
-		for (Entry entry : entries)
-		{
-			if (entry.line != null)
-			{
-				String string = FormatUtil.format(entry.line);
-				if (isScoreSet(objective.getScore(string)))
-					string += nextNull();
-
-				objective.getScore(string).setScore(score--);
-				continue;
-			}
-
-			String key = FormatUtil.format(entry.key);
-			if (keyPrefix != null)
-				key = keyPrefix + key;
-
-			String value = FormatUtil.format(entry.value);
-			if (valuePrefix != null)
-				value = valuePrefix + value;
-
-			if (format == EntryFormat.NEW_LINE)
-			{
-				if (isScoreSet(objective.getScore(key)))
-					key += nextNull();
-				if (isScoreSet(objective.getScore(value)))
-					value += nextNull();
-
-				objective.getScore(key).setScore(score--);
-				objective.getScore(value).setScore(score--);
-			}
-			else
-			{
-				String string = key + value;
-				if (isScoreSet(objective.getScore(string)))
-					string += nextNull();
-
-				objective.getScore(string).setScore(score--);
-			}
-		}
-	}
-
-	/**
 	 * Updates this scoreboard.
 	 */
 	public void update()
@@ -248,9 +187,9 @@ public final class CustomScoreboard
 		objective.setDisplayName(display);
 		objective.setDisplaySlot(slot);
 
-		int score = entries.size();
-		if (format == EntryFormat.NEW_LINE)
-			score *= 2;
+		int score = 0;
+		for (Entry entry : entries)
+			score += entry.getSize(format);
 
 		for (Entry entry : entries)
 		{
@@ -267,13 +206,15 @@ public final class CustomScoreboard
 				continue;
 			}
 			
-			String key = FormatUtil.format(entry.key);
+			String key = entry.key;
 			if (keyPrefix != null)
 				key = keyPrefix + key;
+			key = FormatUtil.format(key);
 
-			String value = FormatUtil.format(entry.value);
+			String value = entry.value;
 			if (valuePrefix != null)
 				value = valuePrefix + value;
+			value = FormatUtil.format(value);
 
 			if (format == EntryFormat.NEW_LINE)
 			{
