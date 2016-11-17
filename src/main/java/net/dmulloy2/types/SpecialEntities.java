@@ -41,7 +41,7 @@ import lombok.Getter;
 
 /**
  * Handles special entities such as Wither Skeletons, Zombie Villagers, and Horses.
- * Necessary because Mojang changed Entities are structured in 1.11.
+ * Necessary because Mojang changed Entities how are structured in 1.11.
  * 
  * @author dmulloy2
  */
