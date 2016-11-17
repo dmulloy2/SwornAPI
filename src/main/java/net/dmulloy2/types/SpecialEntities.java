@@ -20,6 +20,8 @@ package net.dmulloy2.types;
 import net.dmulloy2.util.Util;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.ElderGuardian;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
@@ -32,10 +34,14 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
+import org.bukkit.entity.ZombieVillager;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Handles special entities such as Wither Skeletons, Zombie Villagers, and Horses.
- * Necessary because Mojang is changing how Entities are structured in 1.11.
+ * Necessary because Mojang changed Entities are structured in 1.11.
  * 
  * @author dmulloy2
  */
@@ -46,8 +52,15 @@ public class SpecialEntities
 
 	static
 	{
-		// TODO Implement SeparateProvider
-		provider = new CombinedProvider();
+		try
+		{
+			ElderGuardian.class.getName();
+			provider = new SeparateProvider();
+		}
+		catch (Throwable ex)
+		{
+			provider = new CombinedProvider();
+		}
 	}
 
 	private SpecialEntities() { }
@@ -56,9 +69,63 @@ public class SpecialEntities
 	{
 		LivingEntity spawnWitherSkeleton(Location loc);
 		LivingEntity spawnZombieVillager(Location loc, Profession profession);
-		LivingEntity spawnHorse(Location loc, Horse.Variant variant, Horse.Color color,
+		LivingEntity spawnHorse(Location loc, HorseType type, Horse.Color color,
 				Horse.Style style, boolean tame, boolean chest);
 		boolean isElderGuardian(Entity entity);
+	}
+
+	private static class SeparateProvider implements Provider
+	{
+		@Override
+		public LivingEntity spawnWitherSkeleton(Location loc)
+		{
+			return (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.WITHER_SKELETON);
+		}
+
+		@Override
+		public LivingEntity spawnZombieVillager(Location loc, Profession profession)
+		{
+			ZombieVillager entity = (ZombieVillager) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE_VILLAGER);
+			entity.setVillagerProfession(profession);
+			return entity;
+		}
+
+		@Override
+		public LivingEntity spawnHorse(Location loc, HorseType type, Color color, Style style, boolean tame, boolean chest)
+		{
+			Horse horse = (Horse) loc.getWorld().spawnEntity(loc, type.getEntity());
+			horse.setColor(color);
+			horse.setStyle(style);
+			horse.setTamed(tame);
+
+			if (chest && horse instanceof ChestedHorse)
+				((ChestedHorse) horse).setCarryingChest(true);
+	
+			return horse;
+		}
+
+		@Override
+		public boolean isElderGuardian(Entity entity)
+		{
+			return entity instanceof ElderGuardian;
+		}
+		
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static enum HorseType
+	{
+		DONKEY(EntityType.DONKEY, Variant.DONKEY),
+		NORMAL(EntityType.HORSE, Variant.HORSE),
+		LLAMA(EntityType.LLAMA, Variant.LLAMA),
+		MULE(EntityType.MULE, Variant.MULE),
+		SKELETON(EntityType.SKELETON_HORSE, Variant.SKELETON_HORSE),
+		ZOMBIE(EntityType.ZOMBIE_HORSE, Variant.UNDEAD_HORSE)
+		;
+
+		private EntityType entity;
+		private Variant variant;
 	}
 
 	private static class CombinedProvider implements Provider
@@ -80,10 +147,10 @@ public class SpecialEntities
 		}
 
 		@Override
-		public LivingEntity spawnHorse(Location loc, Variant variant, Color color, Style style, boolean tame, boolean chest)
+		public LivingEntity spawnHorse(Location loc, HorseType type, Color color, Style style, boolean tame, boolean chest)
 		{
 			Horse horse = (Horse) loc.getWorld().spawnEntity(loc, EntityType.HORSE);
-			horse.setVariant(variant);
+			horse.setVariant(type.getVariant());
 			horse.setColor(color);
 			horse.setStyle(style);
 			horse.setTamed(tame);
@@ -141,14 +208,14 @@ public class SpecialEntities
 	 * @param chest Whether or not the Horse is carrying a chest
 	 * @return The Horse
 	 */
-	public static LivingEntity spawnHorse(Location loc, Horse.Variant variant,
+	public static LivingEntity spawnHorse(Location loc, HorseType type,
 			Horse.Color color, Horse.Style style, boolean tame, boolean chest)
 	{
-		if (variant == null) variant = randomElement(Horse.Variant.values());
+		if (type == null) type = randomElement(HorseType.values());
 		if (color == null) color = randomElement(Horse.Color.values());
 		if (style == null) style = randomElement(Horse.Style.values());
 
-		return provider.spawnHorse(loc, variant, color, style, tame, chest);
+		return provider.spawnHorse(loc, type, color, style, tame, chest);
 	}
 
 	private static <E> E randomElement(E[] elements)

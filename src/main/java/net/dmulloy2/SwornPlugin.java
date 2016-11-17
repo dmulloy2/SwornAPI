@@ -50,8 +50,25 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	@Getter
 	protected LogHandler logHandler;
 
-	@Getter
 	protected final CommandProps commandProps = new CommandProps();
+
+	/**
+	 * @deprecated Renamed to {@link #props()}
+	 */
+	@Deprecated
+	public CommandProps getCommandProps()
+	{
+		return props();
+	}
+
+	/**
+	 * Allows the modification of basic command properties like the color scheme.
+	 * @return The command properties
+	 */
+	public CommandProps props()
+	{
+		return commandProps;
+	}
 
 	/**
 	 * Gets this plugin's prefix. Defaults to {@link ChatColor#YELLOW}.
@@ -108,13 +125,15 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 
 	/**
 	 * Checks if the currently running version of Minecraft is supported by
-	 * SwornAPI. If not, a message is printed using the logHandler.
+	 * SwornAPI. If not, a warning is printed using the logHandler.
 	 */
 	public void checkVersion()
 	{
-		Version current = Versioning.getVersion();
-		if (! current.isSupported())
-			logHandler.log(Level.WARNING, "{0} does not support {1}. Check for an update!", getName(), current.getName());
+		Version version = Versioning.getVersion();
+		if (version.wasDropped())
+			logHandler.log(Level.WARNING, "This version of {0} no longer supports {1}. Consider updating Spigot.", getName(), version.getName());
+		else if (! version.isSupported())
+			logHandler.log(Level.WARNING, "This version of {0} does not support {1}. Check for an update!", getName(), version.getName());
 	}
 
 	@Override

@@ -18,8 +18,7 @@
 package net.dmulloy2.commands;
 
 import net.dmulloy2.types.IPermission;
-
-import org.bukkit.ChatColor;
+import net.dmulloy2.util.FormatUtil;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,12 +33,26 @@ import lombok.experimental.Accessors;
 public class CommandProps
 {
 	private String errorPrefix = "&cError: &4";
-	private ChatColor defaultColor = ChatColor.YELLOW;
-	// TODO Usage templates?
-	// TODO Error formatting?
+	private String baseColor = "&e";
+	private String accentColor = "&b";
+	private String headerColor = "&3";
 	private String helpHeader = "&3---- &e{0} Commands &3- &e{1}&3/&e{2} &3----";
-	private String helpFooter = "";
+	private String helpFooter = "{b}Hover to see command information. Click to insert into chat.";
 	private IPermission reloadPerm = null;
 
 	public CommandProps() { }
+
+	public String format(String string, Object... args)
+	{
+		return FormatUtil.format(string
+				.replace("{b}", baseColor)
+				.replace("{a}", accentColor)
+				.replace("{h}", headerColor),
+				args);
+	}
+
+	public String formatErr(String string, Object... args)
+	{
+		return format(errorPrefix + string, args);
+	}
 }

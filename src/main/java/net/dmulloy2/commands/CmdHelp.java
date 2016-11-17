@@ -39,9 +39,6 @@ public class CmdHelp extends Command
 	private static final int linesPerPage = 6;
 	private static final int pageArgIndex = 0;
 
-	private String header;
-	private String footer;
-
 	public CmdHelp(SwornPlugin plugin)
 	{
 		super(plugin);
@@ -50,9 +47,6 @@ public class CmdHelp extends Command
 		this.description = "Shows " + plugin.getName() + " help";
 		this.visibility = CommandVisibility.ALL;
 		this.usesPrefix = true;
-
-		this.header = props.getHelpHeader();
-		this.footer = props.getHelpFooter();
 	}
 
 	@Override
@@ -95,18 +89,26 @@ public class CmdHelp extends Command
 
 	public String getHeader()
 	{
-		return header;
+		return props().getHelpHeader();
 	}
 
+	/**
+	 * @deprecated Use {@link CommandProps#setHelpHeader(String)}
+	 */
+	@Deprecated
 	public CmdHelp setHeader(String header)
 	{
-		this.header = header;
+		props().setHelpHeader(header);
 		return this;
 	}
 
+	/**
+	 * @deprecated Use {@link CommandProps#setHelpFooter(String)}
+	 */
+	@Deprecated
 	public CmdHelp setFooter(String footer)
 	{
-		this.footer = footer;
+		props().setHelpFooter(footer);
 		return this;
 	}
 
@@ -141,6 +143,7 @@ public class CmdHelp extends Command
 		lines.addAll(getLegacyHeader(index));
 		lines.addAll(getLegacyLines((index - 1) * linesPerPage, index * linesPerPage));
 
+		String footer = props().getHelpFooter();
 		if (! footer.isEmpty())
 			lines.add(footer);
 
@@ -156,7 +159,7 @@ public class CmdHelp extends Command
 	{
 		List<String> ret = new ArrayList<>();
 
-		ret.add(FormatUtil.format(header, plugin.getName(), index, getPageCount()));
+		ret.add(format(getHeader(), plugin.getName(), index, getPageCount()));
 
 		List<String> extraHelp = plugin.getExtraHelp();
 		if (extraHelp != null)
@@ -165,7 +168,7 @@ public class CmdHelp extends Command
 				ret.add(FormatUtil.format(extra));
 		}
 
-		ret.add(FormatUtil.format("&eKey: &3<required> [optional]"));
+		ret.add(format("{b}Key: {h}<required> [optional]"));
 		return ret;
 	}
 
@@ -197,7 +200,8 @@ public class CmdHelp extends Command
 
 	public BaseComponent[] getFooter()
 	{
-		return TextComponent.fromLegacyText(FormatUtil.format("&eHover to see command information. Click to insert into chat."));
+		String footer = props().getHelpFooter();
+		return TextComponent.fromLegacyText(format(footer));
 	}
 
 	private final List<BaseComponent[]> getHelpMenu()

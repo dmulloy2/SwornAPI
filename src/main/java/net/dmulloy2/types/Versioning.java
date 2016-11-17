@@ -17,12 +17,12 @@
  */
 package net.dmulloy2.types;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import lombok.Getter;
-
 import org.bukkit.Bukkit;
+
+import lombok.Getter;
 
 /**
  * @author dmulloy2
@@ -36,63 +36,80 @@ public class Versioning
 	 * Represents a supported Minecraft version
 	 */
 	@Getter
-	public static class Version
+	public static enum Version
 	{
-		private static final List<Version> supported = new ArrayList<>();
-
 		/**
-		 * Minecraft 1.7, the update that changed the world
+		 * Minecraft 1.11, the exploration update
 		 */
-		public static final Version MC_17 = new Version("Minecraft 1.7.x", "1.7");
-
-		/**
-		 * Minecraft 1.8, the bountiful update
-		 */
-		public static final Version MC_18 = new Version("Minecraft 1.8.x", "1.8");
-
-		/**
-		 * Minecraft 1.9, the combat update
-		 */
-		public static final Version MC_19 = new Version("Minecraft 1.9.x", "1.9");
-
+		MC_111("Minecraft 1.11.x", "1.11"),
 		/**
 		 * Minecraft 1.10, the frostburn update
 		 */
-		public static final Version MC_110 = new Version("Minecraft 1.10.x", "1.10");
-
+		MC_110("Minecraft 1.10.x", "1.10"),
 		/**
-		 * Minecraft 1.6, the horse update
-		 * @deprecated No longer supported
+		 * Minecraft 1.9, the combat update
 		 */
-		@Deprecated
-		public static final Version MC_16 = new Version("Minecraft 1.6.x");
+		MC_19("Minecraft 1.9.x", "1.9"),
+		/**
+		 * Minecraft 1.8, the bountiful update
+		 */
+		MC_18("Minecraft 1.8.x", "1.8"),
+		/**
+		 * Minecraft 1.7, the update that changed the world. No longer supported.
+		 */
+		MC_17("Minecraft 1.7.x", "1.7", false),
+		/**
+		 * Minecraft 1.6, the horse update. No longer supported.
+		 */
+		MC_16("Minecraft 1.6.x", "1.6", false),
+		/**
+		 * Generic unknown version. Obviously not supported.
+		 */
+		UNKNOWN("Minecraft 1.x.x", "N/A", false);
 
-		private final String name;
+		private String name;
 		private final String matcher;
+
+		private final boolean isKnown;
 		private final boolean isSupported;
 
-		protected Version(String name)
+		private Version(String name)
 		{
 			this.name = name;
 			this.matcher = null;
+			this.isKnown = false;
 			this.isSupported = false;
 		}
 
-		protected Version(String name, String matcher)
+		private Version(String name, String matcher)
+		{
+			this(name, matcher, true);
+		}
+	
+		private Version(String name, String matcher, boolean isSupported)
 		{
 			this.name = name;
 			this.matcher = matcher;
-			this.isSupported = true;
-			supported.add(this);
+			this.isKnown = true;
+			this.isSupported = isSupported;
 		}
 
 		/**
-		 * Whether or not SwornAPI supports this version.
+		 * Whether or not SwornAPI explicitly supports this version.
 		 * @return True if it does, false if not
 		 */
 		public boolean isSupported()
 		{
-			return isSupported;
+			return isKnown && isSupported;
+		}
+
+		/**
+		 * Whether or not SwornAPI has dropped support for this version.
+		 * @return True if it has, false if it hasn't
+		 */
+		public boolean wasDropped()
+		{
+			return isKnown && !isSupported;
 		}
 
 		@Override
@@ -103,11 +120,13 @@ public class Versioning
 
 		/**
 		 * Gets the list of supported Versions
-		 * @return The list
+		 * @return The List
+		 * @deprecated Use {@link #values()}
 		 */
+		@Deprecated
 		public static List<Version> getSupported()
 		{
-			return supported;
+			return Arrays.asList(values());
 		}
 	}
 
@@ -118,7 +137,8 @@ public class Versioning
 	private static Version fromCurrent()
 	{
 		String version = extractVersion(Bukkit.getBukkitVersion());
-		return version != null ? new Version("Minecraft " + version) : new Version("Unknown");
+		Version.UNKNOWN.name = "Minecraft " + version;
+		return Version.UNKNOWN;
 	}
 
 	private static String extractVersion(String text)
@@ -136,7 +156,7 @@ public class Versioning
 		if (version == null)
 		{
 			String serverVersion = Bukkit.getBukkitVersion();
-			for (Version ver : Version.getSupported())
+			for (Version ver : Version.values())
 			{
 				if (serverVersion.contains(ver.getMatcher()))
 					return version = ver;
@@ -148,6 +168,11 @@ public class Versioning
 		return version;
 	}
 
+	/**
+	 * For testing use only
+	 * 
+	 * @param version The new version
+	 */
 	protected static void setVersion(Version version)
 	{
 		Versioning.version = version;

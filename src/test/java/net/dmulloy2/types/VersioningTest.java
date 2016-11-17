@@ -36,7 +36,18 @@ public class VersioningTest
 	public void testUnsupported()
 	{
 		Versioning.setVersion(null);
-		BukkitTesting.setBukkitVersion("42.0.0-R2.0-SNAPSHOT");
+		BukkitTesting.setBukkitVersion("4.2.0-R6.9-SNAPSHOT");
+		assertFalse(Versioning.isSupported());
+		BukkitTesting.resetBukkitVersion();
+	}
+
+	@Test
+	public void testDropped()
+	{
+		Versioning.setVersion(null);
+		BukkitTesting.setBukkitVersion("1.7.10-R0.1-SNAPSHOT");
+		System.out.println(Versioning.getVersion());
+		assertTrue(Versioning.getVersion().wasDropped());
 		assertFalse(Versioning.isSupported());
 		BukkitTesting.resetBukkitVersion();
 	}

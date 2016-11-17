@@ -33,7 +33,7 @@ public class CmdReload extends Command
 		super(plugin);
 		this.name = "reload";
 		this.description = "Reload " + plugin.getName();
-		this.permission = props.getReloadPerm();
+		this.permission = props().getReloadPerm();
 		this.usesPrefix = true;
 	}
 

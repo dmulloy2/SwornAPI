@@ -62,7 +62,6 @@ import net.dmulloy2.util.Util;
 public abstract class Command implements CommandExecutor
 {
 	protected final SwornPlugin plugin;
-	protected final CommandProps props;
 
 	protected CommandSender sender;
 	protected Player player;
@@ -88,7 +87,6 @@ public abstract class Command implements CommandExecutor
 	public Command(SwornPlugin plugin)
 	{
 		this.plugin = plugin;
-		this.props = plugin.getCommandProps();
 		this.aliases = new ArrayList<>();
 		this.subCommands = new ArrayList<>();
 		this.syntaxes = new ArrayList<>();
@@ -331,6 +329,16 @@ public abstract class Command implements CommandExecutor
 
 	// ---- Messaging
 
+	protected final CommandProps props()
+	{
+		return plugin.props();
+	}
+
+	protected final String format(String message, Object... args)
+	{
+		return props().format(message, args);
+	}
+
 	/**
 	 * Sends an error message to the command sender.
 	 * 
@@ -340,7 +348,7 @@ public abstract class Command implements CommandExecutor
 	protected final void err(String message, Object... args)
 	{
 		Validate.notNull(message, "message cannot be null!");
-		sendMessage(props.getErrorPrefix() + FormatUtil.format(message, args));
+		sender.sendMessage(format(props().getErrorPrefix() + message, args));
 	}
 
 	/**
@@ -352,7 +360,7 @@ public abstract class Command implements CommandExecutor
 	protected final void sendpMessage(String message, Object... args)
 	{
 		Validate.notNull(message, "message cannot be null!");
-		sendMessage(plugin.getPrefix() + message, args);
+		sender.sendMessage(format(plugin.getPrefix() + message, args));
 	}
 
 	/**
@@ -364,7 +372,7 @@ public abstract class Command implements CommandExecutor
 	protected final void sendMessage(String message, Object... args)
 	{
 		Validate.notNull(message, "message cannot be null");
-		sender.sendMessage(props.getDefaultColor() + FormatUtil.format(message, args));
+		sender.sendMessage(format(props().getBaseColor() + message, args));
 	}
 
 	/**
@@ -379,7 +387,7 @@ public abstract class Command implements CommandExecutor
 		Validate.notNull(sender, "sender cannot be null!");
 		Validate.notNull(message, "message cannot be null!");
 
-		sendMessage(sender, props.getErrorPrefix() + FormatUtil.format(message, args));
+		sender.sendMessage(format(props().getErrorPrefix() + message, args));
 	}
 
 	/**
@@ -394,7 +402,7 @@ public abstract class Command implements CommandExecutor
 		Validate.notNull(sender, "sender cannot be null!");
 		Validate.notNull(message, "message cannot be null!");
 
-		sendMessage(sender, plugin.getPrefix() + message, args);
+		sender.sendMessage(format(plugin.getPrefix() + message, args));
 	}
 
 	/**
@@ -409,7 +417,7 @@ public abstract class Command implements CommandExecutor
 		Validate.notNull(sender, "sender cannot be null!");
 		Validate.notNull(message, "message cannot be null!");
 
-		sender.sendMessage(props.getDefaultColor() + FormatUtil.format(message, args));
+		sender.sendMessage(format(props().getBaseColor() + message, args));
 	}
 
 	// ---- Fancy Messaging
@@ -469,7 +477,7 @@ public abstract class Command implements CommandExecutor
 		{
 			Syntax syntax = syntaxes.get(i);
 			StringBuilder line = new StringBuilder();
-			line.append("&b/");
+			line.append("{a}/");
 
 			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
 				line.append(plugin.getCommandHandler().getCommandPrefix()).append(" ");
@@ -482,15 +490,15 @@ public abstract class Command implements CommandExecutor
 			for (Argument arg : syntax)
 			{
 				if (arg.isRequired())
-					line.append(String.format(" &3<%s>", arg.getArgument()));
+					line.append(String.format(" {h}<%s>", arg.getArgument()));
 				else
-					line.append(String.format(" &3[%s]", arg.getArgument()));
+					line.append(String.format(" {h}[%s]", arg.getArgument()));
 			}
 
 			if (displayHelp && i == 0)
-				line.append(" &e" + description);
+				line.append(" {b}" + description);
 
-			ret.add(FormatUtil.format(line.toString()));
+			ret.add(format(line.toString()));
 		}
 
 		return ret;
@@ -520,7 +528,7 @@ public abstract class Command implements CommandExecutor
 		{
 			Syntax syntax = syntaxes.get(i);
 			StringBuilder templateBuilder = new StringBuilder();
-			templateBuilder.append("&b/");
+			templateBuilder.append("{a}/");
 
 			if (plugin.getCommandHandler().usesCommandPrefix() && usesPrefix)
 				templateBuilder.append(plugin.getCommandHandler().getCommandPrefix()).append(" ");
@@ -533,14 +541,14 @@ public abstract class Command implements CommandExecutor
 			for (Argument arg : syntax)
 			{
 				if (arg.isRequired())
-					templateBuilder.append(String.format(" &3<%s>", arg.getArgument()));
+					templateBuilder.append(String.format(" {h}<%s>", arg.getArgument()));
 				else
-					templateBuilder.append(String.format(" &3[%s]", arg.getArgument()));
+					templateBuilder.append(String.format(" {h}[%s]", arg.getArgument()));
 			}
 
-			String template = FormatUtil.format(templateBuilder.toString());
+			String template = format(templateBuilder.toString());
 			String prefix = list ? i == 0 ? "- " : "  " : "";
-			ComponentBuilder builder = new ComponentBuilder(ChatColor.AQUA + prefix + template);
+			ComponentBuilder builder = new ComponentBuilder(format("{a}" + prefix + template));
 
 			StringBuilder hoverTextBuilder = new StringBuilder();
 			hoverTextBuilder.append(template + ":\n");
@@ -553,9 +561,9 @@ public abstract class Command implements CommandExecutor
 				{
 					String argument = arg.getArgument();
 					if (arg.isRequired())
-						hoverTextBuilder.append(FormatUtil.format("&3  <{0}>: &e{1}\n", argument, explanation));
+						hoverTextBuilder.append(format("{h}  <{0}>: {b}{1}\n", argument, explanation));
 					else
-						hoverTextBuilder.append(FormatUtil.format("&3  [{0}]: &e{1}\n", argument, explanation));
+						hoverTextBuilder.append(format("{h}  [{0}]: {b}{1}\n", argument, explanation));
 				}
 
 				if (a != 0 && a == syntax.size() - 1)
@@ -564,8 +572,8 @@ public abstract class Command implements CommandExecutor
 
 			StringJoiner description = new StringJoiner("\n");
 			for (String s : getDescription())
-				description.append(ChatColor.YELLOW + s);
-			hoverTextBuilder.append(FormatUtil.format(capitalizeFirst(description.toString())));
+				description.append("{b}" + s);
+			hoverTextBuilder.append(format(capitalizeFirst(description.toString())));
 
 			if (permission != null)
 			{
