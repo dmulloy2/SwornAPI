@@ -17,14 +17,13 @@
  */
 package net.dmulloy2.util;
 
-import net.dmulloy2.types.PotionType;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 /**
  * Utility for dealing with backwards compatibility
@@ -42,14 +41,15 @@ public class CompatUtil
 	 * @param amount ItemStack amount
 	 * @param level Potion level
 	 * @param splash Whether or not it's a splash potion
+	 * @param extended 
 	 * @return The potion item
 	 */
-	public static ItemStack createPotion(PotionType type, int amount, int level, boolean splash)
+	public static ItemStack createPotion(PotionType type, int amount, int level, boolean splash, boolean extended)
 	{
 		try
 		{
 			Material material = splash ? Material.SPLASH_POTION : Material.POTION;
-			PotionData data = new PotionData(type.getBukkit(), level == 2, false);
+			PotionData data = new PotionData(type, level == 2, extended);
 			ItemStack potion = new ItemStack(material, amount);
 			PotionMeta meta = (PotionMeta) potion.getItemMeta();
 			meta.setBasePotionData(data);
@@ -59,9 +59,10 @@ public class CompatUtil
 		catch (LinkageError e)
 		{
 			Potion potion = new Potion(1);
-			potion.setType(type.getBukkit());
+			potion.setType(type);
 			potion.setLevel(level);
 			potion.setSplash(splash);
+			potion.setHasExtendedDuration(extended);
 			return potion.toItemStack(amount);
 		}
 	}

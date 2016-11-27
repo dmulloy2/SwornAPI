@@ -19,61 +19,74 @@ package net.dmulloy2.types;
 
 import java.util.Collection;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.dmulloy2.util.FormatUtil;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import lombok.Getter;
 
 /**
- * Represents various potion types with friendlier names.
- *
+ * Represents various potion types with friendlier configuration and display names.
  * @author dmulloy2
  */
-
 @Getter
-@AllArgsConstructor
 public enum PotionType
 {
-	WATER("water"),
-	MUNDANE("mundane"),
-	THICK("thick"),
-	AWKWARD("awkward"),
-	NIGHT_VISION("nvg"),
-	INVISIBILITY("invis"),
-	JUMP("jump"),
-	FIRE_RESISTANCE("fireres"),
-	SPEED("speed"),
-	SLOWNESS("slow"),
-	WATER_BREATHING("waterbreath"),
-	INSTANT_HEAL("heal"),
-	INSTANT_DAMAGE("damage"),
-	POISON("poison"),
-	REGEN("regen"),
-	STRENGTH("strength"),
-	WEAKNESS("weak"),
-	LUCK("luck");
+	AWKWARD("Awkward"),
+	FIRE_RESISTANCE("Fire Resistance", "fireres"),
+	INSTANT_DAMAGE("Harming", "damage"),
+	INSTANT_HEAL("Healing", "heal"),
+	INVISIBILITY("Invisibility", "invis"),
+	JUMP("Leaping", "jump"),
+	LUCK("Luck", "luck"),
+	MUNDANE("Mundane"),
+	NIGHT_VISION("Night Vision", "nvg"),
+	POISON("Poison"),
+	REGEN("Regeneration", "regen"),
+	SLOWNESS("Slowness", "slow"),
+	SPEED("Swiftness", "swift", "speed"),
+	STRENGTH("Strength"),
+	THICK("Thick"),
+	WATER("Water"),
+	WATER_BREATHING("Water Breathing", "waterbreath"),
+	WEAKNESS("Weakness", "weak");
 
 	private final String name;
+	private final String[] aliases;
+
+	private PotionType(String name, String... aliases)
+	{
+		this.name = name;
+		this.aliases = aliases;
+	}
 
 	/**
-	 * Finds a PotionType from a given string matcher
-	 * @param matcher String matcher
-	 * @return The PotionType, or null if none exists
+	 * Gets the Minecraft Potion display name of this type.
+	 * @return The display name
 	 */
-	public static PotionType find(String matcher)
+	public String getPotionDisplay()
 	{
-		Validate.notNull(matcher, "Matcher cannot be null!");
-		matcher = matcher.toLowerCase();
-
-		for (PotionType type : values())
+		switch (this)
 		{
-			if (type.getName().equals(matcher) || type.name().toLowerCase().equals(matcher))
-				return type;
+			case AWKWARD:
+			case MUNDANE:
+				return name + " Potion";
+			case WATER:
+				return name;
+			default:
+				return "Potion of " + name;
 		}
+	}
 
-		return null;
+	/**
+	 * Gets the Minecraft Effect display name of this type.
+	 * @return The display name
+	 */
+	public String getEffectDisplay()
+	{
+		return name;
 	}
 
 	/**
@@ -86,11 +99,95 @@ public enum PotionType
 	}
 
 	/**
+	 * Gets the Bukkit PotionEffectType equivalent of this PotionType.
+	 * An equivalent does not exist for every PotionType.
+	 * @return The Bukkit equivalent, or null if it does not exist
+	 */
+	public PotionEffectType getEffectType()
+	{
+		return getBukkit().getEffectType();
+	}
+
+	// ---- Finders
+
+	/**
+	 * Finds the Bukkit PotionType from a given string, falling back to enum names
+	 * if no PotionType exists.
+	 * @param string String to parse
+	 * @return The PotionType, or null if none could be found
+	 */
+	public static org.bukkit.potion.PotionType findPotion(String string)
+	{
+		PotionType type = find(string);
+		if (type != null)
+			return type.getBukkit();
+
+		try
+		{
+			return org.bukkit.potion.PotionType.valueOf(
+				string.toUpperCase().replace(" ", "_"));
+		} catch (IllegalArgumentException ex) { }
+		return null;
+	}
+
+	/**
+	 * Finds the Bukkit PotionEffectType from a given string, falling back to
+	 * {@link PotionEffectType#getByName(String)} if no PotionType exists.
+	 * @param string String to parse
+	 * @return The PotionEffectType, or null if none could be found
+	 */
+	public static PotionEffectType findEffect(String string)
+	{
+		PotionType type = find(string);
+		if (type != null)
+		{
+			PotionEffectType effect = type.getEffectType();
+			if (effect != null)
+				return effect;
+		}
+
+		return PotionEffectType.getByName(string.replace(" ", "_"));
+	}
+
+	/**
+	 * Finds a PotionType from a given string matcher
+	 * @param matcher String matcher
+	 * @return The PotionType, or null if none exists
+	 */
+	public static PotionType find(String matcher)
+	{
+		Validate.notNull(matcher, "matcher cannot be null!");
+		matcher = matcher.toLowerCase();
+
+		for (PotionType type : values())
+		{
+			if (type.getName().equals(matcher)
+					|| type.name().toLowerCase().equals(matcher)
+					|| containsIgnoreCase(matcher, type.getAliases()))
+				return type;
+		}
+
+		return null;
+	}
+
+	private static boolean containsIgnoreCase(String lookup, String[] array)
+	{
+		for (String string : array)
+		{
+			if (string.equalsIgnoreCase(lookup))
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns a String representation of a {@link Collection} of
 	 * PotionEffects
 	 *
 	 * @param effects Collection of potion effects.
 	 */
+	// TODO Figure out a good way to use our strings
 	public static String toString(Collection<PotionEffect> effects)
 	{
 		Validate.notNull(effects, "effects cannot be null!");

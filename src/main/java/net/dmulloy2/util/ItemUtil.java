@@ -27,7 +27,6 @@ import java.util.logging.Level;
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.CustomSkullType;
 import net.dmulloy2.types.EnchantmentType;
-import net.dmulloy2.types.PotionType;
 import net.dmulloy2.types.StringJoiner;
 
 import org.bukkit.ChatColor;
@@ -38,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionType;
 
 /**
  * Utility for dealing with items and potions
@@ -203,7 +203,7 @@ public class ItemUtil
 
 		String[] split = normalized.split(",");
 
-		PotionType type = PotionType.find(split[0]);
+		PotionType type = net.dmulloy2.types.PotionType.findPotion(split[0]);
 		if (type == null)
 			throw new NullPointerException("Null potion type \"" + split[0] + "\"");
 
@@ -216,8 +216,9 @@ public class ItemUtil
 			throw new IllegalArgumentException("Invalid level " + level);
 
 		boolean splash = split.length > 3 && Util.toBoolean(split[3]);
+		boolean extended = split.length > 4 && Util.toBoolean(split[4]);
 
-		ItemStack potion = CompatUtil.createPotion(type, amount, level, splash);
+		ItemStack potion = CompatUtil.createPotion(type, amount, level, splash, extended);
 
 		// Parse meta
 		parseItemMeta(potion, normalized);

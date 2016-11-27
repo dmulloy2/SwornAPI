@@ -20,44 +20,49 @@ package net.dmulloy2.types;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.dmulloy2.util.FormatUtil;
+
 import lombok.Getter;
 
 import org.bukkit.enchantments.Enchantment;
 
 /**
- * Represents various enchantments with more friendly names.
- *
+ * Represents various enchantments with friendlier configuration and display names.
  * @author dmulloy2
  */
-
 @Getter
 public enum EnchantmentType
 {
-	ARROW_DAMAGE("power", "arrowdmg"),
-	ARROW_FIRE("flame", "fire"),
-	ARROW_INFINITE("infinity", "inf"),
-	ARROW_KNOCKBACK("punch", "arrowkb"),
-	DAMAGE_ALL("sharpness", "sharp"),
-	DAMAGE_ARTHROPODS("bane"),
-	DAMAGE_UNDEAD("smite"),
-	DEPTH_STRIDER("depthstrider"),
-	DIG_SPEED("efficiency", "eff"),
-	DURABILITY("durability", "dura"),
-	FIRE_ASPECT("fireaspect"),
-	KNOCKBACK("knockback"),
-	LOOT_BONUS_BLOCKS("fortune"),
-	LOOT_BONUS_MOBS("looting"),
-	LUCK("luck"),
-	LOOT("loot"),
-	OXYGEN("respiration", "breathing"),
-	PROTECTION_ENVIRONMENTAL("prot", "protection"),
-	PROTECTION_EXPLOSIONS("blast"),
-	PROTECTION_FALL("feather"),
-	PROTECTION_FIRE("fireprot"),
-	PROTECTION_PROJECTILE("proj"),
-	SILK_TOUCH("silk"),
-	THORNS("thorns"),
-	WATER_WORKER("aqua", "affinity");
+	ARROW_DAMAGE("Power", "arrowdmg"),
+	ARROW_FIRE("Flame", "fire"),
+	ARROW_INFINITE("Infinity", "inf"),
+	ARROW_KNOCKBACK("Punch", "arrowkb"),
+	BINDING_CURSE("Curse of Bind", "bind", "binding"),
+	DAMAGE_ALL("Sharpness", "sharp"),
+	DAMAGE_ARTHROPODS("Bane of Arthropods", "bane"),
+	DAMAGE_UNDEAD("Smite"),
+	DEPTH_STRIDER("Depth Strider", "depthstrider", "depth"),
+	DIG_SPEED("Efficiency", "eff"),
+	DURABILITY("Durability", "dura"),
+	FIRE_ASPECT("Fire Aspect", "fireaspect"),
+	FROST_WALKER("Frost Walker", "frostwalker"),
+	KNOCKBACK("Knockback"),
+	LOOT_BONUS_BLOCKS("Fortune"),
+	LOOT_BONUS_MOBS("Looting"),
+	LUCK("Luck"),
+	LOOT("Loot"),
+	LURE("Lure"),
+	MENDING("Mending", "mend"),
+	OXYGEN("Respiration", "breathing"),
+	PROTECTION_ENVIRONMENTAL("Protection", "prot"),
+	PROTECTION_EXPLOSIONS("Blast Protection", "blast"),
+	PROTECTION_FALL("Feather Falling", "feather"),
+	PROTECTION_FIRE("Fire Protection", "fireprot"),
+	PROTECTION_PROJECTILE("Projectile Protection", "proj"),
+	SILK_TOUCH("Silk Touch", "silk"),
+	THORNS("Thorns"),
+	VANISHING_CURSE("Vanishing Curse", "vanish"),
+	WATER_WORKER("Aqua Affinity", "aqua", "affinity");
 
 	private String name;
 	private String[] aliases;
@@ -80,7 +85,7 @@ public enum EnchantmentType
 		if (type != null)
 			return type.getName();
 
-		return enchant.getName().toLowerCase();
+		return FormatUtil.getFriendlyName(enchant);
 	}
 
 	/**
