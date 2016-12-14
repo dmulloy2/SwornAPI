@@ -104,4 +104,42 @@ public class CompatUtil
 			player.setItemInHand(item);
 		}
 	}
+
+	/**
+	 * Gets a player's max health. Implementations targeting newer versions of
+	 * Minecraft should use Attributes.
+	 * 
+	 * @param player Player to get max health of
+	 * @return The max health
+	 */
+	public static double getMaxHealth(Player player)
+	{
+		try
+		{
+			return player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue();
+		}
+		catch (LinkageError e)
+		{
+			return player.getMaxHealth();
+		}
+	}
+
+	/**
+	 * Sets a player's max health. Implementations targeting newer versions of
+	 * Minecraft should use Attributes.
+	 * 
+	 * @param player Player to set max health of
+	 * @param value New max health
+	 */
+	public static void setMaxHealth(Player player, double value)
+	{
+		try
+		{
+			player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).setBaseValue(value);
+		}
+		catch (LinkageError e)
+		{
+			player.setMaxHealth(value);
+		}
+	}
 }
