@@ -60,6 +60,7 @@ public enum EnchantmentType
 	PROTECTION_FIRE("Fire Protection", "fireprot"),
 	PROTECTION_PROJECTILE("Projectile Protection", "proj"),
 	SILK_TOUCH("Silk Touch", "silk"),
+	SWEEPING_EDGE("Sweeping Edge", "sweep"),
 	THORNS("Thorns"),
 	VANISHING_CURSE("Vanishing Curse", "vanish"),
 	WATER_WORKER("Aqua Affinity", "aqua", "affinity");
