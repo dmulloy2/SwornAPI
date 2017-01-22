@@ -861,17 +861,16 @@ public abstract class Command implements CommandExecutor
 
 	/**
 	 * Gets the name of a given command sender from the sender's perspective.
-	 * This method supports all kinds of command senders.
+	 * This method supports all known command senders.
 	 * 
 	 * @param sender Sender of the command
-	 * @param targer Sender to get the name of
+	 * @param target Who the message is meant for
 	 * @param subject Whether or not it's the subject of the sentence
 	 * @return The name of the command sender
 	 */
 	protected final String getName(CommandSender sender, CommandSender target, boolean subject)
 	{
 		Validate.notNull(sender, "sender cannot be null!");
-		Validate.notNull(target, "targer cannot be null!");
 
 		if (sender.equals(target))
 		{
