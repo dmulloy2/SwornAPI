@@ -39,6 +39,10 @@ public class Versioning
 	public static enum Version
 	{
 		/**
+		 * Minecraft 1.12, the world of color update
+		 */
+		MC_112("Minecraft 1.12.x", "1.12"),
+		/**
 		 * Minecraft 1.11, the exploration update
 		 */
 		MC_111("Minecraft 1.11.x", "1.11"),
