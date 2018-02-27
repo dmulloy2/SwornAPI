@@ -178,8 +178,6 @@ public abstract class Command implements CommandExecutor
 					invalidSyntax(args);
 					break;
 			}
-
-			return;
 		}
 		catch (Throwable ex)
 		{
@@ -496,7 +494,7 @@ public abstract class Command implements CommandExecutor
 			}
 
 			if (displayHelp && i == 0)
-				line.append(" {b}" + description);
+				line.append(" {b}").append(description);
 
 			ret.add(format(line.toString()));
 		}
@@ -551,7 +549,7 @@ public abstract class Command implements CommandExecutor
 			ComponentBuilder builder = new ComponentBuilder(format("{a}" + prefix + template));
 
 			StringBuilder hoverTextBuilder = new StringBuilder();
-			hoverTextBuilder.append(template + ":\n");
+			hoverTextBuilder.append(template).append(":\n");
 
 			for (int a = 0; a < syntax.size(); a++)
 			{
@@ -578,8 +576,8 @@ public abstract class Command implements CommandExecutor
 			if (permission != null)
 			{
 				hoverTextBuilder.append("\n\n");
-				hoverTextBuilder.append(ChatColor.DARK_RED + "Permission:");
-				hoverTextBuilder.append("\n" + getPermissionString());
+				hoverTextBuilder.append(ChatColor.DARK_RED).append("Permission:");
+				hoverTextBuilder.append("\n").append(getPermissionString());
 			}
 
 			String hoverText = hoverTextBuilder.toString();
@@ -962,9 +960,9 @@ public abstract class Command implements CommandExecutor
 	 * Finds the closest Syntax match for a given array of arguments.
 	 * 
 	 * @param args Arguments to find syntax for
-	 * @return The syntax, defaulting to {@link defaultSyntax()}
+	 * @return The syntax, defaulting to {@link #defaultSyntax()}
 	 */
-	private final Syntax findClosest(String[] args)
+	private Syntax findClosest(String[] args)
 	{
 		if (syntaxes.size() == 1 || args.length == 0)
 			return defaultSyntax();
@@ -994,7 +992,7 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @return The default syntax
 	 */
-	private final Syntax defaultSyntax()
+	private Syntax defaultSyntax()
 	{
 		return syntaxes.get(0);
 	}

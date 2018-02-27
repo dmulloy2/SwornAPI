@@ -28,7 +28,7 @@ import org.apache.commons.lang.Validate;
 
 public class StringJoiner
 {
-	public static final String DEFAULT_DELIMITER = " ";
+	private static final String DEFAULT_DELIMITER = " ";
 	public static final StringJoiner SPACE = new StringJoiner();
 
 	private String delimiter;
@@ -67,7 +67,7 @@ public class StringJoiner
 		Validate.notNull(string, "string cannot be null!");
 
 		if (! string.isEmpty())
-			builder.append(string + delimiter);
+			builder.append(string).append(delimiter);
 		return this;
 	}
 

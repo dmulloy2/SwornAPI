@@ -43,7 +43,7 @@ public class FormatUtil
 	 * @param format Base string
 	 * @param objects Objects to format in
 	 * @return Formatted string
-	 * @see {@link MessageFormat#format(String, Object...)}
+	 * @see MessageFormat#format(String, Object...)
 	 */
 	public static String format(String format, Object... objects)
 	{
@@ -86,7 +86,7 @@ public class FormatUtil
 					int index = 0;
 					while (index < s.length() && s.charAt(index) != '&')
 					{
-						ret.append("&" + rainbowColors[index % rainbowColors.length]);
+						ret.append("&").append(rainbowColors[index % rainbowColors.length]);
 						ret.append(s.charAt(index));
 						index++;
 					}
@@ -147,7 +147,7 @@ public class FormatUtil
 	 * 
 	 * @param material Material to get the user-friendly version of
 	 * @return The string
-	 * @see MaterialUtil#getMaterialName(Material)
+	 * @see MaterialUtil#getName(Material)
 	 */
 	public static String getFriendlyName(Material material)
 	{
@@ -209,7 +209,7 @@ public class FormatUtil
 	 * @param delimiter String to join the args together with
 	 * @param args Strings to join together
 	 * @return Multiple strings joined together with the given glue.
-	 * @see {@link StringJoiner}
+	 * @see StringJoiner
 	 */
 	public static String join(String delimiter, String... args)
 	{
@@ -225,7 +225,7 @@ public class FormatUtil
 	 *
 	 * @param args Strings to join together
 	 * @return Multiple strings joined together with a space
-	 * @see {@link StringJoiner}
+	 * @see StringJoiner
 	 */
 	public static String join(String... args)
 	{

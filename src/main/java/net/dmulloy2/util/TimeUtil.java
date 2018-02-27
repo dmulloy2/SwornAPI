@@ -43,7 +43,7 @@ public class TimeUtil
 	 * @param time2 Second time in milliseconds
 	 * @return Formatted time difference
 	 */
-	public static final String formatTimeDifference(long time1, long time2)
+	public static String formatTimeDifference(long time1, long time2)
 	{
 		return formatTime(getTimeDifference(time1, time2));
 	}
@@ -55,7 +55,7 @@ public class TimeUtil
 	 * @param time2 Second time in milliseconds
 	 * @return Absolute time difference
 	 */
-	public static final long getTimeDifference(long time1, long time2)
+	public static long getTimeDifference(long time1, long time2)
 	{
 		return Math.abs(time2 - time1);
 	}
@@ -75,12 +75,12 @@ public class TimeUtil
 		int seconds = (int) Math.floor(time % (1000 * 3600 * 24) % (1000 * 3600) % (1000 * 60) / 1000);
 
 		if (days != 0)
-			ret.append(days + "d");
+			ret.append(days).append("d");
 		if (hours != 0 || days != 0)
-			ret.append(hours + "h");
+			ret.append(hours).append("h");
 		if (minutes != 0 || hours != 0 || days != 0)
-			ret.append(minutes + "m");
-		ret.append(seconds + "s");
+			ret.append(minutes).append("m");
+		ret.append(seconds).append("s");
 
 		return ret.toString();
 	}
@@ -91,7 +91,7 @@ public class TimeUtil
 	 * @param timeZone Time zone, defaults to GMT
 	 * @return The current long date
 	 */
-	public static final String getLongDateCurr(String timeZone)
+	public static String getLongDateCurr(String timeZone)
 	{
 		if (timeZone == null || timeZone.isEmpty())
 			timeZone = "GMT";
@@ -105,9 +105,9 @@ public class TimeUtil
 	/**
 	 * Gets the current long date in GMT.
 	 *
-	 * @see {@link TimeUtil#getLongDateCurr(String)}
+	 * @see TimeUtil#getLongDateCurr(String)
 	 */
-	public static final String getLongDateCurr()
+	public static String getLongDateCurr()
 	{
 		return getLongDateCurr("GMT");
 	}
@@ -119,7 +119,7 @@ public class TimeUtil
 	 * @param timeZone Time zone, defaults to GMT
 	 * @return The current short date
 	 */
-	public static final String getSimpleDate(long time, String timeZone)
+	public static String getSimpleDate(long time, String timeZone)
 	{
 		if (timeZone == null || timeZone.isEmpty())
 			timeZone = "GMT";
@@ -134,9 +134,9 @@ public class TimeUtil
 	 * Gets the simple date of a given time in GMT.
 	 *
 	 * @param time Time in milliseconds
-	 * @see {@link TimeUtil#getSimpleDate(long, String)}
+	 * @see TimeUtil#getSimpleDate(long, String)
 	 */
-	public static final String getSimpleDate(long time)
+	public static String getSimpleDate(long time)
 	{
 		return getSimpleDate(time, "GMT");
 	}
@@ -148,7 +148,7 @@ public class TimeUtil
 	 * @return The parsed time
 	 * @throws BadTimeException If parsing fails
 	 */
-	public static final long parseTime(String time) throws BadTimeException
+	public static long parseTime(String time) throws BadTimeException
 	{
 		try
 		{
@@ -203,12 +203,12 @@ public class TimeUtil
 
 	// ---- Conversion Methods
 
-	public static final long toTicks(Number seconds)
+	public static long toTicks(Number seconds)
 	{
 		return seconds.intValue() * 20;
 	}
 
-	public static final int toSeconds(Number ticks)
+	public static int toSeconds(Number ticks)
 	{
 		return ticks.intValue() / 20;
 	}

@@ -41,7 +41,7 @@ public class CompatUtil
 	 * @param amount ItemStack amount
 	 * @param level Potion level
 	 * @param splash Whether or not it's a splash potion
-	 * @param extended 
+	 * @param extended Extended potion
 	 * @return The potion item
 	 */
 	public static ItemStack createPotion(PotionType type, int amount, int level, boolean splash, boolean extended)

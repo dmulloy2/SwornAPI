@@ -16,6 +16,7 @@
 package net.dmulloy2.chat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -176,8 +177,7 @@ public class ComponentBuilder
 	 */
 	public ComponentBuilder addAll(BaseComponent... components)
 	{
-		for (BaseComponent component : components)
-			parts.add(component);
+		parts.addAll(Arrays.asList(components));
 		return this;
 	}
 

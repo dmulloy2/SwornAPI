@@ -36,7 +36,7 @@ public class Versioning
 	 * Represents a supported Minecraft version
 	 */
 	@Getter
-	public static enum Version
+	public enum Version
 	{
 		/**
 		 * Minecraft 1.12, the world of color update
@@ -77,20 +77,12 @@ public class Versioning
 		private final boolean isKnown;
 		private final boolean isSupported;
 
-		private Version(String name)
-		{
-			this.name = name;
-			this.matcher = null;
-			this.isKnown = false;
-			this.isSupported = false;
-		}
-
-		private Version(String name, String matcher)
+		Version(String name, String matcher)
 		{
 			this(name, matcher, true);
 		}
 	
-		private Version(String name, String matcher, boolean isSupported)
+		Version(String name, String matcher, boolean isSupported)
 		{
 			this.name = name;
 			this.matcher = matcher;
@@ -125,7 +117,7 @@ public class Versioning
 		/**
 		 * Gets the list of supported Versions
 		 * @return The List
-		 * @deprecated Use {@link #values()}
+		 * @deprecated Use {@code Version.values()}
 		 */
 		@Deprecated
 		public static List<Version> getSupported()
@@ -197,7 +189,7 @@ public class Versioning
 	 *
 	 * @return True if it is supported, false if not
 	 */
-	public static final boolean isSupported()
+	public static boolean isSupported()
 	{
 		return getVersion().isSupported();
 	}

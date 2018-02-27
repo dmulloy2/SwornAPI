@@ -17,16 +17,12 @@
  */
 package net.dmulloy2.types;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,22 +33,20 @@ import lombok.Setter;
  * @author dmulloy2
  */
 @Getter @Setter
-// TODO Switch to Java 8 and use FunctionalInterfaces
 public class Sorter<K, V extends Comparable<V>>
 {
 	/**
 	 * Obtains criteria used for sorting
 	 * @author dmulloy2
 	 */
-	// @FunctionalInterface
-	public static interface SortCriteria<K, V>
+	@FunctionalInterface
+	public interface SortCriteria<K, V>
 	{
 		/**
 		 * Obtains the criteria used for sorting from the given object
 		 * @param key Object in the list
 		 * @return Criteria for sorting
 		 */
-		@Nonnull
 		V getValue(K key);
 	}
 
@@ -62,7 +56,7 @@ public class Sorter<K, V extends Comparable<V>>
 	 */
 	@Getter
 	@AllArgsConstructor
-	public static enum SortMode
+	public enum SortMode
 	{
 		/**
 		 * Sorts values in ascending order, with the lowest values first
@@ -80,8 +74,8 @@ public class Sorter<K, V extends Comparable<V>>
 	 * Filters out values from sorting
 	 * @author dmulloy2
 	 */
-	// @FunctionalInterface
-	public static interface Filter<V>
+	@FunctionalInterface
+	public interface Filter<V>
 	{
 		/**
 		 * Whether or not to include this value in the sorting process
@@ -121,18 +115,8 @@ public class Sorter<K, V extends Comparable<V>>
 	 */
 	public List<K> sort(K[] array)
 	{
-		/* return sort(Arrays.stream(array)
-				.collect(Collectors.toMap(k -> k, criteria::getValue))); */
-
-		Map<K, V> map = new HashMap<>();
-		for (K elem : array)
-		{
-			V value = criteria.getValue(elem);
-			if (value != null)
-				map.put(elem, value);
-		}
-
-		return sort(map);
+		return sort(Arrays.stream(array)
+		                  .collect(Collectors.toMap(k -> k, criteria::getValue)));
 	}
 
 	/**
@@ -140,47 +124,17 @@ public class Sorter<K, V extends Comparable<V>>
 	 * @param collection Collection to sort
 	 * @return The sorted collection as a list
 	 */
-	public List<K> sort(Collection<K> collection)
-	{
-		/* return sort(collection.stream()
-				.collect(Collectors.toMap(k -> k, criteria::getValue))); */
-
-		Map<K, V> map = new HashMap<>();
-		for (K elem : collection)
-		{
-			V value = criteria.getValue(elem);
-			if (value != null)
-				map.put(elem, value);
-		}
-
-		return sort(map);
+	public List<K> sort(Collection<K> collection) {
+		return sort(collection.stream()
+		                      .collect(Collectors.toMap(k -> k, criteria::getValue)));
 	}
 
 	// Where the actual sorting takes place
-	private List<K> sort(Map<K, V> map)
-	{
-		/* return map.entrySet()
-				.stream()
-				.sorted((e1, e2) -> mode.getSign() * e1.getValue().compareTo(e2.getValue()))
-				.map(e -> e.getKey())
-				.collect(Collectors.toList()); */
-
-		List<Entry<K, V>> sortedEntries = new ArrayList<>(map.entrySet());
-		Collections.sort(sortedEntries, new Comparator<Entry<K, V>>()
-		{
-			@Override
-			public int compare(Entry<K, V> entry1, Entry<K, V> entry2)
-			{
-				return -entry1.getValue().compareTo(entry2.getValue());
-			}
-		});
-
-		List<K> list = new ArrayList<>();
-		for (Entry<K, V> entry : sortedEntries)
-		{
-			list.add(entry.getKey());
-		}
-
-		return list;
+	private List<K> sort(Map<K, V> map) {
+		return map.entrySet()
+		          .stream()
+		          .sorted((e1, e2) -> mode.getSign() * e1.getValue().compareTo(e2.getValue()))
+		          .map(Entry::getKey)
+		          .collect(Collectors.toList());
 	}
 }

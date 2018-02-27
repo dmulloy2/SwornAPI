@@ -114,7 +114,7 @@ public class SpecialEntities
 
 	@Getter
 	@AllArgsConstructor
-	public static enum HorseType
+	public enum HorseType
 	{
 		DONKEY(EntityType.DONKEY, Variant.DONKEY),
 		NORMAL(EntityType.HORSE, Variant.HORSE),
@@ -201,7 +201,7 @@ public class SpecialEntities
 	/**
 	 * Spawns a Horse at a given location with the given properties.
 	 * @param loc Location to spawn at
-	 * @param variant Horse Variant, null if random
+	 * @param type Horse Type, null if random
 	 * @param color Horse Color, null if random
 	 * @param style Horse Style, null if random
 	 * @param tame Whether or not the Horse is tamed

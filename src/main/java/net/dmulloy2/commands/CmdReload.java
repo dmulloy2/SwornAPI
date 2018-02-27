@@ -18,6 +18,7 @@
 package net.dmulloy2.commands;
 
 import net.dmulloy2.SwornPlugin;
+import net.dmulloy2.types.IPermission;
 
 /**
  * Generic plugin reload command

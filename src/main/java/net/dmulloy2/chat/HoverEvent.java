@@ -15,6 +15,8 @@
  */
 package net.dmulloy2.chat;
 
+import java.util.Arrays;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -46,6 +48,6 @@ public final class HoverEvent
 	@Override
 	public String toString()
 	{
-		return String.format("HoverEvent{action=%s, value=%s}", action, value);
+		return String.format("HoverEvent{action=%s, value=%s}", action, Arrays.toString(value));
 	}
 }

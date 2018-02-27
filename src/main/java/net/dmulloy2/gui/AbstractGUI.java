@@ -65,7 +65,7 @@ public abstract class AbstractGUI
 		Validate.notNull(title, "Inventory title cannot be null!");
 		title = FormatUtil.format(getTitle());
 
-		Inventory inventory = null;
+		Inventory inventory;
 
 		try
 		{
@@ -129,7 +129,7 @@ public abstract class AbstractGUI
 	 * Sends a prefixed message to the player.
 	 * 
 	 * @param message Message to send
-	 * @param args Objects to format in
+	 * @param objects Objects to format in
 	 */
 	protected final void sendpMessage(String message, Object... objects)
 	{
@@ -140,7 +140,7 @@ public abstract class AbstractGUI
 	 * Sends a message to the player.
 	 * 
 	 * @param message Message to send
-	 * @param args Objects to format in
+	 * @param objects Objects to format in
 	 */
 	protected final void sendMessage(String message, Object... objects)
 	{

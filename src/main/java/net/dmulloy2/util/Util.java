@@ -49,8 +49,8 @@ public class Util
 	 *
 	 * @param identifier Player name or UUID
 	 * @return Player from the given name or UUID, or null if none exists.
-	 * @see {@link Bukkit#getPlayer(UUID)}
-	 * @see {@link Bukkit#getPlayer(String)}
+	 * @see Bukkit#getPlayer(UUID)
+	 * @see Bukkit#getPlayer(String)
 	 */
 	public static Player matchPlayer(String identifier)
 	{
@@ -70,9 +70,9 @@ public class Util
 	 *
 	 * @param identifier Player name or UUID
 	 * @return OfflinePlayer from the given name or UUID, or null if none exists
-	 * @see {@link #matchPlayer(String)}
-	 * @see {@link Bukkit#getOfflinePlayer(UUID)}
-	 * @see {@link Bukkit#getOfflinePlayer(String)}
+	 * @see #matchPlayer(String)
+	 * @see Bukkit#getOfflinePlayer(UUID)
+	 * @see Bukkit#getOfflinePlayer(String)
 	 */
 	@SuppressWarnings("deprecation") // Bukkit#getOfflinePlayer(String)
 	public static OfflinePlayer matchOfflinePlayer(String identifier)
@@ -109,7 +109,7 @@ public class Util
 	 * @param effect Effect type to play
 	 * @param loc Location where the effect should be played
 	 * @param data Effect data, can be null
-	 * @see {@link Player#playEffect(Location, Effect, Object)}
+	 * @see Player#playEffect(Location, Effect, Object)
 	 */
 	public static <T> void playEffect(Effect effect, Location loc, T data)
 	{
@@ -174,6 +174,29 @@ public class Util
 		return random.nextInt(x);
 	}
 
+	private static void appendStackTrace(Throwable ex, StringJoiner joiner)
+	{
+		for (StackTraceElement ste : ex.getStackTrace())
+		{
+			String className = ste.getClassName();
+			if (! className.contains("net.minecraft"))
+			{
+				StringBuilder line = new StringBuilder();
+				line.append("\t").append(className).append(".").append(ste.getMethodName());
+				if (ste.getLineNumber() > 0)
+					line.append("(Line ").append(ste.getLineNumber()).append(")");
+				else
+					line.append("(Native Method)");
+
+				String jar = getWorkingJar(className);
+				if (jar != null)
+					line.append(" [").append(jar).append("]");
+
+				joiner.append(line.toString());
+			}
+		}
+	}
+
 	/**
 	 * Returns a useful Stack Trace for debugging purposes.
 	 *
@@ -190,50 +213,14 @@ public class Util
 		joiner.append("Encountered an exception" + circumstance + ": " + ex.toString());
 		joiner.append("Affected classes:");
 
-		for (StackTraceElement ste : ex.getStackTrace())
-		{
-			String className = ste.getClassName();
-			if (! className.contains("net.minecraft"))
-			{
-				StringBuilder line = new StringBuilder();
-				line.append("\t" + className + "." + ste.getMethodName());
-				if (ste.getLineNumber() > 0)
-					line.append("(Line " + ste.getLineNumber() + ")");
-				else
-					line.append("(Native Method)");
-
-				String jar = getWorkingJar(className);
-				if (jar != null)
-					line.append(" [" + jar + "]");
-
-				joiner.append(line.toString());
-			}
-		}
+		appendStackTrace(ex, joiner);
 
 		while (ex.getCause() != null)
 		{
 			ex = ex.getCause();
 			joiner.append("Caused by: " + ex.toString());
 			joiner.append("Affected classes:");
-			for (StackTraceElement ste : ex.getStackTrace())
-			{
-				String className = ste.getClassName();
-				if (! className.contains("net.minecraft"))
-				{
-					StringBuilder line = new StringBuilder();
-					line.append("\t" + className + "." + ste.getMethodName());
-					if (ste.getLineNumber() > 0)
-						line.append("(Line " + ste.getLineNumber() + ")");
-					else
-						line.append("(Native Method)");
-
-					String jar = getWorkingJar(className);
-					if (jar != null)
-						line.append(" [" + jar + "]");
-
-					joiner.append(line.toString());
-				}
-			}
+			appendStackTrace(ex, joiner);
 		}
 
 		return joiner.toString();
@@ -244,7 +231,7 @@ public class Util
 	 *
 	 * @return The current thread's stack
 	 */
-	public static final String getThreadStack()
+	public static String getThreadStack()
 	{
 		try
 		{
@@ -264,7 +251,7 @@ public class Util
 	 * @param clazzName Class name
 	 * @return The working jar, or null if not found
 	 */
-	public static final String getWorkingJar(String clazzName)
+	public static String getWorkingJar(String clazzName)
 	{
 		try
 		{
@@ -279,7 +266,7 @@ public class Util
 	 * @param clazz Class to get the jar for
 	 * @return The working jar, or null if not found
 	 */
-	public static final String getWorkingJar(Class<?> clazz)
+	public static String getWorkingJar(Class<?> clazz)
 	{
 		try
 		{
@@ -335,7 +322,7 @@ public class Util
 
 		if (object instanceof Boolean)
 		{
-			return ((Boolean) object).booleanValue();
+			return ((Boolean) object);
 		}
 
 		String str = object.toString();

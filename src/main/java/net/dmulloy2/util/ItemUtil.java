@@ -174,7 +174,7 @@ public class ItemUtil
 	 * @return List of ItemStacks
 	 * @see #readItem(String)
 	 */
-	public static final List<ItemStack> readItems(List<String> strings, SwornPlugin plugin)
+	public static List<ItemStack> readItems(List<String> strings, SwornPlugin plugin)
 	{
 		List<ItemStack> ret = new ArrayList<>();
 		for (String string : strings)
@@ -255,7 +255,7 @@ public class ItemUtil
 				String str = string.substring(string.indexOf(loreKey) + loreKey.length());
 				int commaIndex = str.indexOf(",");
 				if (commaIndex != -1)
-					str.substring(0, commaIndex);
+					str = str.substring(0, commaIndex);
 				str = str.replace('_', ' ');
 
 				List<String> lore = new ArrayList<>();
@@ -273,7 +273,7 @@ public class ItemUtil
 					String str = string.substring(string.indexOf(colorKey) + colorKey.length());
 					int commaIndex = str.indexOf(",");
 					if (commaIndex != -1)
-						str.substring(0, commaIndex);
+						str = str.substring(0, commaIndex);
 
 					DyeColor dyeColor = DyeColor.valueOf(str.toUpperCase());
 					((LeatherArmorMeta) meta).setColor(dyeColor.getColor());
@@ -303,10 +303,7 @@ public class ItemUtil
 
 					// Attempt to use CustomSkullType
 					CustomSkullType customType = CustomSkullType.get(type);
-					if (type != null)
-						((SkullMeta) meta).setOwner(customType.getOwner());
-					else
-						((SkullMeta) meta).setOwner(type);
+					((SkullMeta) meta).setOwner(customType.getOwner());
 				}
 			}
 
@@ -327,21 +324,21 @@ public class ItemUtil
 		StringBuilder ret = new StringBuilder();
 		ret.append(stack.getType());
 		if (stack.getDurability() > 0)
-			ret.append(":" + stack.getDurability());
-		ret.append(", " + stack.getAmount());
+			ret.append(":").append(stack.getDurability());
+		ret.append(", ").append(stack.getAmount());
 
 		if (! stack.getEnchantments().isEmpty())
 		{
 			StringJoiner joiner = new StringJoiner(", ");
 			for (Entry<Enchantment, Integer> ench : stack.getEnchantments().entrySet())
 				joiner.append(EnchantmentType.toName(ench.getKey()) + ":" + ench.getValue());
-			ret.append(", " + joiner.toString());
+			ret.append(", ").append(joiner.toString());
 		}
 
 		ItemMeta meta = stack.getItemMeta();
 		if (meta.hasDisplayName())
 		{
-			ret.append(", name:" + meta.getDisplayName()
+			ret.append(", name:").append(meta.getDisplayName()
 					.replace(ChatColor.COLOR_CHAR, '&')
 					.replace(' ', '_'));
 		}
@@ -356,7 +353,7 @@ public class ItemUtil
 						.replace(' ', '_'));
 			}
 
-			ret.append(", lore:" + lore.toString());
+			ret.append(", lore:").append(lore.toString());
 		}
 
 		// TODO: More meta support
@@ -377,7 +374,8 @@ public class ItemUtil
 		{
 			ret.append("(");
 			for (Entry<Enchantment, Integer> enchantment : stack.getEnchantments().entrySet())
-				ret.append(EnchantmentType.toName(enchantment.getKey()) + ": " + enchantment.getValue() + ", ");
+				ret.append(EnchantmentType.toName(enchantment.getKey())).append(": ").append(enchantment.getValue())
+				   .append(", ");
 			ret.delete(ret.lastIndexOf(","), ret.lastIndexOf(" "));
 			ret.append(")");
 		}
