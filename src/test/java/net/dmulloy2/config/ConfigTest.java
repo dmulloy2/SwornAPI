@@ -4,6 +4,7 @@
 package net.dmulloy2.config;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -73,7 +74,9 @@ public class ConfigTest
 	@Test
 	public void testItems()
 	{
-		assertEquals(Config.item, new ItemStack(Material.GOLDEN_APPLE, 5));
+		assertNotNull(Config.item);
+		assertEquals(Material.GOLDEN_APPLE, Config.item.getType());
+		assertEquals(5, Config.item.getAmount());
 	}
 
 	private static class Config

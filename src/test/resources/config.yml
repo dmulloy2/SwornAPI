@@ -3,7 +3,7 @@ string: "succeeded"
 material: "golden_apple"
 
 materials:
-  - 322
+  - "golden_apple"
   - "diamond_block"
 
 item: "golden_apple, 5"

@@ -50,29 +50,31 @@ public class MaterialUtil
 	{
 		Material material = Material.matchMaterial(string);
 		if (material != null)
+		{
 			return material;
+		}
+
+		try
+		{
+			material = Material.matchMaterial(string, true);
+			if (material != null)
+			{
+				return material;
+			}
+		} catch (Throwable ignored) { }
 
 		// Resolve using Vault, if applicable
-		if (Bukkit.getPluginManager().isPluginEnabled("Vault"))
+		if (Bukkit.getPluginManager() != null && Bukkit.getPluginManager().isPluginEnabled("Vault"))
 		{
 			try
 			{
 				material = VaultHandler.resolve(string);
 				if (material != null)
+				{
 					return material;
+				}
 			} catch (Throwable ex) { }
 		}
-
-		try
-		{
-			// Attempt to grab it unsafely. The call will never return null,
-			// but if nothing is found, it will return air.
-
-			@SuppressWarnings("deprecation")
-			Material internal = Bukkit.getUnsafe().getMaterialFromInternalName(string);
-			if (internal != Material.AIR)
-				return internal;
-		} catch (Throwable ex) { }
 
 		return null;
 	}
