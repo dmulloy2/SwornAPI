@@ -39,6 +39,10 @@ public class Versioning
 	public enum Version
 	{
 		/**
+		 * Minecraft 1.13, update aquatic / the flattening
+		 */
+		MC_113("Minecraft 1.13.x", "1.13"),
+		/**
 		 * Minecraft 1.12, the world of color update
 		 */
 		MC_112("Minecraft 1.12.x", "1.12"),

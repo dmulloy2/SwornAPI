@@ -68,7 +68,7 @@ public enum EnchantmentType
 	private String name;
 	private String[] aliases;
 
-	private EnchantmentType(String name, String... aliases)
+	EnchantmentType(String name, String... aliases)
 	{
 		this.name = name;
 		this.aliases = aliases;

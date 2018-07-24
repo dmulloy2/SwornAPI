@@ -73,7 +73,7 @@ public class MyMaterial
 	 */
 	public final boolean matches(ItemStack item)
 	{
-		return item.getType() == material && (ignoreData ? true : item.getDurability() == data);
+		return item.getType() == material && (ignoreData || item.getDurability() == data);
 	}
 
 	/**

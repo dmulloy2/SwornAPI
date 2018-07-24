@@ -204,7 +204,7 @@ public class CmdHelp extends Command
 		return TextComponent.fromLegacyText(format(footer));
 	}
 
-	private final List<BaseComponent[]> getHelpMenu()
+	private List<BaseComponent[]> getHelpMenu()
 	{
 		List<BaseComponent[]> ret = new ArrayList<>();
 
@@ -233,7 +233,7 @@ public class CmdHelp extends Command
 		return ret;
 	}
 
-	private final List<String> getLegacyHelpMenu()
+	private List<String> getLegacyHelpMenu()
 	{
 		List<String> ret = new ArrayList<>();
 

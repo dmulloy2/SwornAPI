@@ -46,7 +46,7 @@ public final class CustomScoreboard
 	 * Represents the supported entry formats.
 	 * @author dmulloy2
 	 */
-	public static enum EntryFormat
+	public enum EntryFormat
 	{
 		/**
 		 * Keys and values will be on the same line.

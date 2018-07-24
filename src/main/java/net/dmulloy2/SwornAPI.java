@@ -31,7 +31,8 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 public class SwornAPI
 {
 	private static boolean registered = false;
-	public static final void checkRegistrations()
+
+	public static void checkRegistrations()
 	{
 		if (! registered)
 		{

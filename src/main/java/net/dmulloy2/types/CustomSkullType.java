@@ -69,16 +69,18 @@ public enum CustomSkullType
 	private final String owner;
 	private final String[] toConvert;
 
-	private CustomSkullType(String owner, String... toConvert)
+	CustomSkullType(String owner, String... toConvert)
 	{
 		this.owner = owner;
 		this.toConvert = toConvert;
 	}
 
 	private static final Map<String, CustomSkullType> MAP;
+
 	static
 	{
-		MAP = new HashMap<String, CustomSkullType>();
+		MAP = new HashMap<>();
+
 		for (CustomSkullType type : values())
 		{
 			MAP.put(type.name().toLowerCase(), type);

@@ -28,5 +28,5 @@ public interface IPermission
 	/**
 	 * @return This permission's node
 	 */
-	public String getNode();
+	String getNode();
 }

@@ -80,11 +80,11 @@ public class ChatUtil
 
 	@Getter
 	@AllArgsConstructor
-	private static enum Provider
+	private enum Provider
 	{
 		SPIGOT("Spigot", SpigotProvider.class),
 		PROTOCOLLIB("ProtocolLib", ProtocolLibProvider.class),
-		REFLECTION("Reflection", ReflectionProvider.class),
+		NMS("NMS", NMSProvider.class),
 		PLAINTEXT("Plaintext", PlainTextProvider.class);
 
 		private String name;

@@ -45,7 +45,7 @@ public enum ChatPosition
 
 	private final byte value;
 
-	private ChatPosition(int value)
+	ChatPosition(int value)
 	{
 		this.value = (byte) value;
 	}

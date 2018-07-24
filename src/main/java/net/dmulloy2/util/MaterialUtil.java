@@ -17,6 +17,7 @@
  */
 package net.dmulloy2.util;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import net.dmulloy2.Volatile;
 import net.dmulloy2.integration.VaultHandler;
 
 /**
@@ -44,7 +46,7 @@ public class MaterialUtil
 	 * @return The material, or null if not found
 	 * @see Material#matchMaterial(String)
 	 */
-	public static final Material getMaterial(String string)
+	public static Material getMaterial(String string)
 	{
 		Material material = Material.matchMaterial(string);
 		if (material != null)
@@ -81,42 +83,44 @@ public class MaterialUtil
 	 * @param material Material to get the name of
 	 * @return The name
 	 */
-	public static final String getName(Material material)
+	public static String getName(Material material)
 	{
 		if (material == null)
 			return "null";
 
-		// Try first with Vault
-		try
-		{
-			String vault = VaultHandler.friendlyName(material);
-			if (vault != null) return vault;
-		} catch (Throwable ex) { }
-
-		// Fall back to our method in FormatUtil
-		return FormatUtil.getFriendlyName(material.name());
+		return getName(new ItemStack(material));
 	}
 
 	/**
 	 * Gets the friendly name of an ItemStack.
-	 * 
+	 *
 	 * @param stack Stack to get the name of
 	 * @return The name
 	 */
-	public static final String getName(ItemStack stack)
+	public static String getName(ItemStack stack)
 	{
 		if (stack == null)
 			return "null";
 		
-		// Try first with Vault
 		try
 		{
-			String vault = VaultHandler.friendlyName(stack);
-			if (vault != null) return vault;
-		} catch (Throwable ex) { }
-
-		// Throw out the item data
-		return getName(stack.getType());
+			return Volatile.getName(stack);
+		} catch (Exception ex)
+		{
+			try
+			{
+				Class<?> craftItemStack = ReflectionUtil.getCraftClass("inventory.CraftItemStack");
+				Method asNMSCopy = craftItemStack.getMethod("asNMSCopy", ItemStack.class);
+				Object nmsItem = asNMSCopy.invoke(null, stack);
+				Method getItem = nmsItem.getClass().getMethod("getItem");
+				Object item = getItem.invoke(nmsItem);
+				Method getName = item.getClass().getMethod("a", nmsItem.getClass());
+				return (String) getName.invoke(item, nmsItem);
+			} catch (Exception ex1)
+			{
+				return FormatUtil.getFriendlyName(stack.getType().name());
+			}
+		}
 	}
 
 	/**
@@ -124,7 +128,7 @@ public class MaterialUtil
 	 * @param string String to parse
 	 * @return The name, or {@code -string} if parsing fails
 	 */
-	public static final String getName(String string)
+	public static String getName(String string)
 	{
 		try
 		{
@@ -140,7 +144,7 @@ public class MaterialUtil
 	 * @deprecated Renamed to {@link #getName(String)
 	 */
 	@Deprecated
-	public static final String getMaterialName(String name)
+	public static String getMaterialName(String name)
 	{
 		return getName(name);
 	}
@@ -151,7 +155,7 @@ public class MaterialUtil
 	 * @param strings List to convert
 	 * @return Converted list
 	 */
-	public static final List<Material> fromStrings(List<String> strings)
+	public static List<Material> fromStrings(List<String> strings)
 	{
 		List<Material> ret = new ArrayList<>();
 

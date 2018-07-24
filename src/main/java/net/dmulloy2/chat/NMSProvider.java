@@ -21,32 +21,42 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
+import net.dmulloy2.Volatile;
 import net.dmulloy2.handlers.LogHandler;
 import net.dmulloy2.types.ChatPosition;
 import net.dmulloy2.util.Util;
+
+import org.bukkit.entity.Player;
+
+import static net.dmulloy2.util.ReflectionUtil.getMinecraftClass;
 
 /**
  * @author dmulloy2
  */
 
-public class ReflectionProvider implements ChatProvider
+public class NMSProvider implements ChatProvider
 {
 	private Method serialize;
 	private Constructor<?> packetConstructor;
 	private Field connectionField;
+	private Method getMessageType;
 	private Method sendPacket;
 
-	protected ReflectionProvider() throws ReflectiveOperationException
+	private boolean reflected;
+
+	private void setupReflection() throws ReflectiveOperationException
 	{
+		if (reflected) return;
+		reflected = true;
+
 		Class<?> serializerClass = getMinecraftClass("ChatSerializer", "IChatBaseComponent$ChatSerializer");
 		serialize = serializerClass.getMethod("a", String.class);
 
 		Class<?> chatPacketClass = getMinecraftClass("PacketPlayOutChat");
 		Class<?> componentClass = getMinecraftClass("IChatBaseComponent");
-		packetConstructor = chatPacketClass.getConstructor(componentClass, byte.class);
+		Class<?> messageTypeClass = getMinecraftClass("ChatMessageType");
+		getMessageType = messageTypeClass.getMethod("a", byte.class);
+		packetConstructor = chatPacketClass.getConstructor(componentClass, messageTypeClass);
 
 		Class<?> entityPlayer = getMinecraftClass("EntityPlayer");
 		connectionField = entityPlayer.getField("playerConnection");
@@ -60,74 +70,35 @@ public class ReflectionProvider implements ChatProvider
 	{
 		try
 		{
-			Object component = serialize.invoke(null, ComponentSerializer.toString(message));
-			Object packet = packetConstructor.newInstance(component, position.getValue());
-
-			Method getHandle = player.getClass().getMethod("getHandle");
-			Object entityPlayer = getHandle.invoke(player);
-
-			Object playerConnection = connectionField.get(entityPlayer);
-			sendPacket.invoke(playerConnection, packet);
+			Volatile.sendMessage(player, position, message);
 			return true;
-		}
-		catch (Throwable ex)
+		} catch (Exception ex)
 		{
-			LogHandler.globalDebug(Util.getUsefulStack(ex, "sending chat packet to {0}", player.getName()));
-			return false;
+			try
+			{
+				setupReflection();
+
+				Object component = serialize.invoke(null, ComponentSerializer.toString(message));
+				Object messageType = getMessageType.invoke(null, position.getValue());
+				Object packet = packetConstructor.newInstance(component, messageType);
+
+				Method getHandle = player.getClass().getMethod("getHandle");
+				Object entityPlayer = getHandle.invoke(player);
+
+				Object playerConnection = connectionField.get(entityPlayer);
+				sendPacket.invoke(playerConnection, packet);
+				return true;
+			} catch (Exception ex2)
+			{
+				LogHandler.globalDebug(Util.getUsefulStack(ex2, "sending chat packet to {0}", player.getName()));
+				return false;
+			}
 		}
 	}
 
 	@Override
 	public String getName()
 	{
-		return "Reflection";
-	}
-
-	private static String VERSION;
-	private static String NMS;
-
-	private static boolean initialized;
-
-	private static void initialize()
-	{
-		if (! initialized)
-		{
-			initialized = true;
-
-			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-			NMS = "net.minecraft.server." + VERSION + ".";
-		}
-	}
-
-	private static Class<?> getMinecraftClass(String name)
-	{
-		initialize();
-
-		try
-		{
-			return Class.forName(NMS + name);
-		}
-		catch (Throwable ex)
-		{
-			LogHandler.globalDebug("Could not find Minecraft class {0}", NMS + name);
-			return null;
-		}
-	}
-
-	private static Class<?> getMinecraftClass(String name, String... aliases)
-	{
-		Class<?> clazz = getMinecraftClass(name);
-		if (clazz == null)
-		{
-			for (String alias : aliases)
-			{
-				clazz = getMinecraftClass(alias);
-				if (clazz != null)
-					return clazz;
-			}
-		}
-
-		return clazz;
+		return "NMS";
 	}
 }

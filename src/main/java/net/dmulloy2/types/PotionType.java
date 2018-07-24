@@ -56,7 +56,7 @@ public enum PotionType
 	private final String name;
 	private final String[] aliases;
 
-	private PotionType(String name, String... aliases)
+	PotionType(String name, String... aliases)
 	{
 		this.name = name;
 		this.aliases = aliases;

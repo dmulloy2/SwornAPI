@@ -974,7 +974,7 @@ public abstract class Command implements CommandExecutor
 		for (Syntax syntax : syntaxes)
 		{
 			int curDelta = Math.abs(syntax.size() - args.length);
-			if (curDelta < delta || curDelta == -1)
+			if (curDelta < delta || delta == -1)
 			{
 				closest = syntax;
 				delta = curDelta;

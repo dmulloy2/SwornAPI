@@ -28,5 +28,5 @@ public interface Reloadable
 	/**
 	 * Reloads settings in this class.
 	 */
-	public void reload();
+	void reload();
 }
