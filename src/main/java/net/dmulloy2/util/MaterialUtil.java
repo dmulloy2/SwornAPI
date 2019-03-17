@@ -19,7 +19,9 @@ package net.dmulloy2.util;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -37,6 +39,26 @@ import net.dmulloy2.integration.VaultHandler;
 public class MaterialUtil
 {
 	private MaterialUtil() { }
+
+	private static Map<Integer, Material> idToMaterial = new HashMap<>();
+
+	static
+	{
+		try
+		{
+			for (Material material : Material.values())
+			{
+				if (material.isLegacy())
+				{
+					idToMaterial.put(material.getId(), Bukkit.getUnsafe().fromLegacy(material));
+				}
+			}
+		}
+		catch (Throwable ex)
+		{
+			ex.printStackTrace();
+		}
+	}
 
 	/**
 	 * Gets the {@link Material} from a given string using Bukkit, Vault, or
@@ -62,6 +84,16 @@ public class MaterialUtil
 				return material;
 			}
 		} catch (Throwable ignored) { }
+
+		try
+		{
+			int id = Integer.parseInt(string);
+			material = idToMaterial.get(id);
+			if (material != null)
+			{
+				return material;
+			}
+		} catch (NumberFormatException ignored) { }
 
 		// Resolve using Vault, if applicable
 		if (Bukkit.getPluginManager() != null && Bukkit.getPluginManager().isPluginEnabled("Vault"))
@@ -107,7 +139,7 @@ public class MaterialUtil
 		try
 		{
 			return Volatile.getName(stack);
-		} catch (Exception ex)
+		} catch (Throwable ignored)
 		{
 			try
 			{
@@ -118,7 +150,7 @@ public class MaterialUtil
 				Object item = getItem.invoke(nmsItem);
 				Method getName = item.getClass().getMethod("a", nmsItem.getClass());
 				return (String) getName.invoke(item, nmsItem);
-			} catch (Exception ex1)
+			} catch (Throwable ignored1)
 			{
 				return FormatUtil.getFriendlyName(stack.getType().name());
 			}
@@ -137,7 +169,7 @@ public class MaterialUtil
 			ItemStack stack = ItemUtil.readItem(string);
 			if (stack != null)
 				return getName(stack);
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 
 		return "-" + string;
 	}

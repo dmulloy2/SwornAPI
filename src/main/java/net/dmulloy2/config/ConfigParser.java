@@ -164,6 +164,14 @@ public final class ConfigParser
 										break;
 									// Check for nulls with materials
 									case PARSE_MATERIAL:
+										String input = value.toString();
+
+										try
+										{
+											Integer.parseInt(input);
+											plugin.getLogHandler().log(Level.WARNING, "Use of type IDs is discouraged. Please change \"{0}\" in your config", path);
+										} catch (NumberFormatException ignored) { }
+
 										value = MaterialUtil.getMaterial(value.toString());
 										if (value == null && ! options.allowNull())
 										{
@@ -177,6 +185,13 @@ public final class ConfigParser
 										for (Object element : (List<Object>) value)
 										{
 											String string = element.toString();
+
+											try
+											{
+												Integer.parseInt(string);
+												plugin.getLogHandler().log(Level.WARNING, "Use of type IDs is discouraged. Please change \"{0}\" in your config", path);
+											} catch (NumberFormatException ignored) { }
+
 											Material material = MaterialUtil.getMaterial(string);
 											if (material == null && ! options.allowNull())
 											{

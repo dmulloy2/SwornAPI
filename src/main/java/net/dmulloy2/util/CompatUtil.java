@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -140,6 +141,30 @@ public class CompatUtil
 		catch (LinkageError e)
 		{
 			player.setMaxHealth(value);
+		}
+	}
+
+	public static void hidePlayer(Player player1, Plugin plugin, Player player2)
+	{
+		try
+		{
+			player1.hidePlayer(plugin, player2);
+		}
+		catch (LinkageError e)
+		{
+			player1.showPlayer(player2);
+		}
+	}
+
+	public static void showPlayer(Player player1, Plugin plugin, Player player2)
+	{
+		try
+		{
+			player1.showPlayer(plugin, player2);
+		}
+		catch (LinkageError e)
+		{
+			player1.showPlayer(player2);
 		}
 	}
 }

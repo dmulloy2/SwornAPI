@@ -19,6 +19,7 @@ package net.dmulloy2.types;
 
 import java.util.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -43,7 +44,16 @@ public class MyMaterial
 	public MyMaterial(Material material, short data, boolean ignoreData)
 	{
 		this.ignoreData = ignoreData;
-		this.material = material;
+
+		if (data != 0)
+		{
+			MaterialData mData = new MaterialData(material, (byte) data);
+			this.material = Bukkit.getUnsafe().fromLegacy(mData);
+		} else
+		{
+			this.material = material;
+		}
+
 		this.data = data;
 	}
 

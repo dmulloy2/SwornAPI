@@ -45,7 +45,6 @@ public class VersioningTest
 	{
 		Versioning.setVersion(null);
 		BukkitTesting.setBukkitVersion("1.7.10-R0.1-SNAPSHOT");
-		System.out.println(Versioning.getVersion());
 		assertTrue(Versioning.getVersion().wasDropped());
 		assertFalse(Versioning.isSupported());
 		BukkitTesting.resetBukkitVersion();
