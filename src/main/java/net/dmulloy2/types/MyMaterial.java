@@ -213,7 +213,7 @@ public class MyMaterial
 			Material material = MaterialUtil.getMaterial(string);
 			if (material != null)
 				return new MyMaterial(material);
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return null;
 	}
 }

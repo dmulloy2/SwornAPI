@@ -60,7 +60,7 @@ public @interface ValueOptions
 	 * 
 	 * @author dmulloy2
 	 */
-	public static enum ValueOption
+	enum ValueOption
 	{
 		FORMAT,
 		LIST_LOWER_CASE,

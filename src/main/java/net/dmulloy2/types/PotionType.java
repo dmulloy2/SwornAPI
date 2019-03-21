@@ -126,7 +126,7 @@ public enum PotionType
 		{
 			return org.bukkit.potion.PotionType.valueOf(
 				string.toUpperCase().replace(" ", "_"));
-		} catch (IllegalArgumentException ex) { }
+		} catch (IllegalArgumentException ignored) { }
 		return null;
 	}
 

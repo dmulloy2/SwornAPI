@@ -210,7 +210,7 @@ public class TextComponent extends BaseComponent
 			components.add(new TextComponent(""));
 		}
 
-		return components.toArray(new BaseComponent[components.size()]);
+		return components.toArray(new BaseComponent[0]);
 	}
 
 	public static List<BaseComponent[]> fromLegacyList(List<String> list)

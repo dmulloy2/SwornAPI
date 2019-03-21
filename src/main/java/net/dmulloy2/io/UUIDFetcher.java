@@ -54,7 +54,7 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	public UUIDFetcher(List<String> names)
 	{
 		Validate.notNull(names, "names cannot be null!");
-		this.namesList = new ArrayList<List<String>>();
+		this.namesList = new ArrayList<>();
 
 		int namesCopied = 0;
 		while (namesCopied < names.size())
@@ -69,10 +69,8 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 	{
 		Map<String, UUID> uuidMap = new HashMap<>();
 
-		Iterator<List<String>> iter = namesList.iterator();
-		while (iter.hasNext())
+		for (List<String> names : namesList)
 		{
-			List<String> names = iter.next();
 			Iterator<String> iter1 = names.iterator();
 			while (iter1.hasNext())
 			{
@@ -94,8 +92,8 @@ public class UUIDFetcher implements Callable<Map<String, UUID>>
 				JSONObject jsonProfile = (JSONObject) profile;
 				String id = (String) jsonProfile.get("id");
 				String name = (String) jsonProfile.get("name");
-				UUID uuid = UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-"
-						+ id.substring(16, 20) + "-" + id.substring(20, 32));
+				UUID uuid = UUID.fromString(id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16)
+				                            + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
 				uuidMap.put(name, uuid);
 			}
 		}

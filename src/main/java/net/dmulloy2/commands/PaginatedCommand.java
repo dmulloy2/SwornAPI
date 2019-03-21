@@ -89,7 +89,7 @@ public abstract class PaginatedCommand extends Command
 	 */
 	public List<String> getPage(int index)
 	{
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		lines.add(getHeader(index));
 		lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
 		String footer = getFooter();
@@ -115,7 +115,7 @@ public abstract class PaginatedCommand extends Command
 	 */
 	public List<String> getLines(int startIndex, int endIndex)
 	{
-		List<String> lines = new ArrayList<String>();
+		List<String> lines = new ArrayList<>();
 		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
 		{
 			String line = getLine(i);

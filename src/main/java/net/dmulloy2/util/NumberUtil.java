@@ -45,7 +45,7 @@ public class NumberUtil
 		try
 		{
 			return Integer.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 
@@ -84,7 +84,7 @@ public class NumberUtil
 		try
 		{
 			return Float.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 
@@ -123,7 +123,7 @@ public class NumberUtil
 		try
 		{
 			return Double.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 
@@ -162,7 +162,7 @@ public class NumberUtil
 		try
 		{
 			return Long.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 
@@ -201,7 +201,7 @@ public class NumberUtil
 		try
 		{
 			return Short.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 
@@ -240,7 +240,7 @@ public class NumberUtil
 		try
 		{
 			return Byte.valueOf(object.toString());
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return -1;
 	}
 

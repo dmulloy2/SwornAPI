@@ -33,7 +33,7 @@ public class CommandException extends RuntimeException
 		this(reason, "");
 	}
 
-	public static enum Reason
+	public enum Reason
 	{
 		/**
 		 * Breaks out of command execution without a message

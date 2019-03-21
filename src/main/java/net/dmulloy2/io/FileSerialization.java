@@ -151,7 +151,7 @@ public class FileSerialization
 				}
 				else if (field.getType().isAssignableFrom(String.class))
 				{
-					if ((String) field.get(object) != null)
+					if (field.get(object) != null)
 						data.put(field.getName(), field.get(object));
 				}
 				else if (field.getType().isAssignableFrom(Map.class))
@@ -166,7 +166,7 @@ public class FileSerialization
 				}
 
 				field.setAccessible(accessible);
-			} catch (Throwable ex) { }
+			} catch (Throwable ignored) { }
 		}
 
 		return data;

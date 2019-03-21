@@ -199,7 +199,7 @@ public class ComponentBuilder
 	 */
 	public BaseComponent[] create()
 	{
-		return parts.toArray(new BaseComponent[parts.size()]);
+		return parts.toArray(new BaseComponent[0]);
 	}
 
 	/**

@@ -83,10 +83,8 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		Iterator<String> iter = list.iterator();
-		while (iter.hasNext())
+		for (String element : list)
 		{
-			String element = iter.next();
 			if (string.equalsIgnoreCase(element))
 				return true;
 		}
@@ -104,12 +102,6 @@ public class ListUtil
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
-		Iterator<String> iter = list.iterator();
-		while (iter.hasNext())
-		{
-			String element = iter.next();
-			if (string.equalsIgnoreCase(element))
-				iter.remove();
-		}
+		list.removeIf(string::equalsIgnoreCase);
 	}
 }

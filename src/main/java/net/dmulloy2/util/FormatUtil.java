@@ -52,7 +52,7 @@ public class FormatUtil
 		try
 		{
 			format = MessageFormat.format(format, objects);
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 
 		return replaceColors(format);
 	}
@@ -125,7 +125,7 @@ public class FormatUtil
 			Method method = obj.getClass().getMethod("toString");
 			if (method.getDeclaringClass().getSuperclass() == null)
 				return obj.getClass().getSimpleName();
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return getFriendlyName(obj.toString());
 	}
 

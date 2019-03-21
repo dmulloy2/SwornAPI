@@ -43,5 +43,5 @@ public enum CommandVisibility
 	/**
 	 * Invisible
 	 */
-	NONE;
+	NONE
 }

@@ -71,7 +71,7 @@ public class ChatUtil
 			try
 			{
 				return available.getClazz().newInstance();
-			} catch (Throwable ex) { }
+			} catch (Throwable ignored) { }
 		}
 
 		// Fall back to plain text

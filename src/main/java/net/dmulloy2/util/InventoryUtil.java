@@ -130,9 +130,8 @@ public class InventoryUtil
 
 		int ret = 0;
 		ItemStack[] items = inventory.getContents();
-		for (int slot = 0; slot < items.length; slot++)
+		for (ItemStack item : items)
 		{
-			ItemStack item = items[slot];
 			if (item != null && item.getType() != Material.AIR)
 			{
 				Material mat = item.getType();
@@ -141,7 +140,9 @@ public class InventoryUtil
 				if (mat == type)
 				{
 					if (dat == -1 || dat == duration)
+					{
 						ret += amt;
+					}
 				}
 			}
 		}
@@ -175,30 +176,29 @@ public class InventoryUtil
 				int itmAmt = items[slot].getAmount();
 				if ((mat == type) && ((dat == duration) || (dat == -1)))
 				{
-					if (amt > 0)
+					if (itmAmt >= amt)
 					{
-						if (itmAmt >= amt)
-						{
-							itmAmt -= amt;
-							amt = 0;
-						}
-						else
-						{
-							amt = start - itmAmt;
-							itmAmt = 0;
-						}
-						if (itmAmt > 0)
-						{
-							inventory.getItem(slot).setAmount(itmAmt);
-						}
-						else
-						{
-							inventory.setItem(slot, null);
-						}
+						itmAmt -= amt;
+						amt = 0;
+					}
+					else
+					{
+						amt = start - itmAmt;
+						itmAmt = 0;
+					}
+					if (itmAmt > 0)
+					{
+						inventory.getItem(slot).setAmount(itmAmt);
+					}
+					else
+					{
+						inventory.setItem(slot, null);
 					}
 
 					if (amt <= 0)
+					{
 						return;
+					}
 				}
 			}
 		}
@@ -213,26 +213,26 @@ public class InventoryUtil
 
 	private static Map<Integer, ItemStack> addOversizedItems(Inventory inventory, int oversizedStacks, ItemStack... items)
 	{
-		Map<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+		Map<Integer, ItemStack> leftover = new HashMap<>();
 
 		ItemStack[] combined = new ItemStack[items.length];
-		for (int i = 0; i < items.length; i++)
+		for (ItemStack item1 : items)
 		{
-			if (items[i] == null || items[i].getAmount() < 1)
+			if (item1 == null || item1.getAmount() < 1)
 				continue;
 
 			for (int j = 0; j < combined.length; j++)
 			{
 				if (combined[j] == null)
 				{
-					combined[j] = items[i].clone();
-					combined[j].setData(items[i].getData());
+					combined[j] = item1.clone();
+					combined[j].setData(item1.getData());
 					break;
 				}
 
-				if (combined[j].isSimilar(items[i]))
+				if (combined[j].isSimilar(item1))
 				{
-					combined[j].setAmount(combined[j].getAmount() + items[i].getAmount());
+					combined[j].setAmount(combined[j].getAmount() + item1.getAmount());
 					break;
 				}
 			}

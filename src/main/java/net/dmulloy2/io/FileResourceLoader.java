@@ -46,7 +46,7 @@ public class FileResourceLoader extends ClassLoader
 			try
 			{
 				return file.toURI().toURL();
-			} catch (Throwable ex) { }
+			} catch (Throwable ignored) { }
 		}
 
 		return super.getResource(string);
@@ -61,7 +61,7 @@ public class FileResourceLoader extends ClassLoader
 			try
 			{
 				return new FileInputStream(file);
-			} catch (Throwable ex) { }
+			} catch (Throwable ignored) { }
 		}
 
 		return super.getResourceAsStream(string);

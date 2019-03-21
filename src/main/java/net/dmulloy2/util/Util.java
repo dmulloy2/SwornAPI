@@ -256,7 +256,7 @@ public class Util
 		try
 		{
 			return getWorkingJar(Class.forName(clazzName));
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return null;
 	}
 
@@ -274,7 +274,7 @@ public class Util
 			path = URLDecoder.decode(path, "UTF-8");
 			path = path.substring(path.lastIndexOf("/") + 1);
 			return ! path.isEmpty() ? path : null;
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return null;
 	}
 

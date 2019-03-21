@@ -151,8 +151,7 @@ public final class CustomScoreboard
 
 	private void addOrReplace(Entry entry)
 	{
-		if (entries.contains(entry))
-			entries.remove(entry);
+		entries.remove(entry);
 		entries.add(entry);
 	}
 
@@ -255,7 +254,7 @@ public final class CustomScoreboard
 		try
 		{
 			return score.isScoreSet();
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 		return true;
 	}
 
