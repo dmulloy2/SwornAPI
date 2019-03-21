@@ -17,10 +17,7 @@
  */
 package net.dmulloy2.util;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -67,82 +64,66 @@ public class ItemUtil
 		if (string.startsWith("potion:"))
 			return readPotion(string);
 
-		Material material = null;
-		int amount = -1;
-		short data = 0;
-
-		// Meta
-		final String meta = string;
-		Map<Enchantment, Integer> enchantments = new LinkedHashMap<>();
+		String materialStr = string, amountStr = "";
+		Map<Enchantment, Integer> enchants = new HashMap<>();
 
 		string = string.replaceAll("\\s", "");
 		if (string.contains(","))
 		{
-			String str = string.substring(0, string.indexOf(","));
-			if (str.contains(":"))
-			{
-				String[] split = str.split(":");
-				material = MaterialUtil.getMaterial(split[0]);
-				if (material == null)
-					throw new NullPointerException("Null material \"" + split[0] + "\"");
+			String[] split = string.split(",");
 
-				data = NumberUtil.toShort(split[1]);
-			}
-			else
-			{
-				material = MaterialUtil.getMaterial(str);
-				if (material == null)
-					throw new NullPointerException("Null material \"" + str + "\"");
-			}
+			materialStr = split[0];
+			amountStr = split[1];
 
-			str = string.substring(string.indexOf(",") + 1);
-			if (str.contains(","))
+			for (int i = 2; i < split.length; i++)
 			{
-				amount = NumberUtil.toInt(str.substring(0, str.indexOf(",")));
-				if (amount <= 0)
-					throw new IllegalArgumentException("Illegal amount: " + str.substring(0, str.indexOf(",")));
+				String[] enchSplit = split[i].split(":");
 
-				str = str.substring(str.indexOf(",") + 1);
-				if (! str.isEmpty())
+				Enchantment enchant = EnchantmentType.toEnchantment(enchSplit[0]);
+				int level = NumberUtil.toInt(enchSplit[1]);
+
+				if (enchant != null && level > 0)
 				{
-					String[] split = str.split(",");
-					for (String ench : split)
-					{
-						if (ench.contains(":"))
-						{
-							Enchantment enchant = EnchantmentType.toEnchantment(ench.substring(0, ench.indexOf(":")));
-							int level = NumberUtil.toInt(ench.substring(ench.indexOf(":") + 1));
-
-							if (enchant != null && level > 0)
-							{
-								enchantments.put(enchant, level);
-							}
-						}
-					}
+					enchants.put(enchant, level);
 				}
 			}
-			else
+		}
+
+		short data = 0;
+		if (materialStr.contains(":"))
+		{
+			String[] split = materialStr.split(":");
+			materialStr = split[0];
+
+			data = NumberUtil.toShort(split[1]);
+			if (data < 0)
 			{
-				amount = NumberUtil.toInt(str);
-				if (amount <= 0)
-					throw new IllegalArgumentException("Illegal amount: " + str);
+				throw new IllegalArgumentException("Invalid data: " + split[1]);
 			}
 		}
-		else
+
+		Material material = MaterialUtil.getMaterial(materialStr);
+		if (material == null)
 		{
-			// They must've just specified a material or id
-			material = MaterialUtil.getMaterial(string);
-			if (material == null)
-				throw new NullPointerException("Null material \"" + string + "\"");
-			amount = 1;
+			throw new NullPointerException("Invalid material: " + materialStr);
 		}
 
-		ItemStack ret = new ItemStack(material, amount, data);
-		ret.addUnsafeEnchantments(enchantments);
+		int amount = 1;
+		if (!amountStr.isEmpty())
+		{
+			amount = NumberUtil.toInt(amountStr);
+			if (amount <= 0)
+			{
+				throw new IllegalArgumentException("Illegal amount: " + amountStr);
+			}
+		}
+
+		ItemStack item = new ItemStack(material, amount, data);
+		item.addUnsafeEnchantments(enchants);
 
 		// Parse meta
-		parseItemMeta(ret, meta);
-		return ret;
+		parseItemMeta(item, string);
+		return item;
 	}
 
 	/**
@@ -309,7 +290,7 @@ public class ItemUtil
 
 			// TODO: Firework and Book support
 			item.setItemMeta(meta);
-		} catch (Throwable ex) { }
+		} catch (Throwable ignored) { }
 	}
 
 	/**

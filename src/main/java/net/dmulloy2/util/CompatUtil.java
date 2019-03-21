@@ -50,7 +50,7 @@ public class CompatUtil
 		try
 		{
 			Material material = splash ? Material.SPLASH_POTION : Material.POTION;
-			PotionData data = new PotionData(type, level == 2, extended);
+			PotionData data = new PotionData(type, extended, level > 1);
 			ItemStack potion = new ItemStack(material, amount);
 			PotionMeta meta = (PotionMeta) potion.getItemMeta();
 			meta.setBasePotionData(data);

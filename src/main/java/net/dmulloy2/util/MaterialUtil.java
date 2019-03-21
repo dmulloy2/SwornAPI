@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.dmulloy2.Volatile;
+import net.dmulloy2.integration.VaultHandler;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import net.dmulloy2.Volatile;
-import net.dmulloy2.integration.VaultHandler;
 
 /**
  * Utility class for dealing with Materials.
@@ -105,7 +105,7 @@ public class MaterialUtil
 				{
 					return material;
 				}
-			} catch (Throwable ex) { }
+			} catch (Throwable ignored) { }
 		}
 
 		return null;

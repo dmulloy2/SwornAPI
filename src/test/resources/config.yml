@@ -6,4 +6,8 @@ materials:
   - "golden_apple"
   - "diamond_block"
 
-item: "golden_apple, 5"
+items:
+  - "diamond_sword, 1, sharp:5, dura:3, fireaspect:2, name:&4&lOathbreaker"
+  - "golden_apple, 2"
+  - "flint_and_steel"
+  - "potion: speed, 2, 1, false, true"
