@@ -17,8 +17,6 @@
  */
 package net.dmulloy2.integration;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
@@ -29,6 +27,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A dependency provider for optional {@link Plugin} dependencies.
@@ -48,22 +48,62 @@ import org.bukkit.plugin.Plugin;
 
 public class DependencyProvider<T extends Plugin>
 {
-	protected String name;
+
 	protected T dependency;
 	protected boolean enabled;
 
+	private final int minVersion;
+	protected final String name;
 	protected final SwornPlugin handler;
 
-	@SuppressWarnings("unchecked")
 	public DependencyProvider(final SwornPlugin handler, final String name)
+	{
+		this(handler, name, new int[0]);
+	}
+
+	public DependencyProvider(final SwornPlugin handler, final String name, int... minVersion)
 	{
 		this.handler = checkNotNull(handler, "handler cannot be null!");
 		this.name = checkNotNull(name, "name cannot be null!");
+		this.minVersion = condense(minVersion);
+
+		handler.getServer().getPluginManager().registerEvents(new Listener()
+		{
+			@EventHandler
+			public void onPluginEnable(PluginEnableEvent event)
+			{
+				if (dependency == null && event.getPlugin().getName().equals(name))
+				{
+					enable();
+				}
+			}
+
+			@EventHandler
+			public void onPluginDisable(PluginDisableEvent event)
+			{
+				if (dependency != null && event.getPlugin().getName().equals(name))
+				{
+					disable();
+					handler.getLogHandler().log("{0} integration disabled.", name);
+				}
+			}
+		}, handler);
+
+		enable();
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void enable()
+	{
+		if (dependency != null)
+		{
+			return;
+		}
 
 		try
 		{
 			dependency = (T) handler.getServer().getPluginManager().getPlugin(name);
-			if (dependency != null)
+			if (dependency != null && versionCheck())
 			{
 				enabled = true;
 				onEnable();
@@ -74,41 +114,13 @@ public class DependencyProvider<T extends Plugin>
 		{
 			handler.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "hooking into " + name));
 		}
+	}
 
-		handler.getServer().getPluginManager().registerEvents(new Listener()
-		{
-			@EventHandler
-			public void onPluginEnable(PluginEnableEvent event)
-			{
-				if (dependency == null && event.getPlugin().getName().equals(name))
-				{
-					try
-					{
-						dependency = (T) event.getPlugin();
-						enabled = true;
-						onEnable();
-						handler.getLogHandler().log("{0} integration enabled.", name);
-					}
-					catch (Throwable ex)
-					{
-						handler.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "hooking into " + name));
-					}
-				}
-			}
-
-			@EventHandler
-			public void onPluginDisable(PluginDisableEvent event)
-			{
-				if (dependency != null && event.getPlugin().getName().equals(name))
-				{
-					onDisable();
-					enabled = false;
-					dependency = null;
-					handler.getLogHandler().log("{0} integration disabled.", name);
-				}
-			}
-
-		}, handler);
+	protected void disable()
+	{
+		onDisable();
+		enabled = false;
+		dependency = null;
 	}
 
 	/**
@@ -150,5 +162,54 @@ public class DependencyProvider<T extends Plugin>
 	public boolean isEnabled()
 	{
 		return enabled && dependency != null;
+	}
+
+	// ---- Version Checking
+
+	private boolean versionCheck()
+	{
+		if (dependency != null)
+		{
+			String version = dependency.getDescription().getVersion();
+			if (version.contains("-"))
+			{
+				version = version.split("-")[0];
+			}
+
+			int condensed = condense(version);
+			return condensed >= minVersion;
+		}
+
+		return false;
+	}
+
+	private int condense(String version)
+	{
+		// assume that they will all (at least roughly) follow semver
+		int major, minor = 0, patch = 0;
+
+		String[] split = version.split("\\.");
+		major = Integer.parseInt(split[0]);
+
+		if (split.length > 1)
+		{
+			minor = Integer.parseInt(split[1]);
+		}
+
+		if (split.length > 2)
+		{
+			patch = Integer.parseInt(split[2]);
+		}
+
+		return condense(major, minor, patch);
+	}
+
+	private int condense(int... numbers)
+	{
+		int major = numbers.length > 0 ? numbers[0] : 0;
+		int minor = numbers.length > 1 ? numbers[1] : 0;
+		int patch = numbers.length > 2 ? numbers[2] : 0;
+
+		return (10000 * major) + (100 * minor) + patch;
 	}
 }
