@@ -5,14 +5,14 @@ package net.dmulloy2;
 
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_13_R2.DispenserRegistry;
+import net.minecraft.server.v1_15_R1.DispenserRegistry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_13_R2.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_13_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_13_R2.util.Versioning;
+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_15_R1.util.Versioning;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;
@@ -34,7 +34,7 @@ public class BukkitTesting
 
 			System.setProperty("swornapi.debug", "true");
 
-			DispenserRegistry.c(); // Basically registers everything
+			DispenserRegistry.init(); // Basically registers everything
 
 			// Mock the server object
 			Server mockedServer = mock(Server.class);

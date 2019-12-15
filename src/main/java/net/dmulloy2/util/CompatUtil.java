@@ -47,25 +47,13 @@ public class CompatUtil
 	 */
 	public static ItemStack createPotion(PotionType type, int amount, int level, boolean splash, boolean extended)
 	{
-		try
-		{
-			Material material = splash ? Material.SPLASH_POTION : Material.POTION;
-			PotionData data = new PotionData(type, extended, level > 1);
-			ItemStack potion = new ItemStack(material, amount);
-			PotionMeta meta = (PotionMeta) potion.getItemMeta();
-			meta.setBasePotionData(data);
-			potion.setItemMeta(meta);
-			return potion;
-		}
-		catch (LinkageError e)
-		{
-			Potion potion = new Potion(1);
-			potion.setType(type);
-			potion.setLevel(level);
-			potion.setSplash(splash);
-			potion.setHasExtendedDuration(extended);
-			return potion.toItemStack(amount);
-		}
+		Material material = splash ? Material.SPLASH_POTION : Material.POTION;
+		PotionData data = new PotionData(type, extended, level > 1);
+		ItemStack potion = new ItemStack(material, amount);
+		PotionMeta meta = (PotionMeta) potion.getItemMeta();
+		meta.setBasePotionData(data);
+		potion.setItemMeta(meta);
+		return potion;
 	}
 
 	/**

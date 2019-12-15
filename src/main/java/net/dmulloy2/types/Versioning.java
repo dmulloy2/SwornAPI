@@ -39,6 +39,14 @@ public class Versioning
 	public enum Version
 	{
 		/**
+		 * Minecraft 1.15, the bee update
+		 */
+		MC_115("Minecraft 1.15.x", "1.15"),
+		/**
+		 * Minecraft 1.14, the village and pillage update
+		 */
+		MC_114("Minecraft 1.14.x", "1.14"),
+		/**
 		 * Minecraft 1.13, update aquatic / the flattening
 		 */
 		MC_113("Minecraft 1.13.x", "1.13"),
