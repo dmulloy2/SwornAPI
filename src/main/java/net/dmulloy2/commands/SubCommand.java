@@ -30,7 +30,7 @@ public abstract class SubCommand extends Command
 		this.parent = parent;
 	}
 
-	protected final boolean argMatchesIdentifier(String arg)
+	protected boolean argMatchesIdentifier(String arg)
 	{
 		if (arg.equalsIgnoreCase(name))
 			return true;

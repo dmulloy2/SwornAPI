@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -65,7 +67,7 @@ public abstract class Command implements CommandExecutor
 
 	protected CommandSender sender;
 	protected Player player;
-	protected String args[];
+	protected String[] args;
 
 	protected String name;
 	protected String description;
@@ -73,7 +75,7 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	protected List<SubCommand> subCommands;
+	private List<Command> subCommands;
 	protected Command parent;
 
 	protected List<Syntax> syntaxes;
@@ -114,7 +116,7 @@ public abstract class Command implements CommandExecutor
 	{
 		if (! subCommands.isEmpty() && args.length != 0)
 		{
-			for (SubCommand subCommand : subCommands)
+			for (Command subCommand : subCommands)
 			{
 				if (subCommand.argMatchesIdentifier(args[0]))
 				{
@@ -162,6 +164,7 @@ public abstract class Command implements CommandExecutor
 
 		try
 		{
+			prePerform();
 			perform();
 		}
 		catch (CommandException ex)
@@ -191,6 +194,11 @@ public abstract class Command implements CommandExecutor
 			sendMessage(builder.create());
 		}
 	}
+
+	/**
+	 * Executed right before perform. Useful if plugins are making the same check for each execution.
+	 */
+	public void prePerform() { }
 
 	/**
 	 * Performs this command after permission and argument length checks.
@@ -614,9 +622,24 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @param command Command to add
 	 */
-	protected final void addSubCommand(SubCommand command)
+	protected final void addSubCommand(Command command)
 	{
+		command.parent = this;
 		subCommands.add(command);
+	}
+
+	protected boolean argMatchesIdentifier(String arg)
+	{
+		if (arg.equalsIgnoreCase(name))
+			return true;
+
+		for (String alias : aliases)
+		{
+			if (arg.equalsIgnoreCase(alias))
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -644,7 +667,7 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @return The list
 	 */
-	protected final List<SubCommand> getSubCommands()
+	protected final List<Command> getSubCommands()
 	{
 		return subCommands;
 	}
@@ -659,7 +682,7 @@ public abstract class Command implements CommandExecutor
 	{
 		List<String> ret = new ArrayList<>();
 
-		for (SubCommand cmd : getSubCommands())
+		for (Command cmd : getSubCommands())
 		{
 			ret.addAll(cmd.getUsageTemplate(displayHelp));
 		}
@@ -687,7 +710,7 @@ public abstract class Command implements CommandExecutor
 	{
 		List<BaseComponent[]> ret = new ArrayList<>();
 
-		for (SubCommand cmd : getSubCommands())
+		for (Command cmd : getSubCommands())
 		{
 			ret.addAll(cmd.getFancyUsageTemplate(list));
 		}
@@ -804,7 +827,7 @@ public abstract class Command implements CommandExecutor
 		return message ? checkNotNull(player, "Player \"&c{0}&4\" not found!", arg) : player;
 	}
 
-	protected <T> T checkNotNull(T value, String message, Object... args)
+	protected <T> T checkNotNull(@Nullable T value, String message, Object... args)
 	{
 		if (value == null)
 			throw new CommandException(Reason.VALIDATE, message, args);
@@ -821,6 +844,11 @@ public abstract class Command implements CommandExecutor
 	{
 		if (! hasPermission(sender, permission, true))
 			throw new CommandException(Reason.BREAK);
+	}
+
+	protected void stopExecution()
+	{
+		throw new CommandException(Reason.BREAK);
 	}
 
 	/**

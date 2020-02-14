@@ -95,19 +95,6 @@ public class MaterialUtil
 			}
 		} catch (NumberFormatException ignored) { }
 
-		// Resolve using Vault, if applicable
-		if (Bukkit.getPluginManager() != null && Bukkit.getPluginManager().isPluginEnabled("Vault"))
-		{
-			try
-			{
-				material = VaultHandler.resolve(string);
-				if (material != null)
-				{
-					return material;
-				}
-			} catch (Throwable ignored) { }
-		}
-
 		return null;
 	}
 
