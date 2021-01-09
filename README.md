@@ -2,8 +2,8 @@
 SwornAPI is a collection of useful classes that I use in most of my projects. It contains APIs for configuration, commands, chat, GUIs, reflection, integration, I/O, and more. 
 
 ### Resources
-* [Download](http://ci.dmulloy2.net/job/SwornAPI)
-* [JavaDocs](http://ci.dmulloy2.net/job/SwornAPI/javadoc)
+* [Download](https://ci.dmulloy2.net/job/SwornAPI)
+* [JavaDocs](https://ci.dmulloy2.net/job/SwornAPI/javadoc)
 
 ### Building
 SwornAPI is built using Maven. It requires Spigot and the Spigot API, which can be obtained [here](https://www.spigotmc.org/wiki/buildtools/).
@@ -17,17 +17,17 @@ SwornAPI is best utilized as a Maven dependency:
 ````xml
 <repositories>
   <repository>
-    <id>dmulloy2-repo</id>
-    <url>http://repo.dmulloy2.net/content/groups/public/</url>
+    <id>jitpack</id>
+    <url>https://jitpack.io</url>
   </repository>
   <!-- And so on -->
 </repository>
 
 <dependencies>
   <dependency>
-    <groupId>net.dmulloy2</groupId>
-    <artifactId>swornapi</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <groupId>com.github.dmulloy2</groupId>
+    <artifactId>SwornAPI</artifactId>
+    <version>-SNAPSHOT</version>
   </dependency>
   <!-- And so on -->
 </dependencies>

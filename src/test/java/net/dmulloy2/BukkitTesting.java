@@ -5,14 +5,14 @@ package net.dmulloy2;
 
 import java.util.logging.Logger;
 
-import net.minecraft.server.v1_15_R1.DispenserRegistry;
+import net.minecraft.server.v1_16_R3.DispenserRegistry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_15_R1.util.Versioning;
+import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_16_R3.util.Versioning;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;

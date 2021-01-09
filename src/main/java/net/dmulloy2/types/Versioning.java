@@ -39,6 +39,10 @@ public class Versioning
 	public enum Version
 	{
 		/**
+		 * Minecraft 1.16, the nether update
+		 */
+		MC_116("Minecraft 1.16.x", "1.16"),
+		/**
 		 * Minecraft 1.15, the bee update
 		 */
 		MC_115("Minecraft 1.15.x", "1.15"),

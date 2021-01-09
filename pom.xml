@@ -22,7 +22,7 @@
       <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
     </repository>
     <repository>
-      <id>vault-repo</id>
+      <id>jitpack</id>
       <url>https://jitpack.io/</url>
     </repository>
   </repositories>
@@ -87,23 +87,23 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.15-R0.1-SNAPSHOT</version>
+      <version>1.16.4-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.15-R0.1-SNAPSHOT</version>
+      <version>1.16.4-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.16.4</version>
+      <version>1.18.16</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.comphenix.protocol</groupId>
+      <groupId>com.github.dmulloy2</groupId>
       <artifactId>ProtocolLib</artifactId>
-      <version>4.5.0</version>
+      <version>-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.github.MilkBowl</groupId>
