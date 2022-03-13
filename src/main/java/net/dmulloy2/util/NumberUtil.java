@@ -44,7 +44,7 @@ public class NumberUtil
 
 		try
 		{
-			return Integer.valueOf(object.toString());
+			return Integer.parseInt(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -83,7 +83,7 @@ public class NumberUtil
 
 		try
 		{
-			return Float.valueOf(object.toString());
+			return Float.parseFloat(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -122,7 +122,7 @@ public class NumberUtil
 
 		try
 		{
-			return Double.valueOf(object.toString());
+			return Double.parseDouble(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -161,7 +161,7 @@ public class NumberUtil
 
 		try
 		{
-			return Long.valueOf(object.toString());
+			return Long.parseLong(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -200,7 +200,7 @@ public class NumberUtil
 
 		try
 		{
-			return Short.valueOf(object.toString());
+			return Short.parseShort(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -239,7 +239,7 @@ public class NumberUtil
 
 		try
 		{
-			return Byte.valueOf(object.toString());
+			return Byte.parseByte(object.toString());
 		} catch (Throwable ignored) { }
 		return -1;
 	}
@@ -273,8 +273,7 @@ public class NumberUtil
 	public static double roundNumDecimals(double d, int num)
 	{
 		StringBuilder format = new StringBuilder("#.");
-		for (int i = 0; i < num; i++)
-			format.append("#");
+		format.append("#".repeat(Math.max(0, num)));
 		DecimalFormat f = new DecimalFormat(format.toString());
 		return toDouble(f.format(d));
 	}
@@ -299,21 +298,19 @@ public class NumberUtil
 	 */
 	public static String getNumeral(int number)
 	{
-		switch (number)
-		{
-			case 1: return "I";
-			case 2: return "II";
-			case 3: return "III";
-			case 4: return "IV";
-			case 5: return "V";
-			case 6: return "VI";
-			case 7: return "VII";
-			case 8: return "VIII";
-			case 9: return "IX";
-			case 10: return "X";
-		}
-
-		return String.valueOf(number);
+		return switch (number) {
+			case 1 -> "I";
+			case 2 -> "II";
+			case 3 -> "III";
+			case 4 -> "IV";
+			case 5 -> "V";
+			case 6 -> "VI";
+			case 7 -> "VII";
+			case 8 -> "VIII";
+			case 9 -> "IX";
+			case 10 -> "X";
+			default -> String.valueOf(number);
+		};
 	}
 
 	/**
@@ -324,20 +321,18 @@ public class NumberUtil
 	 */
 	public static int toNumber(String numeral)
 	{
-		switch (numeral)
-		{
-			case "I": return 1;
-			case "II": return 2;
-			case "III": return 3;
-			case "IV": return 4;
-			case "V": return 5;
-			case "VI": return 6;
-			case "VII": return 7;
-			case "VIII": return 8;
-			case "IX": return 9;
-			case "X": return 10;
-		}
-
-		return Integer.parseInt(numeral);
+		return switch (numeral) {
+			case "I" -> 1;
+			case "II" -> 2;
+			case "III" -> 3;
+			case "IV" -> 4;
+			case "V" -> 5;
+			case "VI" -> 6;
+			case "VII" -> 7;
+			case "VIII" -> 8;
+			case "IX" -> 9;
+			case "X" -> 10;
+			default -> Integer.parseInt(numeral);
+		};
 	}
 }

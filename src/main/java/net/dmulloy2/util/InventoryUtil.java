@@ -76,10 +76,9 @@ public class InventoryUtil
 
 		inventory.clear();
 
-		if (inventory instanceof PlayerInventory)
+		if (inventory instanceof PlayerInventory pInventory)
 		{
-			PlayerInventory pInventory = (PlayerInventory) inventory;
-			pInventory.setHelmet(null);
+            pInventory.setHelmet(null);
 			pInventory.setChestplate(null);
 			pInventory.setLeggings(null);
 			pInventory.setBoots(null);

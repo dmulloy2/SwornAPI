@@ -123,10 +123,9 @@ public final class SimpleVector implements ConfigurationSerializable, Cloneable
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof SimpleVector)
+		if (obj instanceof SimpleVector that)
 		{
-			SimpleVector that = (SimpleVector) obj;
-			return this.x == that.x && this.y == that.y && this.z == that.z;
+            return this.x == that.x && this.y == that.y && this.z == that.z;
 		}
 
 		return false;

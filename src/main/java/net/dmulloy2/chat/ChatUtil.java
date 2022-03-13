@@ -37,7 +37,7 @@ public class ChatUtil
 {
 	private ChatUtil() { }
 
-	private static ChatProvider provider;
+	private static final ChatProvider provider;
 
 	static
 	{
@@ -56,7 +56,7 @@ public class ChatUtil
 			{
 				try
 				{
-					return preferred.getClazz().newInstance();
+					return preferred.getClazz().getDeclaredConstructor().newInstance();
 				}
 				catch (Throwable ex)
 				{
@@ -70,7 +70,7 @@ public class ChatUtil
 		{
 			try
 			{
-				return available.getClazz().newInstance();
+				return available.getClazz().getDeclaredConstructor().newInstance();
 			} catch (Throwable ignored) { }
 		}
 
@@ -87,8 +87,8 @@ public class ChatUtil
 		NMS("NMS", NMSProvider.class),
 		PLAINTEXT("Plaintext", PlainTextProvider.class);
 
-		private String name;
-		private Class<? extends ChatProvider> clazz;
+		private final String name;
+		private final Class<? extends ChatProvider> clazz;
 
 		private static Provider fromName(String name)
 		{

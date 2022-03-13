@@ -4,6 +4,9 @@ import net.dmulloy2.chat.BaseComponent;
 import net.dmulloy2.chat.ComponentSerializer;
 import net.dmulloy2.types.ChatPosition;
 
+import net.minecraft.network.chat.ChatMessageType;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.protocol.game.PacketPlayOutChat;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,16 +22,14 @@ public class Volatile
 
 	public static String getName(ItemStack stack)
 	{
-		return org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers.getItem(stack.getType()).getName();
+		return org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers.getItem(stack.getType()).a();
 	}
 
 	public static boolean sendMessage(Player player, ChatPosition position, BaseComponent... message)
 	{
-		net.minecraft.server.v1_16_R3.IChatBaseComponent component =
-				net.minecraft.server.v1_16_R3.IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(message));
-		net.minecraft.server.v1_16_R3.ChatMessageType type = net.minecraft.server.v1_16_R3.ChatMessageType.a(position.getValue());
-		((org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer) player).getHandle().playerConnection
-				.sendPacket(new net.minecraft.server.v1_16_R3.PacketPlayOutChat(component, type, SERVER_UUID));
+		IChatBaseComponent component = IChatBaseComponent.ChatSerializer.a(ComponentSerializer.toString(message));
+		ChatMessageType type = ChatMessageType.a(position.getValue());
+		((org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer) player).getHandle().b.a(new PacketPlayOutChat(component, type, SERVER_UUID));
 		return true;
 	}
 }

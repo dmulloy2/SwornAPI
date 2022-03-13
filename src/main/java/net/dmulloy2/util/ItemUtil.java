@@ -20,6 +20,7 @@ package net.dmulloy2.util;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import net.dmulloy2.SwornPlugin;
 import net.dmulloy2.types.CustomSkullType;
@@ -206,6 +207,8 @@ public class ItemUtil
 		return potion;
 	}
 
+	private static final Pattern LORE_MATCHER = Pattern.compile("name:|lore:|color:|owner:|type:");
+
 	/**
 	 * Parses ItemMeta from a given string, then applies it to a given item.
 	 * @param item Item to apply meta to
@@ -213,10 +216,19 @@ public class ItemUtil
 	 */
 	public static void parseItemMeta(ItemStack item, String string)
 	{
+		if (! LORE_MATCHER.matcher(string).find())
+		{
+			return;
+		}
+
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null)
+		{
+			return;
+		}
+
 		try
 		{
-			ItemMeta meta = item.getItemMeta();
-
 			// Name
 			String nameKey = "name:";
 			if (string.contains(nameKey))
@@ -313,10 +325,15 @@ public class ItemUtil
 			StringJoiner joiner = new StringJoiner(", ");
 			for (Entry<Enchantment, Integer> ench : stack.getEnchantments().entrySet())
 				joiner.append(EnchantmentType.toName(ench.getKey()) + ":" + ench.getValue());
-			ret.append(", ").append(joiner.toString());
+			ret.append(", ").append(joiner);
 		}
 
 		ItemMeta meta = stack.getItemMeta();
+		if (meta == null)
+		{
+			return ret.toString();
+		}
+
 		if (meta.hasDisplayName())
 		{
 			ret.append(", name:").append(meta.getDisplayName()

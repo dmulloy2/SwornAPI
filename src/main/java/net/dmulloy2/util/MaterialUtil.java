@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.dmulloy2.Volatile;
-import net.dmulloy2.integration.VaultHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

@@ -66,7 +66,7 @@ public class TimeUtil
 	 * @param time Time in milliseconds
 	 * @return Formatted time
 	 */
-	public static final String formatTime(long time)
+	public static String formatTime(long time)
 	{
 		StringBuilder ret = new StringBuilder();
 		int days = (int) Math.floor(time / (1000 * 3600 * 24));

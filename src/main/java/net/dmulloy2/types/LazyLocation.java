@@ -183,9 +183,8 @@ public final class LazyLocation implements ConfigurationSerializable, Cloneable
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof LazyLocation)
+		if (obj instanceof LazyLocation that)
 		{
-			LazyLocation that = (LazyLocation) obj;
 			return x == that.x && y == that.y && z == that.z && worldName.equals(that.worldName);
 		}
 

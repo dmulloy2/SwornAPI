@@ -65,8 +65,8 @@ public enum EnchantmentType
 	VANISHING_CURSE("Vanishing Curse", "vanish"),
 	WATER_WORKER("Aqua Affinity", "aqua", "affinity");
 
-	private String name;
-	private String[] aliases;
+	private final String name;
+	private final String[] aliases;
 
 	EnchantmentType(String name, String... aliases)
 	{

@@ -151,9 +151,8 @@ public class MyMaterial
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof MyMaterial)
+		if (obj instanceof MyMaterial that)
 		{
-			MyMaterial that = (MyMaterial) obj;
 			return this.material == that.material && (ignoreData || this.data == that.data);
 		}
 

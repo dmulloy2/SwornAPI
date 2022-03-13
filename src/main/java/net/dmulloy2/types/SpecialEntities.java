@@ -39,6 +39,8 @@ import org.bukkit.entity.ZombieVillager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Objects;
+
 /**
  * Handles special entities such as Wither Skeletons, Zombie Villagers, and Horses.
  * Necessary because Mojang changed Entities how are structured in 1.11.
@@ -79,12 +81,18 @@ public class SpecialEntities
 		@Override
 		public LivingEntity spawnWitherSkeleton(Location loc)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			return (LivingEntity) loc.getWorld().spawnEntity(loc, EntityType.WITHER_SKELETON);
 		}
 
 		@Override
 		public LivingEntity spawnZombieVillager(Location loc, Profession profession)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			ZombieVillager entity = (ZombieVillager) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE_VILLAGER);
 			entity.setVillagerProfession(profession);
 			return entity;
@@ -93,6 +101,9 @@ public class SpecialEntities
 		@Override
 		public LivingEntity spawnHorse(Location loc, HorseType type, Color color, Style style, boolean tame, boolean chest)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			Horse horse = (Horse) loc.getWorld().spawnEntity(loc, type.getEntity());
 			horse.setColor(color);
 			horse.setStyle(style);
@@ -124,8 +135,8 @@ public class SpecialEntities
 		ZOMBIE(EntityType.ZOMBIE_HORSE, Variant.UNDEAD_HORSE)
 		;
 
-		private EntityType entity;
-		private Variant variant;
+		private final EntityType entity;
+		private final Variant variant;
 	}
 
 	private static class CombinedProvider implements Provider
@@ -133,6 +144,9 @@ public class SpecialEntities
 		@Override
 		public LivingEntity spawnWitherSkeleton(Location loc)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			Skeleton entity = (Skeleton) loc.getWorld().spawnEntity(loc, EntityType.SKELETON);
 			entity.setSkeletonType(SkeletonType.WITHER);
 			return entity;
@@ -141,6 +155,9 @@ public class SpecialEntities
 		@Override
 		public LivingEntity spawnZombieVillager(Location loc, Profession profession)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			Zombie zombie = (Zombie) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
 			zombie.setVillagerProfession(profession);
 			return zombie;
@@ -149,6 +166,9 @@ public class SpecialEntities
 		@Override
 		public LivingEntity spawnHorse(Location loc, HorseType type, Color color, Style style, boolean tame, boolean chest)
 		{
+			Objects.requireNonNull(loc, "loc cannot be null");
+			Objects.requireNonNull(loc.getWorld(), "loc world cannot be null");
+
 			Horse horse = (Horse) loc.getWorld().spawnEntity(loc, EntityType.HORSE);
 			horse.setVariant(type.getVariant());
 			horse.setColor(color);

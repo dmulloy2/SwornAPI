@@ -17,6 +17,7 @@
  */
 package net.dmulloy2.commands;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +76,7 @@ public abstract class Command implements CommandExecutor
 	protected IPermission permission;
 	protected CommandVisibility visibility = CommandVisibility.PERMISSION;
 
-	private List<Command> subCommands;
+	private final List<Command> subCommands;
 	protected Command parent;
 
 	protected List<Syntax> syntaxes;
@@ -317,20 +318,14 @@ public abstract class Command implements CommandExecutor
 	public final boolean isVisibleTo(CommandSender sender)
 	{
 		Validate.notNull(sender, "sender cannot be null!");
-		
-		switch (visibility)
-		{
-			case ALL:
-				return true;
-			case PERMISSION:
-				return hasPermission(sender, permission, false);
-			case OPS:
-				return sender.isOp();
-			case NONE:
-				return false;
-			default:
-				throw new IllegalStateException("Unsupported command visibility: " + visibility);
-		}
+
+		return switch (visibility) {
+			case ALL -> true;
+			case PERMISSION -> hasPermission(sender, permission, false);
+			case OPS -> sender.isOp();
+			case NONE -> false;
+			default -> throw new IllegalStateException("Unsupported command visibility: " + visibility);
+		};
 	}
 
 	// ---- Messaging
@@ -495,10 +490,10 @@ public abstract class Command implements CommandExecutor
 
 			for (Argument arg : syntax)
 			{
-				if (arg.isRequired())
-					line.append(String.format(" {h}<%s>", arg.getArgument()));
+				if (arg.required())
+					line.append(String.format(" {h}<%s>", arg.argument()));
 				else
-					line.append(String.format(" {h}[%s]", arg.getArgument()));
+					line.append(String.format(" {h}[%s]", arg.argument()));
 			}
 
 			if (displayHelp && i == 0)
@@ -546,10 +541,10 @@ public abstract class Command implements CommandExecutor
 
 			for (Argument arg : syntax)
 			{
-				if (arg.isRequired())
-					templateBuilder.append(String.format(" {h}<%s>", arg.getArgument()));
+				if (arg.required())
+					templateBuilder.append(String.format(" {h}<%s>", arg.argument()));
 				else
-					templateBuilder.append(String.format(" {h}[%s]", arg.getArgument()));
+					templateBuilder.append(String.format(" {h}[%s]", arg.argument()));
 			}
 
 			String template = format(templateBuilder.toString());
@@ -562,11 +557,11 @@ public abstract class Command implements CommandExecutor
 			for (int a = 0; a < syntax.size(); a++)
 			{
 				Argument arg = syntax.get(a);
-				String explanation = arg.getExplanation();
+				String explanation = arg.explanation();
 				if (explanation != null)
 				{
-					String argument = arg.getArgument();
-					if (arg.isRequired())
+					String argument = arg.argument();
+					if (arg.required())
 						hoverTextBuilder.append(format("{h}  <{0}>: {b}{1}\n", argument, explanation));
 					else
 						hoverTextBuilder.append(format("{h}  [{0}]: {b}{1}\n", argument, explanation));
@@ -911,15 +906,13 @@ public abstract class Command implements CommandExecutor
 		{
 			return "Console";
 		}
-		else if (sender instanceof BlockCommandSender)
+		else if (sender instanceof BlockCommandSender commandBlock)
 		{
-			BlockCommandSender commandBlock = (BlockCommandSender) sender;
 			Location location = commandBlock.getBlock().getLocation();
 			return FormatUtil.format("CommandBlock ({0}, {1}, {2})", location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		}
-		else if (sender instanceof CommandMinecart)
+		else if (sender instanceof CommandMinecart minecart)
 		{
-			CommandMinecart minecart = (CommandMinecart) sender;
 			Location location = minecart.getLocation();
 			return FormatUtil.format("Minecart ({0}, {1}, {2})", location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		}
@@ -971,14 +964,14 @@ public abstract class Command implements CommandExecutor
 		for (int i = 0; i < missing.size(); i++)
 		{
 			Argument arg = missing.get(i);
-			String line = "&c" + arg.getArgument();
+			String line = "&c" + arg.argument();
 			if (i != 0)
 				line = "&4, " + line;
 
 			builder.append(FormatUtil.format(line));
-			String explanation = arg.getExplanation();
+			String explanation = arg.explanation();
 			if (explanation != null)
-				builder.event(new HoverEvent(Action.SHOW_TEXT, FormatUtil.format("&4{0}:\n&f{1}", arg.getArgument(), explanation)));
+				builder.event(new HoverEvent(Action.SHOW_TEXT, FormatUtil.format("&4{0}:\n&f{1}", arg.argument(), explanation)));
 		}
 
 		sendMessage(builder.create());
@@ -1080,17 +1073,12 @@ public abstract class Command implements CommandExecutor
 		addArgument(arg, explanation, false);
 	}
 
-	@Data
-	@AllArgsConstructor
-	public class Argument
-	{
-		private final String argument;
-		private final String explanation;
-		private final boolean required;
+	public record Argument(String argument, String explanation, boolean required) {
 	}
 
-	public class Syntax extends ArrayList<Argument>
+	public static class Syntax extends ArrayList<Argument>
 	{
+		@Serial
 		private static final long serialVersionUID = 1L;
 
 		public final int requiredSize()
@@ -1098,7 +1086,7 @@ public abstract class Command implements CommandExecutor
 			int required = 0;
 			for (Argument arg : this)
 			{
-				if (arg.isRequired())
+				if (arg.required())
 					required++;
 			}
 
@@ -1122,7 +1110,7 @@ public abstract class Command implements CommandExecutor
 
 			for (Argument arg : this)
 			{
-				if (arg.isRequired() == required)
+				if (arg.required() == required)
 				{
 					if (i == index)
 						return arg;

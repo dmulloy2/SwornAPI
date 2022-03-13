@@ -17,11 +17,7 @@
  */
 package net.dmulloy2.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.Validate;
 
@@ -66,8 +62,7 @@ public class ListUtil
 		Validate.notNull(elements, "elements cannot be null!");
 
 		List<T> list = new ArrayList<>(elements.length);
-		for (T element : elements)
-			list.add(element);
+		list.addAll(Arrays.asList(elements));
 
 		return list;
 	}

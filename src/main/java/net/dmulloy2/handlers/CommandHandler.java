@@ -44,7 +44,7 @@ public class CommandHandler implements CommandExecutor
 {
 	private String commandPrefix;
 	private List<Command> registeredPrefixedCommands;
-	private List<Command> registeredCommands;
+	private final List<Command> registeredCommands;
 
 	private final SwornPlugin plugin;
 	public CommandHandler(SwornPlugin plugin)

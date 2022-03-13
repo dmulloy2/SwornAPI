@@ -15,33 +15,14 @@
  */
 package net.dmulloy2.chat;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * Represents a clickable action.
- * 
+ *
  * @author md_5
  */
 
-@Getter
-@AllArgsConstructor
-final public class ClickEvent
-{
-	/**
-	 * The type of action to preform on click
-	 */
-	private final Action action;
-
-	/**
-	 * Depends on action
-	 *
-	 * @see Action
-	 */
-	private final String value;
-
-	public enum Action
-	{
+public record ClickEvent(Action action, String value) {
+	public enum Action {
 		/**
 		 * Open a url at the path given by {@code getValue()}
 		 */
@@ -65,8 +46,7 @@ final public class ClickEvent
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return String.format("ClickEvent{action=%s, value=%s}", action, value);
 	}
 }

@@ -18,6 +18,7 @@
 package net.dmulloy2.util;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -271,7 +272,7 @@ public class Util
 		try
 		{
 			String path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-			path = URLDecoder.decode(path, "UTF-8");
+			path = URLDecoder.decode(path, StandardCharsets.UTF_8);
 			path = path.substring(path.lastIndexOf("/") + 1);
 			return ! path.isEmpty() ? path : null;
 		} catch (Throwable ignored) { }

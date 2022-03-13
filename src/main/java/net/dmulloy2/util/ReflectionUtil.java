@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 
 public class ReflectionUtil
 {
-	private static String VERSION;
 	private static String NMS;
 	private static String OBC;
 
@@ -19,9 +18,9 @@ public class ReflectionUtil
 			initialized = true;
 
 			String serverPackage = Bukkit.getServer().getClass().getPackage().getName();
-			VERSION = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-			NMS = "net.minecraft.server." + VERSION + ".";
-			OBC = "org.bukkit.craftbukkit." + VERSION + ".";
+			String version = serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+			NMS = "net.minecraft.server." + version + ".";
+			OBC = "org.bukkit.craftbukkit." + version + ".";
 		}
 	}
 

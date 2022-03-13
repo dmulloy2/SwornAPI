@@ -56,8 +56,7 @@ public final class CustomScoreboard
 		/**
 		 * Keys and values will be on different lines.
 		 */
-		NEW_LINE,
-		;
+		NEW_LINE
 	}
 
 	private static class Entry
@@ -92,9 +91,8 @@ public final class CustomScoreboard
 		@Override
 		public boolean equals(Object obj)
 		{
-			if (obj instanceof Entry)
+			if (obj instanceof Entry that)
 			{
-				Entry that = (Entry) obj;
 				return line == null ? this.key.equals(that.key) : this.line.equals(that.line);
 			}
 
@@ -182,7 +180,7 @@ public final class CustomScoreboard
 		if (objective != null)
 			objective.unregister();
 
-		objective = board.registerNewObjective(objectiveName, "dummy");
+		board.registerNewObjective(objectiveName, "dummy", display);
 		objective.setDisplayName(display);
 		objective.setDisplaySlot(slot);
 

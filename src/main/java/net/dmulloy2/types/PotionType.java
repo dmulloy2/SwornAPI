@@ -68,16 +68,11 @@ public enum PotionType
 	 */
 	public String getPotionDisplay()
 	{
-		switch (this)
-		{
-			case AWKWARD:
-			case MUNDANE:
-				return name + " Potion";
-			case WATER:
-				return name;
-			default:
-				return "Potion of " + name;
-		}
+		return switch (this) {
+			case AWKWARD, MUNDANE -> name + " Potion";
+			case WATER -> name;
+			default -> "Potion of " + name;
+		};
 	}
 
 	/**

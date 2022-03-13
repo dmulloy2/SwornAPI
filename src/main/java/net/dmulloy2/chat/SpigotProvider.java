@@ -45,17 +45,11 @@ public class SpigotProvider implements ChatProvider
 	// Should always be 1:1
 	private ChatMessageType toBungeeType(ChatPosition position)
 	{
-		switch (position)
-		{
-			case ACTION_BAR:
-				return ChatMessageType.ACTION_BAR;
-			case CHAT:
-				return ChatMessageType.CHAT;
-			case SYSTEM:
-				return ChatMessageType.SYSTEM;	
-		}
-
-		throw new IllegalArgumentException("Could not find bungee equivalent for " + position);
+		return switch (position) {
+			case ACTION_BAR -> ChatMessageType.ACTION_BAR;
+			case CHAT -> ChatMessageType.CHAT;
+			case SYSTEM -> ChatMessageType.SYSTEM;
+		};
 	}
 
 	private BaseComponent[] toBungeeComponents(net.dmulloy2.chat.BaseComponent[] message)

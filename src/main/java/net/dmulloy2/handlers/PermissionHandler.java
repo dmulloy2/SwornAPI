@@ -63,10 +63,9 @@ public class PermissionHandler
 	 */
 	public final boolean hasPermission(CommandSender sender, String permission)
 	{
-		if (sender instanceof Player)
+		if (sender instanceof Player player)
 		{
-			Player player = (Player) sender;
-			return player.hasPermission(permission) || player.isOp();
+            return player.hasPermission(permission) || player.isOp();
 		}
 
 		return true;

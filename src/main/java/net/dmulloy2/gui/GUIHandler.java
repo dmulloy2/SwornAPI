@@ -97,10 +97,9 @@ public class GUIHandler implements Listener
 	public void onInventoryClick(InventoryClickEvent event)
 	{
 		HumanEntity clicker = event.getWhoClicked();
-		if (clicker instanceof Player)
+		if (clicker instanceof Player player)
 		{
-			Player player = (Player) clicker;
-			if (open.containsKey(player.getName()))
+            if (open.containsKey(player.getName()))
 			{
 				AbstractGUI gui = open.get(player.getName());
 				gui.onInventoryClick(event);
@@ -112,10 +111,9 @@ public class GUIHandler implements Listener
 	public void onInventoryClose(InventoryCloseEvent event)
 	{
 		HumanEntity closer = event.getPlayer();
-		if (closer instanceof Player)
+		if (closer instanceof Player player)
 		{
-			Player player = (Player) closer;
-			if (open.containsKey(player.getName()))
+            if (open.containsKey(player.getName()))
 			{
 				AbstractGUI gui = open.get(player.getName());
 				gui.onInventoryClose(event);

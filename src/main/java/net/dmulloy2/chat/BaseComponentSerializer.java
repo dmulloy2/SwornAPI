@@ -132,8 +132,8 @@ public class BaseComponentSerializer
 			if (component.getClickEvent() != null)
 			{
 				JsonObject clickEvent = new JsonObject();
-				clickEvent.addProperty("action", component.getClickEvent().getAction().toString().toLowerCase());
-				clickEvent.addProperty("value", component.getClickEvent().getValue());
+				clickEvent.addProperty("action", component.getClickEvent().action().toString().toLowerCase());
+				clickEvent.addProperty("value", component.getClickEvent().value());
 				object.add("clickEvent", clickEvent);
 			}
 			if (component.getHoverEvent() != null)

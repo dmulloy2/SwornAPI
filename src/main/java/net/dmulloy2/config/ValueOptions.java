@@ -37,7 +37,7 @@ public @interface ValueOptions
 	 * 
 	 * @return Standard value options
 	 */
-	ValueOption[] value();
+	ValueOption value();
 
 	/**
 	 * Whether or not to allow null values. Defaults to false.
@@ -75,7 +75,6 @@ public @interface ValueOptions
 		PARSE_MATERIALS,
 		PARSE_MY_MATERIAL,
 		SECOND_TO_MILLIS,
-		SECOND_TO_TICKS,
-		;
+		SECOND_TO_TICKS
 	}
 }

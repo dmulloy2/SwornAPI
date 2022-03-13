@@ -50,7 +50,6 @@ public class CommandException extends RuntimeException
 		/**
 		 * Thrown by checkArgument and checkNotNull
 		 */
-		VALIDATE,
-		;
+		VALIDATE
 	}
 }

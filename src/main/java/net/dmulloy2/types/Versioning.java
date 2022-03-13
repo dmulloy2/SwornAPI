@@ -39,6 +39,14 @@ public class Versioning
 	public enum Version
 	{
 		/**
+		 * Minecraft 1.18, caves & cliffs II
+		 */
+		MC_118("Minecraft 1.18.x", "1.18"),
+		/**
+		 * Minecraft 1.17, caves & cliffs I
+		 */
+		MC_117("Minecraft 1.17.x", "1.17"),
+		/**
 		 * Minecraft 1.16, the nether update
 		 */
 		MC_116("Minecraft 1.16.x", "1.16"),
