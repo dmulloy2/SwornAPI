@@ -25,6 +25,10 @@ import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.hover.content.Text;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,16 +40,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.chat.BaseComponent;
-import net.dmulloy2.chat.ChatUtil;
-import net.dmulloy2.chat.ClickEvent;
-import net.dmulloy2.chat.ComponentBuilder;
-import net.dmulloy2.chat.HoverEvent;
-import net.dmulloy2.chat.HoverEvent.Action;
-import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.exception.CommandException;
 import net.dmulloy2.exception.CommandException.Reason;
 import net.dmulloy2.types.CommandVisibility;
@@ -191,7 +186,8 @@ public abstract class Command implements CommandExecutor
 			String error = FormatUtil.format("&cError: &4Encountered an exception executing this command: ");
 
 			ComponentBuilder builder = new ComponentBuilder(error);
-			builder.append(FormatUtil.format("&c{0}", ex.toString())).event(new HoverEvent(Action.SHOW_TEXT, stack.replace("\t", "    ")));
+			BaseComponent[] hoverStr = TextComponent.fromLegacyText(stack.replace("\t", "    "));
+			builder.append(FormatUtil.format("&c{0}", ex.toString())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverStr));
 			sendMessage(builder.create());
 		}
 	}
@@ -234,12 +230,13 @@ public abstract class Command implements CommandExecutor
 		{
 			if (message)
 			{
-				StringJoiner hoverText = new StringJoiner("\n");
-				hoverText.append(FormatUtil.format("&4Permission:"));
-				hoverText.append(FormatUtil.format("&r{0}", getPermissionString(permission)));
+				StringJoiner hoverTextBuilder = new StringJoiner("\n");
+				hoverTextBuilder.append(FormatUtil.format("&4Permission:"));
+				hoverTextBuilder.append(FormatUtil.format("&r{0}", getPermissionString(permission)));
+				BaseComponent[] hoverText = TextComponent.fromLegacyText(hoverTextBuilder.toString());
 
 				ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&cError: &4You do not have "));
-				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(Action.SHOW_TEXT, hoverText.toString()));
+				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
 				builder.append(FormatUtil.format(" &4to perform this command!"));
 				sendMessage(sender, builder.create());
 			}
@@ -426,8 +423,10 @@ public abstract class Command implements CommandExecutor
 	/**
 	 * Sends a JSON message to the command sender.
 	 * @param components JSON message to send
+	 * @deprecated Use Spigot API
 	 */
-	protected final void sendMessage(BaseComponent... components)
+	@Deprecated
+	protected final void sendMessage(net.dmulloy2.chat.BaseComponent... components)
 	{
 		sendMessage(sender, components);
 	}
@@ -436,10 +435,39 @@ public abstract class Command implements CommandExecutor
 	 * Sends a JSON message to a given command sender.
 	 * @param sender Sender to send the message to
 	 * @param components JSON message to send
+	 * @deprecated Use Spigot API
 	 */
+	@Deprecated
+	protected final void sendMessage(CommandSender sender, net.dmulloy2.chat.BaseComponent... components)
+	{
+		net.dmulloy2.chat.ChatUtil.sendMessage(sender, components);
+	}
+
+	protected final void sendMessage(CommandSender sender, ChatMessageType position, BaseComponent... components)
+	{
+		if (sender instanceof Player player)
+		{
+			player.spigot().sendMessage(position, components);
+		}
+		else
+		{
+			sender.sendMessage(TextComponent.toLegacyText(components));
+		}
+	}
+
+	protected final void sendMessage(ChatMessageType position, BaseComponent... components)
+	{
+		sendMessage(sender, position, components);
+	}
+
 	protected final void sendMessage(CommandSender sender, BaseComponent... components)
 	{
-		ChatUtil.sendMessage(sender, components);
+		sendMessage(sender, ChatMessageType.SYSTEM, components);
+	}
+
+	protected final void sendMessage(BaseComponent... components)
+	{
+		sendMessage(sender, components);
 	}
 
 	// ---- Help
@@ -583,9 +611,9 @@ public abstract class Command implements CommandExecutor
 				hoverTextBuilder.append("\n").append(getPermissionString());
 			}
 
-			String hoverText = hoverTextBuilder.toString();
+			Text hoverText = new Text(hoverTextBuilder.toString());
 
-			HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hoverText));
+			HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText);
 			builder.event(hoverEvent);
 
 			ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(template));
@@ -971,7 +999,10 @@ public abstract class Command implements CommandExecutor
 			builder.append(FormatUtil.format(line));
 			String explanation = arg.explanation();
 			if (explanation != null)
-				builder.event(new HoverEvent(Action.SHOW_TEXT, FormatUtil.format("&4{0}:\n&f{1}", arg.argument(), explanation)));
+			{
+				Text hoverText = new Text(FormatUtil.format("&4{0}:\n&f{1}", arg.argument(), explanation));
+				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
+			}
 		}
 
 		sendMessage(builder.create());

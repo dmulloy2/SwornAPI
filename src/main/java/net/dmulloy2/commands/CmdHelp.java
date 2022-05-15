@@ -19,13 +19,13 @@ package net.dmulloy2.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.chat.BaseComponent;
-import net.dmulloy2.chat.ChatUtil;
-import net.dmulloy2.chat.TextComponent;
 import net.dmulloy2.types.CommandVisibility;
 import net.dmulloy2.util.FormatUtil;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * Generic help command. This is a modified implementation of
@@ -73,13 +73,9 @@ public class CmdHelp extends Command
 		
 		if (isPlayer())
 		{
-			fancy:
-			{
-				for (BaseComponent[] components : getPage(index))
-					if (! ChatUtil.sendMessageRaw(player, components))
-						break fancy;
-				return;
-			}
+			for (BaseComponent[] components : getPage(index))
+				player.spigot().sendMessage(components);
+			return;
 		}
 
 		// Fall back to legacy help
@@ -152,7 +148,7 @@ public class CmdHelp extends Command
 
 	public List<BaseComponent[]> getHeader(int index)
 	{
-		return TextComponent.fromLegacyList(getLegacyHeader(index));
+		return getLegacyHeader(index).stream().map(TextComponent::fromLegacyText).collect(Collectors.toList());
 	}
 
 	public List<String> getLegacyHeader(int index)

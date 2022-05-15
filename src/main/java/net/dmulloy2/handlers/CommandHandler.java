@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.chat.BaseComponent;
-import net.dmulloy2.chat.ComponentBuilder;
 import net.dmulloy2.commands.Command;
 import net.dmulloy2.util.FormatUtil;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -188,11 +188,12 @@ public class CommandHandler implements CommandExecutor
 				return true;
 			}
 
-			if (sender instanceof Player)
+			if (sender instanceof Player player)
 			{
 				List<BaseComponent[]> templates = getHelpCommand().getFancyUsageTemplate();
 				String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
-				new ComponentBuilder(error).addAll(templates.get(0)).send(sender);
+				BaseComponent[] components = new ComponentBuilder(error).append(templates.get(0)).create();
+				player.spigot().sendMessage(components);
 			}
 			else
 			{
