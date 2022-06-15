@@ -88,26 +88,6 @@ public class CmdHelp extends Command
 		return props().getHelpHeader();
 	}
 
-	/**
-	 * @deprecated Use {@link CommandProps#setHelpHeader(String)}
-	 */
-	@Deprecated
-	public CmdHelp setHeader(String header)
-	{
-		props().setHelpHeader(header);
-		return this;
-	}
-
-	/**
-	 * @deprecated Use {@link CommandProps#setHelpFooter(String)}
-	 */
-	@Deprecated
-	public CmdHelp setFooter(String footer)
-	{
-		props().setHelpFooter(footer);
-		return this;
-	}
-
 	public int getPageCount()
 	{
 		return (getListSize() + linesPerPage - 1) / linesPerPage;

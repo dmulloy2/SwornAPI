@@ -321,7 +321,6 @@ public abstract class Command implements CommandExecutor
 			case PERMISSION -> hasPermission(sender, permission, false);
 			case OPS -> sender.isOp();
 			case NONE -> false;
-			default -> throw new IllegalStateException("Unsupported command visibility: " + visibility);
 		};
 	}
 
@@ -419,29 +418,6 @@ public abstract class Command implements CommandExecutor
 	}
 
 	// ---- Fancy Messaging
-
-	/**
-	 * Sends a JSON message to the command sender.
-	 * @param components JSON message to send
-	 * @deprecated Use Spigot API
-	 */
-	@Deprecated
-	protected final void sendMessage(net.dmulloy2.chat.BaseComponent... components)
-	{
-		sendMessage(sender, components);
-	}
-
-	/**
-	 * Sends a JSON message to a given command sender.
-	 * @param sender Sender to send the message to
-	 * @param components JSON message to send
-	 * @deprecated Use Spigot API
-	 */
-	@Deprecated
-	protected final void sendMessage(CommandSender sender, net.dmulloy2.chat.BaseComponent... components)
-	{
-		net.dmulloy2.chat.ChatUtil.sendMessage(sender, components);
-	}
 
 	protected final void sendMessage(CommandSender sender, ChatMessageType position, BaseComponent... components)
 	{

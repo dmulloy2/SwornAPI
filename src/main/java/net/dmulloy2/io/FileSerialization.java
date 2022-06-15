@@ -19,13 +19,18 @@ package net.dmulloy2.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import net.dmulloy2.handlers.LogHandler;
+import net.dmulloy2.util.Util;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -107,6 +112,8 @@ public class FileSerialization
 		config.save(file);
 	}
 
+	private static final ConcurrentMap<String, Optional<MethodHandle>> SERIALIZE_CACHE = new ConcurrentHashMap<>();
+
 	/**
 	 * Serializes all of an object's fields into a Map. This method ignores
 	 * transient, null, zero, and empty fields.
@@ -124,8 +131,6 @@ public class FileSerialization
 			{
 				if (Modifier.isTransient(field.getModifiers()))
 					continue;
-
-				boolean accessible = field.isAccessible();
 
 				field.setAccessible(true);
 
@@ -159,16 +164,115 @@ public class FileSerialization
 					if (! ((Map<?, ?>) field.get(object)).isEmpty())
 						data.put(field.getName(), field.get(object));
 				}
-				else
+				else if (field.getType().isEnum())
 				{
-					if (field.get(object) != null)
-						data.put(field.getName(), field.get(object));
+					data.put(field.getName(), ((Enum<?>) field.get(object)).name().toLowerCase());
 				}
+				else if (field.get(object) != null)
+				{
+					String className = field.getType().getName();
+					if (!SERIALIZE_CACHE.containsKey(className))
+					{
+						try
+						{
+							MethodType methodType = MethodType.methodType(Object.class);
+							MethodHandle serialHandle = MethodHandles.publicLookup().findVirtual(field.getType(), "serialize", methodType);
+							SERIALIZE_CACHE.put(className, Optional.of(serialHandle));
+						}
+						catch (NoSuchMethodException ex)
+						{
+							SERIALIZE_CACHE.put(className, Optional.empty());
+						}
+					}
 
-				field.setAccessible(accessible);
-			} catch (Throwable ignored) { }
+					Optional<MethodHandle> serialHandle = SERIALIZE_CACHE.get(className);
+					if (serialHandle.isPresent())
+					{
+						data.put(field.getName(), serialHandle.get().invoke(field.get(object)));
+					}
+					else
+					{
+						data.put(field.getName(), field.get(object));
+					}
+				}
+			}
+			catch (Throwable ex)
+			{
+				if (LogHandler.isGlobalDebugEnabled())
+					LogHandler.globalDebug(Util.getUsefulStack(ex, "serializing field {0} of {1}",
+						field.getName(), object));
+			}
 		}
 
 		return data;
+	}
+
+	private static final ConcurrentMap<String, Optional<MethodHandle>> DESERIALIZE_CACHE = new ConcurrentHashMap<>();
+
+	@SuppressWarnings("unchecked")
+	public static void deserialize(Object object, Map<String, Object> data)
+	{
+		for (Entry<String, Object> entry : data.entrySet())
+		{
+			String fieldName = entry.getKey();
+			Object fieldData = entry.getValue();
+
+			try
+			{
+				Field field = object.getClass().getDeclaredField(fieldName);
+				if (Modifier.isTransient(field.getModifiers()))
+					continue;
+
+				field.setAccessible(true);
+
+				Class<?> fieldType = field.getType();
+				if (fieldType.isPrimitive())
+				{
+					field.set(object, fieldData);
+				}
+				else if (fieldType.isEnum())
+				{
+					Class<? extends Enum<?>> enumType = (Class<? extends Enum<?>>) fieldType;
+					String name = fieldData.toString();
+					Object enumValue = Arrays.stream(enumType.getEnumConstants())
+						.filter(e -> e.name().equalsIgnoreCase(name)).findFirst().orElseThrow();
+					field.set(object, enumValue);
+				}
+				else
+				{
+					String className = fieldType.getName();
+					if (!DESERIALIZE_CACHE.containsKey(className))
+					{
+						try
+						{
+							MethodType methodType = MethodType.methodType(fieldType, Object.class);
+							MethodHandle serialHandle = MethodHandles.publicLookup().findStatic(field.getType(), "deserialize", methodType);
+							DESERIALIZE_CACHE.put(className, Optional.of(serialHandle));
+						}
+						catch (NoSuchMethodException ex)
+						{
+							DESERIALIZE_CACHE.put(className, Optional.empty());
+						}
+					}
+
+					Optional<MethodHandle> deserialize = DESERIALIZE_CACHE.get(className);
+					if (deserialize.isPresent())
+					{
+						field.set(object, deserialize.get().invoke(fieldData));
+					}
+					else
+					{
+						field.set(object, fieldData);
+					}
+				}
+			}
+			catch (NoSuchFieldException ignored) { }
+			catch (Throwable ex)
+			{
+				if (LogHandler.isGlobalDebugEnabled())
+					LogHandler.globalDebug(Util.getUsefulStack(ex, "deserializing field {0} of {1}",
+						fieldName, object));
+			}
+		}
 	}
 }

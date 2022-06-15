@@ -17,15 +17,9 @@
  */
 package net.dmulloy2.util;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import net.dmulloy2.Volatile;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,64 +33,6 @@ public class MaterialUtil
 {
 	private MaterialUtil() { }
 
-	private static Map<Integer, Material> idToMaterial = new HashMap<>();
-
-	static
-	{
-		try
-		{
-			for (Material material : Material.values())
-			{
-				if (material.isLegacy())
-				{
-					idToMaterial.put(material.getId(), Bukkit.getUnsafe().fromLegacy(material));
-				}
-			}
-		}
-		catch (Throwable ex)
-		{
-			ex.printStackTrace();
-		}
-	}
-
-	/**
-	 * Gets the {@link Material} from a given string using Bukkit, Vault, or
-	 * internal Minecraft.
-	 *
-	 * @param string String to get the Material from
-	 * @return The material, or null if not found
-	 * @see Material#matchMaterial(String)
-	 */
-	public static Material getMaterial(String string)
-	{
-		Material material = Material.matchMaterial(string);
-		if (material != null)
-		{
-			return material;
-		}
-
-		try
-		{
-			material = Material.matchMaterial(string, true);
-			if (material != null)
-			{
-				return material;
-			}
-		} catch (Throwable ignored) { }
-
-		try
-		{
-			int id = Integer.parseInt(string);
-			material = idToMaterial.get(id);
-			if (material != null)
-			{
-				return material;
-			}
-		} catch (NumberFormatException ignored) { }
-
-		return null;
-	}
-
 	/**
 	 * Gets the friendly name of a Material.
 	 *
@@ -108,7 +44,7 @@ public class MaterialUtil
 		if (material == null)
 			return "null";
 
-		return getName(new ItemStack(material));
+		return FormatUtil.getFriendlyName(material);
 	}
 
 	/**
@@ -121,26 +57,8 @@ public class MaterialUtil
 	{
 		if (stack == null)
 			return "null";
-		
-		try
-		{
-			return Volatile.getName(stack);
-		} catch (Throwable ignored)
-		{
-			try
-			{
-				Class<?> craftItemStack = ReflectionUtil.getCraftClass("inventory.CraftItemStack");
-				Method asNMSCopy = craftItemStack.getMethod("asNMSCopy", ItemStack.class);
-				Object nmsItem = asNMSCopy.invoke(null, stack);
-				Method getItem = nmsItem.getClass().getMethod("getItem");
-				Object item = getItem.invoke(nmsItem);
-				Method getName = item.getClass().getMethod("a", nmsItem.getClass());
-				return (String) getName.invoke(item, nmsItem);
-			} catch (Throwable ignored1)
-			{
-				return FormatUtil.getFriendlyName(stack.getType().name());
-			}
-		}
+
+		return getName(stack.getType());
 	}
 
 	/**
@@ -153,20 +71,10 @@ public class MaterialUtil
 		try
 		{
 			ItemStack stack = ItemUtil.readItem(string);
-			if (stack != null)
-				return getName(stack);
+			return getName(stack);
 		} catch (Throwable ignored) { }
 
 		return "-" + string;
-	}
-
-	/**
-	 * @deprecated Renamed to {@link #getName(String)
-	 */
-	@Deprecated
-	public static String getMaterialName(String name)
-	{
-		return getName(name);
 	}
 
 	/**
@@ -178,13 +86,19 @@ public class MaterialUtil
 	public static List<Material> fromStrings(List<String> strings)
 	{
 		List<Material> ret = new ArrayList<>();
+		List<String> invalid = new ArrayList<>();
 
 		for (String string : strings)
 		{
-			Material material = getMaterial(string);
-			if (material != null)
+			Material material = Material.matchMaterial(string);
+			if (material == null)
+				invalid.add(string);
+			else
 				ret.add(material);
 		}
+
+		if (!invalid.isEmpty())
+			throw new IllegalArgumentException("Invalid materials: " + invalid);
 
 		return ret;
 	}

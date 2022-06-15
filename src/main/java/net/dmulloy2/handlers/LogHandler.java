@@ -77,7 +77,7 @@ public class LogHandler
 	 */
 	public final void debug(Level level, String msg, Object... objects)
 	{
-		if (Boolean.getBoolean("swornapi.debug") || plugin.getConfig().getBoolean("debug", false))
+		if (isGlobalDebugEnabled() || plugin.getConfig().getBoolean("debug", false))
 			log(level, "[Debug] " + msg, objects);
 	}
 
@@ -102,7 +102,15 @@ public class LogHandler
 	 */
 	public static void globalDebug(String msg, Object... objects)
 	{
-		if (Boolean.getBoolean("swornapi.debug"))
+		if (isGlobalDebugEnabled())
 			System.out.println("[Debug] " + FormatUtil.format(msg, objects));
+	}
+
+	/**
+	 * @return true if the system property <code>swornapi.debug</code> is true
+	 */
+	public static boolean isGlobalDebugEnabled()
+	{
+		return Boolean.getBoolean("swornapi.debug");
 	}
 }

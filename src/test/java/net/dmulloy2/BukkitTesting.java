@@ -11,10 +11,10 @@ import net.minecraft.server.DispenserRegistry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemFactory;
-import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
-import org.bukkit.craftbukkit.v1_18_R2.util.Versioning;
+import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R1.util.Versioning;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Mockito.*;

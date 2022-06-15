@@ -272,9 +272,7 @@ public class NumberUtil
 	 */
 	public static double roundNumDecimals(double d, int num)
 	{
-		StringBuilder format = new StringBuilder("#.");
-		format.append("#".repeat(Math.max(0, num)));
-		DecimalFormat f = new DecimalFormat(format.toString());
+		DecimalFormat f = new DecimalFormat("#." + "#".repeat(Math.max(0, num)));
 		return toDouble(f.format(d));
 	}
 

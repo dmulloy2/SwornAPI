@@ -103,7 +103,7 @@ public class ItemUtil
 			}
 		}
 
-		Material material = MaterialUtil.getMaterial(materialStr);
+		Material material = Material.matchMaterial(materialStr);
 		if (material == null)
 		{
 			throw new NullPointerException("Invalid material: " + materialStr);

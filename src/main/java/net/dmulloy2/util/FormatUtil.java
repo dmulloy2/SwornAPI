@@ -151,7 +151,7 @@ public class FormatUtil
 	 */
 	public static String getFriendlyName(Material material)
 	{
-		return MaterialUtil.getName(material);
+		return getFriendlyName(material.name());
 	}
 
 	private static final String VOWELS = "aeiou";

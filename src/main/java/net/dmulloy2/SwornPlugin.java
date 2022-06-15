@@ -53,15 +53,6 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	protected final CommandProps commandProps = new CommandProps();
 
 	/**
-	 * @deprecated Renamed to {@link #props()}
-	 */
-	@Deprecated
-	public CommandProps getCommandProps()
-	{
-		return props();
-	}
-
-	/**
 	 * Allows the modification of basic command properties like the color scheme.
 	 * @return The command properties
 	 */

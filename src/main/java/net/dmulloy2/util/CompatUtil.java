@@ -28,9 +28,9 @@ import org.bukkit.potion.PotionType;
 /**
  * Utility for dealing with backwards compatibility
  * @author dmulloy2
+ * @deprecated Target newer versions of Minecraft
  */
-
-@SuppressWarnings("deprecation")
+@Deprecated
 public class CompatUtil
 {
 	/**

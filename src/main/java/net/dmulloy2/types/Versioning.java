@@ -17,9 +17,6 @@
  */
 package net.dmulloy2.types;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 
 import lombok.Getter;
@@ -38,6 +35,10 @@ public class Versioning
 	@Getter
 	public enum Version
 	{
+		/**
+		 * Minecraft 1.19, the wild update
+		 */
+		MC_119("Minecraft 1.19.x", "1.19"),
 		/**
 		 * Minecraft 1.18, caves & cliffs II
 		 */
@@ -136,17 +137,6 @@ public class Versioning
 		public String toString()
 		{
 			return name + (matcher != null ? "[matcher=" + matcher + "]" : "");
-		}
-
-		/**
-		 * Gets the list of supported Versions
-		 * @return The List
-		 * @deprecated Use {@code Version.values()}
-		 */
-		@Deprecated
-		public static List<Version> getSupported()
-		{
-			return Arrays.asList(values());
 		}
 	}
 

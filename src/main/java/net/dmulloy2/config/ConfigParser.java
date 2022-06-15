@@ -18,7 +18,6 @@
 package net.dmulloy2.config;
 
 import net.dmulloy2.SwornPlugin;
-import net.dmulloy2.types.MyMaterial;
 import net.dmulloy2.util.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -120,12 +119,7 @@ public final class ConfigParser
 			case PARSE_ITEMS -> ItemUtil.readItems((List<String>) value, plugin);
 			case PARSE_MATERIAL ->
 			{
-				if (NumberUtil.isInt(value))
-				{
-					plugin.getLogHandler().log(Level.WARNING, "Use of type IDs is discouraged. Please change \"{0}\" in your config", path);
-				}
-
-				var material = MaterialUtil.getMaterial(value.toString());
+				var material = Material.matchMaterial(value.toString());
 				if (material == null && !options.allowNull())
 				{
 					plugin.getLogHandler().log(Level.WARNING, "Failed to read material \"{0}\" from {1}. Defaulting to {2}", value, path, def);
@@ -141,16 +135,7 @@ public final class ConfigParser
 				for (Object element : (List<Object>) value)
 				{
 					String string = element.toString();
-
-					try
-					{
-						Integer.parseInt(string);
-						plugin.getLogHandler().log(Level.WARNING, "Use of type IDs is discouraged. Please change \"{0}\" in your config", path);
-					} catch (NumberFormatException ignored)
-					{
-					}
-
-					Material material = MaterialUtil.getMaterial(string);
+					Material material = Material.matchMaterial(string);
 					if (material == null && !options.allowNull())
 					{
 						plugin.getLogHandler().log(Level.WARNING, "Failed to read material \"{0}\" from {1}", string, path);
@@ -160,16 +145,6 @@ public final class ConfigParser
 					}
 				}
 				yield materials;
-			}
-			case PARSE_MY_MATERIAL ->
-			{
-				var myMat = MyMaterial.fromString(value.toString());
-				if (myMat == null && !options.allowNull())
-				{
-					plugin.getLogHandler().log(Level.WARNING, "Failed to read MyMaterial \"{0}\" from {1}. Defaulting to {2}", value, path, def);
-					yield def;
-				}
-				yield myMat;
 			}
 			case SECOND_TO_MILLIS -> TimeUnit.SECONDS.toMillis(NumberUtil.toLong(value));
 			case SECOND_TO_TICKS -> NumberUtil.toLong(value) * TICKS_PER_SECOND;
