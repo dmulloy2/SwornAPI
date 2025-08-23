@@ -23,7 +23,7 @@ import java.util.Map;
 
 import net.dmulloy2.swornapi.util.FormatUtil;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -20,8 +20,6 @@ package net.dmulloy2.swornapi.util;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
@@ -139,7 +137,35 @@ public class FormatUtil
 	{
 		Validate.notNull(string, "string cannot be null!");
 
-		return WordUtils.capitalize(string.toLowerCase().replaceAll("_", " "));
+		return capitalize(string.replaceAll("_", " "));
+	}
+
+	public static String capitalize(String string)
+	{
+		Validate.notNull(string, "string cannot be null!");
+
+		if (string.isEmpty())
+			return string;
+
+		if (string.length() == 1)
+			return string.toUpperCase();
+
+		StringBuilder result = new StringBuilder(string.length());
+		String[] words = string.split(" ");
+		for (String word : words)
+		{
+			if (!word.isEmpty())
+			{
+				result.append(Character.toUpperCase(word.charAt(0)));
+				if (word.length() > 1)
+				{
+					result.append(word.substring(1).toLowerCase());
+				}
+			}
+			result.append(" ");
+		}
+
+		return result.toString().trim();
 	}
 
 	/**

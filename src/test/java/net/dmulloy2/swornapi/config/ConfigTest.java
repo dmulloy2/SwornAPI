@@ -3,7 +3,7 @@
  */
 package net.dmulloy2.swornapi.config;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,10 +23,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -37,10 +37,10 @@ import com.google.common.io.Resources;
 
 public class ConfigTest
 {
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() throws Throwable
 	{
-		BukkitTesting.prepare();
+		BukkitTesting.initializeAll();
 
 		SwornPlugin plugin = mock(SwornPlugin.class);
 		when(plugin.getLogHandler()).thenReturn(new LogHandler(plugin, Logger.getGlobal()));
@@ -59,13 +59,13 @@ public class ConfigTest
 	@Test
 	public void testStrings()
 	{
-		assertEquals(Config.string, "succeeded");
+		assertEquals("succeeded", Config.string);
 	}
 
 	@Test
 	public void testMaterial()
 	{
-		assertEquals(Config.material, Material.GOLDEN_APPLE);
+		assertEquals(Material.GOLDEN_APPLE, Config.material);
 	}
 
 	@Test
@@ -78,34 +78,37 @@ public class ConfigTest
 	public void testItems()
 	{
 		assertNotNull(Config.items);
-		assertEquals(Config.items.size(), 4);
+		assertEquals(4, Config.items.size());
 		
 		ItemStack sword = Config.items.get(0);
-		assertEquals(sword.getType(), Material.DIAMOND_SWORD);
-		assertEquals(sword.getAmount(), 1);
-		assertTrue(sword.getEnchantments().containsKey(Enchantment.DAMAGE_ALL));
-		assertTrue(sword.getEnchantments().containsKey(Enchantment.DURABILITY));
+		assertEquals(Material.DIAMOND_SWORD, sword.getType());
+		assertEquals(1, sword.getAmount());
+		assertTrue(sword.getEnchantments().containsKey(Enchantment.SHARPNESS));
+		assertTrue(sword.getEnchantments().containsKey(Enchantment.UNBREAKING));
 		assertTrue(sword.getEnchantments().containsKey(Enchantment.FIRE_ASPECT));
 		assertNotNull(sword.getItemMeta());
 		assertEquals(sword.getItemMeta().getDisplayName(), ChatColor.DARK_RED.toString() + ChatColor.BOLD.toString() + "Oathbreaker");
 
 		ItemStack apple = Config.items.get(1);
-		assertEquals(apple.getType(), Material.GOLDEN_APPLE);
-		assertEquals(apple.getAmount(), 2);
+		assertEquals(Material.GOLDEN_APPLE, apple.getType());
+		assertEquals(2, apple.getAmount());
 
 		ItemStack flint = Config.items.get(2);
-		assertEquals(flint.getType(), Material.FLINT_AND_STEEL);
-		assertEquals(flint.getAmount(), 1);
+		assertEquals(Material.FLINT_AND_STEEL, flint.getType());
+		assertEquals(1, flint.getAmount());
 
 		ItemStack potion = Config.items.get(3);
-		assertEquals(potion.getType(), Material.POTION);
-		assertEquals(potion.getAmount(), 2);
+		assertEquals(Material.POTION, potion.getType());
+		assertEquals(2, potion.getAmount());
 		assertNotNull(potion.getItemMeta());
 
-		PotionData data = ((PotionMeta) potion.getItemMeta()).getBasePotionData();
-		assertEquals(data.getType(), PotionType.SPEED);
-		assertFalse(data.isUpgraded());
-		assertTrue(data.isExtended());
+		List<PotionEffect> effects = ((PotionMeta) potion.getItemMeta()).getCustomEffects();
+		assertEquals(1, effects.size());
+
+		PotionEffect data = effects.get(0);
+		assertEquals(PotionEffectType.SPEED, data.getType());
+		assertEquals(0, data.getAmplifier());
+		assertEquals(9600, data.getDuration());
 	}
 
 	private static class Config

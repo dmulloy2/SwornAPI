@@ -29,7 +29,7 @@ import net.dmulloy2.swornapi.util.FormatUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;

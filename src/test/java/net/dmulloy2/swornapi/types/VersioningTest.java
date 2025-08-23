@@ -3,13 +3,13 @@
  */
 package net.dmulloy2.swornapi.types;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.dmulloy2.swornapi.BukkitTesting;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author dmulloy2
@@ -17,10 +17,10 @@ import org.junit.Test;
 
 public class VersioningTest
 {
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass()
 	{
-		BukkitTesting.prepare();
+		BukkitTesting.initializeAll();
 	}
 
 	@Test

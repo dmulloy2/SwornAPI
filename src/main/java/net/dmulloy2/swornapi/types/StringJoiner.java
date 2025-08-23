@@ -17,7 +17,7 @@
  */
 package net.dmulloy2.swornapi.types;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 
 /**
  * StringJoiner is used to construct a sequence of characters separated by a

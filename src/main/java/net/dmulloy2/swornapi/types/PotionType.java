@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import net.dmulloy2.swornapi.util.FormatUtil;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -34,30 +34,32 @@ import lombok.Getter;
 @Getter
 public enum PotionType
 {
-	AWKWARD("Awkward"),
-	FIRE_RESISTANCE("Fire Resistance", "fireres"),
-	INSTANT_DAMAGE("Harming", "damage"),
-	INSTANT_HEAL("Healing", "heal"),
-	INVISIBILITY("Invisibility", "invis"),
-	JUMP("Leaping", "jump"),
-	LUCK("Luck", "luck"),
-	MUNDANE("Mundane"),
-	NIGHT_VISION("Night Vision", "nvg"),
-	POISON("Poison"),
-	REGEN("Regeneration", "regen"),
-	SLOWNESS("Slowness", "slow"),
-	SPEED("Swiftness", "swift", "speed"),
-	STRENGTH("Strength"),
-	THICK("Thick"),
-	WATER("Water"),
-	WATER_BREATHING("Water Breathing", "waterbreath"),
-	WEAKNESS("Weakness", "weak");
+	AWKWARD(null, "Awkward"),
+	FIRE_RESISTANCE(PotionEffectType.FIRE_RESISTANCE, "Fire Resistance", "fireres"),
+	INSTANT_DAMAGE(PotionEffectType.INSTANT_DAMAGE, "Harming", "damage"),
+	INSTANT_HEAL(PotionEffectType.INSTANT_HEALTH, "Healing", "heal"),
+	INVISIBILITY(PotionEffectType.INVISIBILITY, "Invisibility", "invis"),
+	JUMP(PotionEffectType.JUMP_BOOST, "Leaping", "jump"),
+	LUCK(PotionEffectType.LUCK, "Luck", "luck"),
+	MUNDANE(null, "Mundane"),
+	NIGHT_VISION(PotionEffectType.NIGHT_VISION, "Night Vision", "nvg"),
+	POISON(PotionEffectType.POISON, "Poison"),
+	REGEN(PotionEffectType.REGENERATION, "Regeneration", "regen"),
+	SLOWNESS(PotionEffectType.SLOWNESS, "Slowness", "slow"),
+	SPEED(PotionEffectType.SPEED, "Swiftness", "swift", "speed"),
+	STRENGTH(PotionEffectType.STRENGTH, "Strength"),
+	THICK(null, "Thick"),
+	WATER(null, "Water"),
+	WATER_BREATHING(PotionEffectType.WATER_BREATHING, "Water Breathing", "waterbreath"),
+	WEAKNESS(PotionEffectType.WEAKNESS, "Weakness", "weak");
 
+	private final PotionEffectType bukkitEffect;
 	private final String name;
 	private final String[] aliases;
 
-	PotionType(String name, String... aliases)
+	PotionType(PotionEffectType bukkitEffect, String name, String... aliases)
 	{
+		this.bukkitEffect = bukkitEffect;
 		this.name = name;
 		this.aliases = aliases;
 	}
@@ -100,7 +102,7 @@ public enum PotionType
 	 */
 	public PotionEffectType getEffectType()
 	{
-		return getBukkit().getEffectType();
+		return bukkitEffect;
 	}
 
 	// ---- Finders

@@ -21,9 +21,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.dmulloy2.swornapi.util.FormatUtil;
+import net.kyori.adventure.key.Key;
 
 import lombok.Getter;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+
+import org.bukkit.Registry;
 import org.bukkit.enchantments.Enchantment;
 
 /**
@@ -33,43 +38,45 @@ import org.bukkit.enchantments.Enchantment;
 @Getter
 public enum EnchantmentType
 {
-	ARROW_DAMAGE("Power", "arrowdmg"),
-	ARROW_FIRE("Flame", "fire"),
-	ARROW_INFINITE("Infinity", "inf"),
-	ARROW_KNOCKBACK("Punch", "arrowkb"),
-	BINDING_CURSE("Curse of Bind", "bind", "binding"),
-	DAMAGE_ALL("Sharpness", "sharp"),
-	DAMAGE_ARTHROPODS("Bane of Arthropods", "bane"),
-	DAMAGE_UNDEAD("Smite"),
-	DEPTH_STRIDER("Depth Strider", "depthstrider", "depth"),
-	DIG_SPEED("Efficiency", "eff"),
-	DURABILITY("Durability", "dura"),
-	FIRE_ASPECT("Fire Aspect", "fireaspect"),
-	FROST_WALKER("Frost Walker", "frostwalker"),
-	KNOCKBACK("Knockback"),
-	LOOT_BONUS_BLOCKS("Fortune"),
-	LOOT_BONUS_MOBS("Looting"),
-	LUCK("Luck"),
-	LOOT("Loot"),
-	LURE("Lure"),
-	MENDING("Mending", "mend"),
-	OXYGEN("Respiration", "breathing"),
-	PROTECTION_ENVIRONMENTAL("Protection", "prot"),
-	PROTECTION_EXPLOSIONS("Blast Protection", "blast"),
-	PROTECTION_FALL("Feather Falling", "feather"),
-	PROTECTION_FIRE("Fire Protection", "fireprot"),
-	PROTECTION_PROJECTILE("Projectile Protection", "proj"),
-	SILK_TOUCH("Silk Touch", "silk"),
-	SWEEPING_EDGE("Sweeping Edge", "sweep"),
-	THORNS("Thorns"),
-	VANISHING_CURSE("Vanishing Curse", "vanish"),
-	WATER_WORKER("Aqua Affinity", "aqua", "affinity");
+	ARROW_DAMAGE(Enchantment.POWER, "Power", "arrowdmg"),
+	ARROW_FIRE(Enchantment.FIRE_ASPECT, "Flame", "fire"),
+	ARROW_INFINITE(Enchantment.INFINITY, "Infinity", "inf"),
+	ARROW_KNOCKBACK(Enchantment.PUNCH, "Punch", "arrowkb"),
+	BINDING_CURSE(Enchantment.BINDING_CURSE, "Curse of Bind", "bind", "binding"),
+	DAMAGE_ALL(Enchantment.SHARPNESS, "Sharpness", "sharp"),
+	DAMAGE_ARTHROPODS(Enchantment.BANE_OF_ARTHROPODS, "Bane of Arthropods", "bane"),
+	DAMAGE_UNDEAD(Enchantment.SMITE, "Smite"),
+	DEPTH_STRIDER(Enchantment.DEPTH_STRIDER, "Depth Strider", "depthstrider", "depth"),
+	DIG_SPEED(Enchantment.EFFICIENCY, "Efficiency", "eff"),
+	DURABILITY(Enchantment.UNBREAKING, "Durability", "dura", "unbreaking"),
+	FIRE_ASPECT(Enchantment.FIRE_ASPECT, "Fire Aspect", "fireaspect"),
+	FROST_WALKER(Enchantment.FROST_WALKER, "Frost Walker", "frostwalker"),
+	KNOCKBACK(Enchantment.KNOCKBACK, "Knockback"),
+	LOOT_BONUS_BLOCKS(Enchantment.FORTUNE, "Fortune"),
+	LOOT_BONUS_MOBS(Enchantment.LOOTING, "Looting"),
+	LUCK(Enchantment.LUCK_OF_THE_SEA, "Luck", "luckofthesea"),
+	LOOT(Enchantment.LOOTING, "Loot", "looting"),
+	LURE(Enchantment.LURE, "Lure"),
+	MENDING(Enchantment.MENDING, "Mending", "mend"),
+	OXYGEN(Enchantment.RESPIRATION, "Respiration", "breathing"),
+	PROTECTION_ENVIRONMENTAL(Enchantment.PROTECTION, "Protection", "prot"),
+	PROTECTION_EXPLOSIONS(Enchantment.BLAST_PROTECTION, "Blast Protection", "blast"),
+	PROTECTION_FALL(Enchantment.FEATHER_FALLING, "Feather Falling", "feather"),
+	PROTECTION_FIRE(Enchantment.FIRE_PROTECTION, "Fire Protection", "fireprot"),
+	PROTECTION_PROJECTILE(Enchantment.PROJECTILE_PROTECTION, "Projectile Protection", "proj"),
+	SILK_TOUCH(Enchantment.SILK_TOUCH, "Silk Touch", "silk"),
+	SWEEPING_EDGE(Enchantment.SWEEPING_EDGE, "Sweeping Edge", "sweep"),
+	THORNS(Enchantment.THORNS, "Thorns"),
+	VANISHING_CURSE(Enchantment.VANISHING_CURSE, "Vanishing Curse", "vanish"),
+	WATER_WORKER(Enchantment.AQUA_AFFINITY, "Aqua Affinity", "aqua", "affinity");
 
+	private final Enchantment bukkitEnchant;
 	private final String name;
 	private final String[] aliases;
 
-	EnchantmentType(String name, String... aliases)
+	EnchantmentType(Enchantment bukkitEnchant, String name, String... aliases)
 	{
+		this.bukkitEnchant = bukkitEnchant;
 		this.name = name;
 		this.aliases = aliases;
 	}
@@ -82,7 +89,7 @@ public enum EnchantmentType
 	 */
 	public static String toName(Enchantment enchant)
 	{
-		EnchantmentType type = getByName(enchant.getName());
+		EnchantmentType type = fromBukkit(enchant);
 		if (type != null)
 			return type.getName();
 
@@ -92,19 +99,24 @@ public enum EnchantmentType
 	/**
 	 * Attempts to get an {@link Enchantment} from a given string.
 	 *
-	 * @param enchant Enchantment name
+	 * @param name Enchantment name
 	 * @return The enchantment, or null if none exists.
 	 */
-	public static Enchantment toEnchantment(String enchant)
+	public static Enchantment toEnchantment(String name)
 	{
-		enchant = enchant.replaceAll(" ", "_");
-		enchant = enchant.toUpperCase();
+		name = name.replaceAll(" ", "_");
 
-		EnchantmentType type = getByName(enchant);
+		Enchantment enchant = RegistryAccess.registryAccess()
+			.getRegistry(RegistryKey.ENCHANTMENT)
+			.get(Key.key("minecraft", name.toLowerCase()));
+		if (enchant != null)
+			return enchant;
+
+		EnchantmentType type = getByName(name.toUpperCase());
 		if (type != null)
-			return Enchantment.getByName(type.name());
+			return type.bukkitEnchant;
 
-		return Enchantment.getByName(enchant);
+		return null;
 	}
 
 	/**
@@ -125,6 +137,17 @@ public enum EnchantmentType
 	}
 
 	// ---- Utility Methods
+
+	private static EnchantmentType fromBukkit(Enchantment bukkitEnchant)
+	{
+		for (EnchantmentType type : values())
+		{
+			if (type.getBukkitEnchant().equals(bukkitEnchant))
+				return type;
+		}
+
+		return null;
+	}
 
 	private static EnchantmentType getByName(String name)
 	{

@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import net.dmulloy2.swornapi.SwornPlugin;
 import net.dmulloy2.swornapi.types.CustomSkullType;
 import net.dmulloy2.swornapi.types.EnchantmentType;
+import net.dmulloy2.swornapi.types.PotionType;
 import net.dmulloy2.swornapi.types.StringJoiner;
 
 import org.bukkit.ChatColor;
@@ -34,8 +35,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 /**
  * Utility for dealing with items and potions
@@ -185,7 +188,7 @@ public class ItemUtil
 
 		String[] split = normalized.split(",");
 
-		PotionType type = net.dmulloy2.swornapi.types.PotionType.findPotion(split[0]);
+		PotionEffectType type = PotionType.findEffect(split[0]);
 		if (type == null)
 			throw new NullPointerException("Null potion type \"" + split[0] + "\"");
 
@@ -200,11 +203,17 @@ public class ItemUtil
 		boolean splash = split.length > 3 && Util.toBoolean(split[3]);
 		boolean extended = split.length > 4 && Util.toBoolean(split[4]);
 
-		ItemStack potion = CompatUtil.createPotion(type, amount, level, splash, extended);
+		Material material = splash ? Material.SPLASH_POTION : Material.POTION;
+
+		ItemStack item = new ItemStack(material, amount);
+		PotionMeta potionData = (PotionMeta) item.getItemMeta();
+		PotionEffect effect = new PotionEffect(type, extended ? 9600 : 3600, level - 1);
+		potionData.addCustomEffect(effect, true);
+		item.setItemMeta(potionData);
 
 		// Parse meta
-		parseItemMeta(potion, normalized);
-		return potion;
+		parseItemMeta(item, normalized);
+		return item;
 	}
 
 	private static final Pattern LORE_MATCHER = Pattern.compile("name:|lore:|color:|owner:|type:");

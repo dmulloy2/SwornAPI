@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import net.dmulloy2.swornapi.handlers.LogHandler;
 import net.dmulloy2.swornapi.util.Util;
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

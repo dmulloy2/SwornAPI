@@ -28,7 +28,7 @@ import java.util.UUID;
 
 import net.dmulloy2.swornapi.types.StringJoiner;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;

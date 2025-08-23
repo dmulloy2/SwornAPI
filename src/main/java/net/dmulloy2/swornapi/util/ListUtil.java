@@ -19,7 +19,7 @@ package net.dmulloy2.swornapi.util;
 
 import java.util.*;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 
 /**
  * Util dealing with Lists.

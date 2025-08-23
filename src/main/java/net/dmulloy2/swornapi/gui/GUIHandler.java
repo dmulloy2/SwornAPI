@@ -22,7 +22,7 @@ import java.util.Map;
 
 import net.dmulloy2.swornapi.SwornPlugin;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -24,7 +24,7 @@ import java.util.Objects;
 import lombok.Getter;
 import net.dmulloy2.swornapi.util.NumberUtil;
 
-import org.apache.commons.lang.Validate;
+import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
