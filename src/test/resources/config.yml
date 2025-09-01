@@ -1,13 +1,46 @@
 string: "succeeded"
 
 material: "golden_apple"
+fullItemType: "minecraft:diamond_sword"
+partialItemType: "golden_sword"
+blockType: "minecraft:oak_door"
 
-materials:
+itemTypeList:
   - "golden_apple"
   - "diamond_block"
 
-items:
+entityTypes:
+  - "zombie"
+  - "minecraft:wither_skeleton"
+
+legacyItems:
   - "diamond_sword, 1, sharp:5, dura:3, fireaspect:2, name:&4&lOathbreaker"
   - "golden_apple, 2"
   - "flint_and_steel"
   - "potion: speed, 2, 1, false, true"
+
+modernItem:
+  type: "minecraft:diamond_sword"
+  meta:
+    display-name: "{'text':'Oathbreaker','color':'dark_red','bold':true}"
+    enchants:
+      minecraft:sharpness: 5
+      durability: 3
+      fire_aspect: 2
+
+modernItems:
+  - type: "minecraft:diamond_sword"
+    enchants:
+      minecraft:sharpness: 5
+      unbreaking: 3
+      fire_aspect: 2
+  - type: "minecraft:golden_sword"
+    meta:
+      display-name: "{'text':'Lightbringer','color':'gold','bold':true}"
+      lore:
+        - "{'text':'For exclusive use by the prince who was promised','color':'white','italic':true}"
+      enchants:
+        minecraft:unbreaking: 3
+  - type: "minecraft:golden_apple"
+    amount: 2
+  - type: "minecraft:flint_and_steel"

@@ -30,14 +30,14 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ValueOptions
+public @interface TransformValue
 {
 	/**
 	 * An array of standard value options.
 	 * 
 	 * @return Standard value options
 	 */
-	ValueOption value();
+	Transform value();
 
 	/**
 	 * Whether or not to allow null values. Defaults to false.
@@ -54,26 +54,4 @@ public @interface ValueOptions
 	 * @return Custom value options
 	 */
 	Class<?>[] custom() default {};
-
-	/**
-	 * Represents a standard value option.
-	 * 
-	 * @author dmulloy2
-	 */
-	enum ValueOption
-	{
-		FORMAT,
-		LIST_LOWER_CASE,
-		LIST_UPPER_CASE,
-		LOWER_CASE,
-		MINUTE_TO_MILLIS,
-		MINUTE_TO_TICKS,
-		PARSE_ENUM,
-		PARSE_ITEM,
-		PARSE_ITEMS,
-		PARSE_MATERIAL,
-		PARSE_MATERIALS,
-		SECOND_TO_MILLIS,
-		SECOND_TO_TICKS
-	}
 }

@@ -22,18 +22,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import net.dmulloy2.swornapi.SwornPlugin;
-import net.dmulloy2.swornapi.commands.Command;
-import net.dmulloy2.swornapi.util.FormatUtil;
-
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-
-import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+
+import net.dmulloy2.swornapi.SwornPlugin;
+import net.dmulloy2.swornapi.commands.Command;
+import net.dmulloy2.swornapi.util.FormatUtil;
+import net.dmulloy2.swornapi.util.Validate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * Handles commands. This supports both prefixed and non-prefixed commands.
@@ -191,10 +190,15 @@ public class CommandHandler implements CommandExecutor
 
 			if (sender instanceof Player player)
 			{
-				List<BaseComponent[]> templates = getHelpCommand().getFancyUsageTemplate();
-				String error = FormatUtil.format("&cError: &4Unknown command \"&c{0}&4\". Try ", name);
-				BaseComponent[] components = new ComponentBuilder(error).append(templates.get(0)).create();
-				player.spigot().sendMessage(components);
+				List<Component> templates = getHelpCommand().getFancyUsageTemplate();
+
+				Component component = Component.text("Error: ", NamedTextColor.RED)
+						.append(Component.text("Unknown command \"", NamedTextColor.DARK_RED))
+						.append(Component.text(name, NamedTextColor.RED))
+						.append(Component.text("\". Try ", NamedTextColor.DARK_RED))
+						.append(templates.getFirst());
+
+				player.sendMessage(component);
 			}
 			else
 			{

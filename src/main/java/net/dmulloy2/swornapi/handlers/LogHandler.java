@@ -56,6 +56,26 @@ public class LogHandler
 		logger.log(level, FormatUtil.format(msg, objects));
 	}
 
+	public final void error(Throwable ex, String msg, Object... objects)
+	{
+		logger.log(Level.SEVERE, FormatUtil.format(msg, objects), ex);
+	}
+
+	public final void error(String msg, Object... objects)
+	{
+		logger.log(Level.SEVERE, FormatUtil.format(msg, objects));
+	}
+
+	public final void warn(Throwable ex, String msg, Object... objects)
+	{
+		logger.log(Level.WARNING, FormatUtil.format(msg, objects), ex);
+	}
+
+	public final void warn(String msg, Object... objects)
+	{
+		logger.log(Level.WARNING, FormatUtil.format(msg, objects));
+	}
+
 	/**
 	 * Logs a formatted message to console with INFO level.
 	 *

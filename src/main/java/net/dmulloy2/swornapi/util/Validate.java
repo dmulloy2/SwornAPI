@@ -4,27 +4,31 @@ public final class Validate
 {
 	private Validate() { }
 
-	public static void notNull(Object object, String message)
+	public static <T> T notNull(T object, String message)
 	{
 		if (object == null)
 		{
 			throw new IllegalArgumentException(message);
 		}
+
+		return object;
 	}
 
-	public static void notEmpty(String string, String message)
+	public static String notEmpty(String string, String message)
 	{
 		if (string == null || string.isEmpty())
 		{
 			throw new IllegalArgumentException(message);
 		}
+
+		return string;
 	}
 
-	public static void noNullElements(Object[] args, String error)
+	public static <T> T[] noNullElements(T[] args, String error)
 	{
 		if (args == null)
 		{
-			return;
+			return args;
 		}
 
 		for (Object arg : args)
@@ -34,13 +38,17 @@ public final class Validate
 				throw new IllegalArgumentException(error);
 			}
 		}
+
+		return args;
 	}
 
-	public static void isTrue(boolean bool, String error)
+	public static boolean isTrue(boolean bool, String error)
 	{
 		if (!bool)
 		{
 			throw new IllegalArgumentException(error);
 		}
+
+		return bool;
 	}
 }

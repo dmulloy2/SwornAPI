@@ -57,7 +57,7 @@ public class FormatUtil
 
 	private static final String[] rainbowColors = new String[]
 	{
-			"c", "6", "e", "a", "b", "d", "5"
+		"c", "6", "e", "a", "b", "d", "5"
 	};
 
 	/**
@@ -66,6 +66,7 @@ public class FormatUtil
 	 * @param message Message to replace color codes in
 	 * @return Formatted chat message
 	 */
+	// TODO: use new adventure API for chat colors
 	public static String replaceColors(String message)
 	{
 		Validate.notNull(message, "message cannot be null!");
@@ -79,20 +80,27 @@ public class FormatUtil
 
 			for (String s : ss)
 			{
-				if (s != null)
+				if (s == null)
 				{
-					int index = 0;
-					while (index < s.length() && s.charAt(index) != '&')
+					continue;
+				}
+
+				int strIdx = 0;
+				int colorIdx = 0;
+				while (strIdx < s.length() && s.charAt(strIdx) != '&')
+				{
+					char c = s.charAt(strIdx++);
+					if (c != ' ')
 					{
-						ret.append("&").append(rainbowColors[index % rainbowColors.length]);
-						ret.append(s.charAt(index));
-						index++;
+						ret.append("&").append(rainbowColors[colorIdx++ % rainbowColors.length]);
 					}
 
-					if (index < s.length())
-					{
-						ret.append(s.substring(index));
-					}
+					ret.append(c);
+				}
+
+				if (strIdx < s.length())
+				{
+					ret.append(s.substring(strIdx));
 				}
 			}
 
@@ -232,31 +240,37 @@ public class FormatUtil
 	 * Joins together multiple given strings with the given glue using the
 	 * {@link StringJoiner} class.
 	 *
+	 * @deprecated Added to Java standard lib, use {@link String#join(CharSequence, CharSequence...)}
+	 *
 	 * @param delimiter String to join the args together with
 	 * @param args Strings to join together
 	 * @return Multiple strings joined together with the given glue.
 	 * @see StringJoiner
 	 */
+	@Deprecated
 	public static String join(String delimiter, String... args)
 	{
 		Validate.notNull(delimiter, "glue cannot be null");
 		Validate.noNullElements(args, "args cannot have null elements!");
 
-		return new StringJoiner(delimiter).appendAll(args).toString();
+		return String.join(delimiter, args);
 	}
 
 	/**
 	 * Joins together multiple given strings with a single space using the
 	 * {@link StringJoiner} class.
 	 *
+	 * @deprecated Added to Java standard lib, use {@link String#join(CharSequence, CharSequence...)}
+	 *
 	 * @param args Strings to join together
 	 * @return Multiple strings joined together with a space
 	 * @see StringJoiner
 	 */
+	@Deprecated
 	public static String join(String... args)
 	{
 		Validate.noNullElements(args, "args cannot have null elements!");
 
-		return StringJoiner.SPACE.newString().appendAll(args).toString();
+		return String.join(" ", args);
 	}
 }

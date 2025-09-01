@@ -17,22 +17,29 @@
  */
 package net.dmulloy2.swornapi.config;
 
-import net.dmulloy2.swornapi.SwornPlugin;
-import net.dmulloy2.swornapi.util.FormatUtil;
-import net.dmulloy2.swornapi.util.ItemUtil;
-import net.dmulloy2.swornapi.util.NumberUtil;
-import net.dmulloy2.swornapi.util.Util;
-
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
+
+import net.dmulloy2.swornapi.SwornPlugin;
+import net.dmulloy2.swornapi.exception.InvalidItemException;
+import net.dmulloy2.swornapi.util.*;
 
 /**
  * Parses a configuration class.
@@ -90,7 +97,7 @@ public final class ConfigParser
 		new ConfigParser(plugin, config, clazz, null).parse();
 	}
 
-	private Object parseValue(Object value, Object def, String path, Field field, ValueOptions options)
+	private Object parseValue(Object value, Object def, String path, Field field, TransformValue options)
 	{
 		return switch (options.value())
 		{
@@ -119,8 +126,56 @@ public final class ConfigParser
 			case MINUTE_TO_MILLIS -> TimeUnit.MINUTES.toMillis(NumberUtil.toLong(value));
 			case MINUTE_TO_TICKS -> TimeUnit.MINUTES.toSeconds(NumberUtil.toLong(value)) * TICKS_PER_SECOND;
 			case PARSE_ENUM -> Enum.valueOf((Class<? extends Enum>) field.getType(), value.toString().toUpperCase().replace(" ", "_").replace(".", "_"));
-			case PARSE_ITEM -> ItemUtil.readItem(value.toString(), plugin);
-			case PARSE_ITEMS -> ItemUtil.readItems((List<String>) value, plugin);
+			case PARSE_LEGACY_ITEM -> ItemUtil.readItem(value.toString(), plugin);
+			case PARSE_LEGACY_ITEMS -> ItemUtil.readItems((List<String>) value, plugin);
+			case PARSE_ITEM ->
+			{
+				if (value instanceof String)
+				{
+					yield ItemUtil.readItem(value.toString(), plugin);
+				} else
+				{
+					ConfigurationSection section = config.getConfigurationSection(path);
+
+					try
+					{
+						yield ModernItemParser.parseItem(section);
+					} catch (InvalidItemException ex)
+					{
+						plugin.getLogHandler().warn(ex, "Failed to parse item from {0}", path);
+						yield def;
+					}
+				}
+			}
+			case PARSE_ITEMS ->
+			{
+				List<?> entries = (List<?>) value;
+				List<ItemStack> items = new ArrayList<>();
+				for (int i = 0; i < entries.size(); i++)
+				{
+					Object element = entries.get(i);
+					if (element instanceof String)
+					{
+						ItemStack item = ItemUtil.readItem(element.toString(), plugin);
+						if (item != null || options.allowNull())
+						{
+							items.add(item);
+						}
+					}
+					else
+					{
+						try
+						{
+							items.add(ModernItemParser.parseItem((Map<String, Object>) element));
+						} catch (InvalidItemException ex)
+						{
+							plugin.getLogHandler().warn(ex, "Failed to parse item from {0}.{1}", path, i);
+						}
+					}
+				}
+
+				yield items;
+			}
 			case PARSE_MATERIAL ->
 			{
 				var material = Material.matchMaterial(value.toString());
@@ -155,76 +210,140 @@ public final class ConfigParser
 		};
 	}
 
+	private Object parseRegistry(String path, Object value, TransformRegistry registryTransform)
+	{
+		RegistryAccess registryAccess = RegistryAccess.registryAccess();
+		RegistryKey<? extends Keyed> registryKey = registryTransform.value().getKey();
+		Registry<?> registry = registryAccess.getRegistry(registryKey);
+
+		if (value instanceof List<?> list)
+		{
+			List<Object> entries = new ArrayList<>();
+			for (int i = 0; i < list.size(); i++)
+			{
+				Object entry = list.get(i);
+				String keyStr = entry.toString().toLowerCase();
+				NamespacedKey keyValue = NamespacedKey.fromString(keyStr);
+				if (keyValue == null)
+				{
+					plugin.getLogHandler().warn("\"{0}\" is not a valid registry key (from {1}.{2})", keyStr, path, i);
+					continue;
+				}
+
+				Object registryEntry = registry.get(keyValue);
+				if (registryEntry == null && !registryTransform.allowNull())
+				{
+					plugin.getLogHandler().warn("\"{0}\" is not a valid entry in registry {1} (from {2}.{3})", keyValue, registryKey, path, i);
+					continue;
+				}
+
+				entries.add(registryEntry);
+			}
+
+			return entries;
+		}
+		else
+		{
+			String keyStr = value.toString().toLowerCase();
+			NamespacedKey keyValue = NamespacedKey.fromString(keyStr);
+			if (keyValue == null)
+			{
+				plugin.getLogHandler().warn("\"{0}\" is not a valid registry key (from {1})", keyStr, path);
+				return null;
+			}
+
+			value = registry.get(keyValue);
+			if (value == null && !registryTransform.allowNull())
+			{
+				plugin.getLogHandler().warn("\"{0}\" is not a valid entry in registry {1} (from {2})", keyValue, registryKey, path);
+				return null;
+			}
+
+			return value;
+		}
+	}
+
+	private void parseField(Field field)
+	{
+		if (!field.canAccess(object)) field.setAccessible(true);
+
+		Object def = null;
+
+		try
+		{
+			def = field.get(object);
+		} catch (Throwable ex)
+		{
+			plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "accessing field {0}", field));
+		}
+
+		Key key = field.getAnnotation(Key.class);
+		if (key == null)
+		{
+			return;
+		}
+
+		String path = key.value();
+		Object value = def;
+
+		try
+		{
+			value = config.get(path);
+			if (value == null)
+			{
+				return;
+			}
+
+			TransformRegistry registryTransform = field.getAnnotation(TransformRegistry.class);
+			TransformValue standardTransform = field.getAnnotation(TransformValue.class);
+
+			if (registryTransform != null)
+			{
+				value = parseRegistry(path, value, registryTransform);
+			}
+			else if (standardTransform != null)
+			{
+				value = parseValue(value, def, path, field, standardTransform);
+
+				for (Class<?> custom : standardTransform.custom())
+				{
+					Method convert = custom.getMethod("convert", Object.class);
+					if (convert.canAccess(null))
+					{
+						try
+						{
+							value = convert.invoke(null, value);
+						} catch (Throwable ex)
+						{
+							plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "converting {0} using {1}", path, custom.getName()));
+						}
+					}
+				}
+			}
+
+			try
+			{
+				field.set(object, value);
+			} catch (IllegalArgumentException ex)
+			{
+				plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
+				plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
+			}
+		} catch (ClassCastException ex)
+		{
+			plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
+			plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
+		} catch (Throwable ex)
+		{
+			plugin.getLogHandler().log(Level.SEVERE, Util.getUsefulStack(ex, "loading value from {0}", path));
+		}
+	}
+
 	private void parse()
 	{
 		for (Field field : clazz.getDeclaredFields())
 		{
-			if (!field.isAccessible()) field.setAccessible(true);
-
-			Object def = null;
-
-			try
-			{
-				def = field.get(object);
-			} catch (Throwable ex)
-			{
-				plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "accessing field {0}", field));
-			}
-
-			Key key = field.getAnnotation(Key.class);
-			if (key == null)
-			{
-				continue;
-			}
-
-			String path = key.value();
-			Object value = def;
-
-			try
-			{
-				value = config.get(path);
-				if (value == null)
-				{
-					continue;
-				}
-
-				ValueOptions options = field.getAnnotation(ValueOptions.class);
-				if (options != null)
-				{
-					value = parseValue(value, def, path, field, options);
-
-					for (Class<?> custom : options.custom())
-					{
-						Method convert = custom.getMethod("convert", Object.class);
-						if (convert.isAccessible())
-						{
-							try
-							{
-								value = convert.invoke(null, value);
-							} catch (Throwable ex)
-							{
-								plugin.getLogHandler().log(Level.WARNING, Util.getUsefulStack(ex, "converting {0} using {1}", path, custom.getName()));
-							}
-						}
-					}
-				}
-
-				try
-				{
-					field.set(object, value);
-				} catch (IllegalArgumentException ex)
-				{
-					plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
-					plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
-				}
-			} catch (ClassCastException ex)
-			{
-				plugin.getLogHandler().log(Level.WARNING, "\"{0}\" is the wrong type: expected {1}, but got {2}", path, field.getType(), value.getClass().getName());
-				plugin.getLogHandler().debug(Level.WARNING, Util.getUsefulStack(ex, "setting {0} to {1}", field, value));
-			} catch (Throwable ex)
-			{
-				plugin.getLogHandler().log(Level.SEVERE, Util.getUsefulStack(ex, "loading value from {0}", path));
-			}
+			parseField(field);
 		}
 	}
 }

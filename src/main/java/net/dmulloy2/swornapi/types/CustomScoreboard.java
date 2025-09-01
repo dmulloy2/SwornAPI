@@ -17,22 +17,20 @@
  */
 package net.dmulloy2.swornapi.types;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.dmulloy2.swornapi.util.FormatUtil;
-
-import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 
-import lombok.Data;
+import net.dmulloy2.swornapi.util.FormatUtil;
+import net.dmulloy2.swornapi.util.Validate;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 /**
  * A scoreboard with custom keys and values.
@@ -180,8 +178,8 @@ public final class CustomScoreboard
 		if (objective != null)
 			objective.unregister();
 
-		board.registerNewObjective(objectiveName, "dummy", display);
-		objective.setDisplayName(display);
+		var displayComponent = LegacyComponentSerializer.legacySection().deserialize(display);
+		objective = board.registerNewObjective(objectiveName, Criteria.DUMMY, displayComponent, RenderType.INTEGER);
 		objective.setDisplaySlot(slot);
 
 		int score = 0;

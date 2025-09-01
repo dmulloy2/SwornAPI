@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 import net.dmulloy2.swornapi.SwornPlugin;
 import net.dmulloy2.swornapi.types.CommandVisibility;
 import net.dmulloy2.swornapi.util.FormatUtil;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
 
 /**
  * Generic help command. This is a modified implementation of
@@ -73,8 +72,8 @@ public class CmdHelp extends Command
 		
 		if (isPlayer())
 		{
-			for (BaseComponent[] components : getPage(index))
-				player.spigot().sendMessage(components);
+			for (Component component : getPage(index))
+				player.sendMessage(component);
 			return;
 		}
 
@@ -98,14 +97,14 @@ public class CmdHelp extends Command
 		return getHelpMenu().size();
 	}
 
-	public List<BaseComponent[]> getPage(int index)
+	public List<Component> getPage(int index)
 	{
-		List<BaseComponent[]> lines = new ArrayList<>();
+		List<Component> lines = new ArrayList<>();
 
 		lines.addAll(getHeader(index));
 		lines.addAll(getLines((index - 1) * linesPerPage, index * linesPerPage));
 
-		BaseComponent[] footer = getFooter();
+		Component footer = getFooter();
 		if (footer != null)
 			lines.add(footer);
 
@@ -126,9 +125,9 @@ public class CmdHelp extends Command
 		return lines;
 	}
 
-	public List<BaseComponent[]> getHeader(int index)
+	public List<Component> getHeader(int index)
 	{
-		return getLegacyHeader(index).stream().map(TextComponent::fromLegacyText).collect(Collectors.toList());
+		return getLegacyHeader(index).stream().map(Component::text).collect(Collectors.toList());
 	}
 
 	public List<String> getLegacyHeader(int index)
@@ -148,10 +147,10 @@ public class CmdHelp extends Command
 		return ret;
 	}
 
-	public List<BaseComponent[]> getLines(int startIndex, int endIndex)
+	public List<Component> getLines(int startIndex, int endIndex)
 	{
-		List<BaseComponent[]> helpMenu = getHelpMenu();
-		List<BaseComponent[]> lines = new ArrayList<>();
+		List<Component> helpMenu = getHelpMenu();
+		List<Component> lines = new ArrayList<>();
 
 		for (int i = startIndex; i < endIndex && i < getListSize(); i++)
 		{
@@ -174,15 +173,15 @@ public class CmdHelp extends Command
 		return lines;
 	}
 
-	public BaseComponent[] getFooter()
+	public Component getFooter()
 	{
 		String footer = props().getHelpFooter();
-		return TextComponent.fromLegacyText(format(footer));
+		return Component.text(format(footer));
 	}
 
-	private List<BaseComponent[]> getHelpMenu()
+	private List<Component> getHelpMenu()
 	{
-		List<BaseComponent[]> ret = new ArrayList<>();
+		List<Component> ret = new ArrayList<>();
 
 		for (Command cmd : plugin.getCommandHandler().getRegisteredPrefixedCommands())
 		{

@@ -4,6 +4,10 @@ import net.dmulloy2.swornapi.handlers.LogHandler;
 
 import org.bukkit.Bukkit;
 
+/**
+ * @deprecated Use NMS directly
+ */
+@Deprecated
 public class ReflectionUtil
 {
 	private static String NMS;

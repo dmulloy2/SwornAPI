@@ -19,8 +19,6 @@ package net.dmulloy2.swornapi.util;
 
 import java.util.*;
 
-import net.dmulloy2.swornapi.util.Validate;
-
 /**
  * Util dealing with Lists.
  *
@@ -35,10 +33,12 @@ public class ListUtil
 
 	/**
 	 * Removes duplicate entries from a {@link List}. Retains order.
+	 * @deprecated you're probably looking for a {@link Set} instead
 	 *
 	 * @param list List to remove duplicate entries from
 	 * @return The list, without duplicate entries
 	 */
+	@Deprecated
 	public static <T> List<T> removeDuplicates(List<T> list)
 	{
 		Validate.notNull(list, "list cannot be null!");
@@ -52,10 +52,12 @@ public class ListUtil
 
 	/**
 	 * Constructs a new {@link List} paramaterized with <code>T</code>.
+	 * @deprecated in favor of {@link List#of(Object[])}
 	 *
 	 * @param elements Array of <code>T</code> to create the list with
 	 * @return a new {@link List} from the given objects
 	 */
+	@Deprecated
 	@SafeVarargs
 	public static <T> List<T> toList(T... elements)
 	{
@@ -91,12 +93,29 @@ public class ListUtil
 	 * Removes a given String element from a list, ignoring case.
 	 * @param list List to remove from
 	 * @param string String to remove
+	 * @deprecated in favor of{@link List#removeIf(java.util.function.Predicate)}
 	 */
+	@Deprecated
 	public static void removeIgnoreCase(List<String> list, String string)
 	{
 		Validate.notNull(list, "list cannot be null!");
 		Validate.notNull(string, "string cannot be null!");
 
 		list.removeIf(string::equalsIgnoreCase);
+	}
+
+	public static <T> T randomFromIterable(Iterable<T> iterable, int size)
+	{
+		Validate.isTrue(size > 0, "Size must be greater than 0!");
+
+	    int index = Util.random(size);
+		Iterator<T> iterator = iterable.iterator();
+		T ret = null;
+		for (int i = 0; i < index; i++)
+		{
+			ret = iterator.next();
+		}
+
+		return Validate.notNull(ret, "Iterable was empty!");
 	}
 }

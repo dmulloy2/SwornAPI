@@ -17,37 +17,30 @@
  */
 package net.dmulloy2.swornapi.types;
 
-import net.dmulloy2.swornapi.util.Util;
-
-import org.bukkit.Location;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.ElderGuardian;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Horse.Color;
-import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Skeleton.SkeletonType;
-import org.bukkit.entity.Villager.Profession;
-import org.bukkit.entity.Zombie;
-import org.bukkit.entity.ZombieVillager;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
 
+import org.bukkit.Location;
+import org.bukkit.entity.*;
+import org.bukkit.entity.Horse.Color;
+import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.Villager.Profession;
+
+import net.dmulloy2.swornapi.util.Util;
+
 /**
  * Handles special entities such as Wither Skeletons, Zombie Villagers, and Horses.
  * Necessary because Mojang changed Entities how are structured in 1.11.
+ *
+ * @deprecated Plugins should use the Bukkit API directly
  * 
  * @author dmulloy2
  */
-@SuppressWarnings("deprecation")
+@Deprecated
 public class SpecialEntities
 {
 	private static Provider provider;

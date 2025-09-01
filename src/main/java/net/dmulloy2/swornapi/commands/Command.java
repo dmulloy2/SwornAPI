@@ -17,20 +17,14 @@
  */
 package net.dmulloy2.swornapi.commands;
 
+import javax.annotation.Nullable;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.logging.Level;
 
-import javax.annotation.Nullable;
-
-import net.dmulloy2.swornapi.exception.CommandException;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.*;
-import net.md_5.bungee.api.chat.hover.content.Text;
-
-import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
@@ -42,12 +36,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
 
 import net.dmulloy2.swornapi.SwornPlugin;
+import net.dmulloy2.swornapi.exception.CommandException;
 import net.dmulloy2.swornapi.types.CommandVisibility;
 import net.dmulloy2.swornapi.types.IPermission;
-import net.dmulloy2.swornapi.types.StringJoiner;
 import net.dmulloy2.swornapi.util.FormatUtil;
-import net.dmulloy2.swornapi.util.ListUtil;
 import net.dmulloy2.swornapi.util.Util;
+import net.dmulloy2.swornapi.util.Validate;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 /**
  * Represents a command. This class provides useful methods for execution,
@@ -182,12 +182,16 @@ public abstract class Command implements CommandExecutor
 			String stack = Util.getUsefulStack(ex, "executing command " + name);
 			plugin.getLogHandler().log(Level.WARNING, stack);
 
-			String error = FormatUtil.format("&cError: &4Encountered an exception executing this command: ");
+			Component errorData = Component.text(ex.getMessage(), NamedTextColor.RED);
+			if (sender.isOp())
+			{
+				errorData = errorData.hoverEvent(Component.text(stack.replace("\t", "  "), NamedTextColor.WHITE));
+			}
 
-			ComponentBuilder builder = new ComponentBuilder(error);
-			BaseComponent[] hoverStr = TextComponent.fromLegacyText(stack.replace("\t", "    "));
-			builder.append(FormatUtil.format("&c{0}", ex.toString())).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverStr));
-			sendMessage(builder.create());
+			Component component = Component.text("Error: ", NamedTextColor.RED)
+					.append(Component.text("Encountered an exception executing this command: ", NamedTextColor.DARK_RED))
+					.append(errorData);
+			sender.sendMessage(component);
 		}
 	}
 
@@ -229,15 +233,14 @@ public abstract class Command implements CommandExecutor
 		{
 			if (message)
 			{
-				StringJoiner hoverTextBuilder = new StringJoiner("\n");
-				hoverTextBuilder.append(FormatUtil.format("&4Permission:"));
-				hoverTextBuilder.append(FormatUtil.format("&r{0}", getPermissionString(permission)));
-				BaseComponent[] hoverText = TextComponent.fromLegacyText(hoverTextBuilder.toString());
-
-				ComponentBuilder builder = new ComponentBuilder(FormatUtil.format("&cError: &4You do not have "));
-				builder.append(FormatUtil.format("&cpermission")).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
-				builder.append(FormatUtil.format(" &4to perform this command!"));
-				sendMessage(sender, builder.create());
+				Component component = Component.text("Error:", NamedTextColor.RED)
+						.append(Component.text("You do not have ", NamedTextColor.DARK_RED))
+						.append(Component.text("permission", NamedTextColor.RED)
+								.hoverEvent(Component.text("Permission: ", NamedTextColor.DARK_RED)
+										.append(Component.text(getPermissionString(permission), NamedTextColor.WHITE))))
+						.append(Component.text(" to perform this command!", NamedTextColor.RED))
+				;
+				sender.sendMessage(component);
 			}
 
 			return false;
@@ -418,6 +421,10 @@ public abstract class Command implements CommandExecutor
 
 	// ---- Fancy Messaging
 
+	/**
+	 * @deprecated use Adventure APIs instead
+	 */
+	@Deprecated
 	protected final void sendMessage(CommandSender sender, ChatMessageType position, BaseComponent... components)
 	{
 		if (sender instanceof Player player)
@@ -426,20 +433,42 @@ public abstract class Command implements CommandExecutor
 		}
 		else
 		{
-			sender.sendMessage(TextComponent.toLegacyText(components));
+			sender.sendMessage(net.md_5.bungee.api.chat.TextComponent.toLegacyText(components));
 		}
 	}
 
+	protected final void sendMessage(CommandSender sender, Component component)
+	{
+		sender.sendMessage(component);
+	}
+
+	/**
+	 * @deprecated use Adventure APIs instead
+	 */
+	@Deprecated
 	protected final void sendMessage(ChatMessageType position, BaseComponent... components)
 	{
 		sendMessage(sender, position, components);
 	}
 
+	protected final void sendMessage(Component component)
+	{
+		sender.sendMessage(component);
+	}
+
+	/**
+	 * @deprecated use Adventure APIs instead
+	 */
+	@Deprecated
 	protected final void sendMessage(CommandSender sender, BaseComponent... components)
 	{
 		sendMessage(sender, ChatMessageType.SYSTEM, components);
 	}
 
+	/**
+	 * @deprecated use Adventure APIs instead
+	 */
+	@Deprecated
 	protected final void sendMessage(BaseComponent... components)
 	{
 		sendMessage(sender, components);
@@ -513,7 +542,7 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @return The usage template
 	 */
-	public List<BaseComponent[]> getFancyUsageTemplate()
+	public List<Component> getFancyUsageTemplate()
 	{
 		return getFancyUsageTemplate(false);
 	}
@@ -524,9 +553,9 @@ public abstract class Command implements CommandExecutor
 	 * @param list Whether or not it is part of a list
 	 * @return The usage template
 	 */
-	public List<BaseComponent[]> getFancyUsageTemplate(boolean list)
+	public List<Component> getFancyUsageTemplate(boolean list)
 	{
-		List<BaseComponent[]> ret = new ArrayList<>();
+		List<Component> ret = new ArrayList<>();
 
 		for (int i = 0; i < syntaxes.size(); i++)
 		{
@@ -552,10 +581,9 @@ public abstract class Command implements CommandExecutor
 
 			String template = format(templateBuilder.toString());
 			String prefix = list ? i == 0 ? "- " : "  " : "";
-			ComponentBuilder builder = new ComponentBuilder(format("{a}" + prefix + template));
+			TextComponent.Builder builder = Component.text(format("{a}" + prefix + template)).toBuilder();
 
-			StringBuilder hoverTextBuilder = new StringBuilder();
-			hoverTextBuilder.append(template).append(":\n");
+			TextComponent.Builder hoverTextBuilder = Component.text(template + ":\n").toBuilder();
 
 			for (int a = 0; a < syntax.size(); a++)
 			{
@@ -565,36 +593,32 @@ public abstract class Command implements CommandExecutor
 				{
 					String argument = arg.argument();
 					if (arg.required())
-						hoverTextBuilder.append(format("{h}  <{0}>: {b}{1}\n", argument, explanation));
+						hoverTextBuilder.append(Component.text(format("{h}  <{0}>: {b}{1}\n", argument, explanation)));
 					else
-						hoverTextBuilder.append(format("{h}  [{0}]: {b}{1}\n", argument, explanation));
+						hoverTextBuilder.append(Component.text(format("{h}  [{0}]: {b}{1}\n", argument, explanation)));
 				}
 
 				if (a != 0 && a == syntax.size() - 1)
-					hoverTextBuilder.append("\n");
+					hoverTextBuilder.append(Component.text("\n"));
 			}
 
 			StringJoiner description = new StringJoiner("\n");
 			for (String s : getDescription())
-				description.append("{b}" + s);
-			hoverTextBuilder.append(format(capitalizeFirst(description.toString())));
+				description.add("{b}" + s);
+			hoverTextBuilder.append(Component.text(format(capitalizeFirst(description.toString()))));
 
 			if (permission != null)
 			{
-				hoverTextBuilder.append("\n\n");
-				hoverTextBuilder.append(ChatColor.DARK_RED).append("Permission:");
-				hoverTextBuilder.append("\n").append(getPermissionString());
+				hoverTextBuilder.append(Component.text("\n\n"));
+				hoverTextBuilder.append(Component.text("Permission:\n", NamedTextColor.DARK_RED));
+				hoverTextBuilder.append(Component.text(getPermissionString()));
 			}
 
-			Text hoverText = new Text(hoverTextBuilder.toString());
+			builder.hoverEvent(hoverTextBuilder.build());
 
-			HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText);
-			builder.event(hoverEvent);
+			builder.clickEvent(ClickEvent.suggestCommand(ChatColor.stripColor(template)));
 
-			ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(template));
-			builder.event(clickEvent);
-
-			ret.add(builder.create());
+			ret.add(builder.build());
 		}
 
 		return ret;
@@ -609,7 +633,7 @@ public abstract class Command implements CommandExecutor
 	public List<String> getDescription()
 	{
 		if (descriptionList == null)
-			descriptionList = ListUtil.toList(description);
+			descriptionList = List.of(description);
 		return descriptionList;
 	}
 
@@ -693,7 +717,7 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @return A list of fancy usage templates
 	 */
-	public final List<BaseComponent[]> getFancySubCommandHelp()
+	public final List<Component> getFancySubCommandHelp()
 	{
 		return getFancySubCommandHelp(false);
 	}
@@ -704,9 +728,9 @@ public abstract class Command implements CommandExecutor
 	 * @param list Whether or not they're part of a list
 	 * @return A list of fancy usage templates
 	 */
-	public final List<BaseComponent[]> getFancySubCommandHelp(boolean list)
+	public final List<Component> getFancySubCommandHelp(boolean list)
 	{
-		List<BaseComponent[]> ret = new ArrayList<>();
+		List<Component> ret = new ArrayList<>();
 
 		for (Command cmd : getSubCommands())
 		{
@@ -960,27 +984,33 @@ public abstract class Command implements CommandExecutor
 	protected final void invalidSyntax(String[] args)
 	{
 		Syntax closest = findClosest(args);
-		String invalidSyntax = FormatUtil.format("&cError: &4Invalid syntax! Missing: &c");
-		ComponentBuilder builder = new ComponentBuilder(invalidSyntax);
+		TextComponent.Builder builder = Component.text("Error:", NamedTextColor.RED)
+			.append(Component.text(" Invalid syntax! Missing: ", NamedTextColor.DARK_RED))
+			.toBuilder();
 
 		List<Argument> missing = closest.missingSyntax(args.length);
 		for (int i = 0; i < missing.size(); i++)
 		{
 			Argument arg = missing.get(i);
-			String line = "&c" + arg.argument();
-			if (i != 0)
-				line = "&4, " + line;
 
-			builder.append(FormatUtil.format(line));
+			if (i != 0)
+			{
+				builder.append(Component.text(", ", NamedTextColor.DARK_RED));
+			}
+
+			Component argComponent = Component.text(arg.argument, NamedTextColor.RED);
+
 			String explanation = arg.explanation();
 			if (explanation != null)
 			{
-				Text hoverText = new Text(FormatUtil.format("&4{0}:\n&f{1}", arg.argument(), explanation));
-				builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText));
+				argComponent = argComponent.hoverEvent(Component.text(arg.argument() + ":\n", NamedTextColor.DARK_RED)
+					.append(Component.text(explanation, NamedTextColor.WHITE)));
 			}
+
+			builder.append(argComponent);
 		}
 
-		sendMessage(builder.create());
+		sendMessage(builder.build());
 	}
 
 	/**
@@ -1021,7 +1051,7 @@ public abstract class Command implements CommandExecutor
 	 */
 	private Syntax defaultSyntax()
 	{
-		return syntaxes.get(0);
+		return syntaxes.getFirst();
 	}
 
 	/**
@@ -1033,7 +1063,7 @@ public abstract class Command implements CommandExecutor
 	 */
 	protected final void addArgument(String arg, String explanation, boolean required)
 	{
-		Syntax syntax = syntaxes.get(syntaxes.size() - 1);
+		Syntax syntax = syntaxes.getLast();
 		syntax.add(new Argument(arg, explanation, required));
 	}
 
@@ -1133,7 +1163,7 @@ public abstract class Command implements CommandExecutor
 	 * 
 	 * @author dmulloy2
 	 */
-	public class SyntaxBuilder
+	public static class SyntaxBuilder
 	{
 		private final List<Syntax> syntaxes;
 
@@ -1217,7 +1247,7 @@ public abstract class Command implements CommandExecutor
 		 */
 		public SyntaxBuilder add(String arg, String explanation, boolean required)
 		{
-			Syntax current = syntaxes.get(syntaxes.size() - 1);
+			Syntax current = syntaxes.getLast();
 			current.add(new Argument(arg, explanation, required));
 			return this;
 		}

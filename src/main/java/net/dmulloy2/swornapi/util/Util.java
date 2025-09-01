@@ -19,16 +19,9 @@ package net.dmulloy2.swornapi.util;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.UUID;
 
-import net.dmulloy2.swornapi.types.StringJoiner;
-
-import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -75,7 +68,6 @@ public class Util
 	 * @see Bukkit#getOfflinePlayer(UUID)
 	 * @see Bukkit#getOfflinePlayer(String)
 	 */
-	@SuppressWarnings("deprecation") // Bukkit#getOfflinePlayer(String)
 	public static OfflinePlayer matchOfflinePlayer(String identifier)
 	{
 		Validate.notNull(identifier, "identifier cannot be null!");
@@ -95,13 +87,23 @@ public class Util
 
 	/**
 	 * Gets a list of currently online Players.
+	 * @deprecated use {@link Bukkit#getOnlinePlayers()} instead`
 	 *
 	 * @return A list of currently online Players
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public static List<Player> getOnlinePlayers()
 	{
-		return (List<Player>) Bukkit.getOnlinePlayers();
+		Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+		if (players instanceof List)
+		{
+			return (List<Player>) players;
+		}
+		else
+		{
+			return List.copyOf(players);
+		}
 	}
 
 	/**
@@ -117,7 +119,7 @@ public class Util
 		Validate.notNull(effect, "effect cannot be null!");
 		Validate.notNull(loc, "loc cannot be null!");
 
-		for (Player player : getOnlinePlayers())
+		for (Player player : Bukkit.getOnlinePlayers())
 		{
 			if (player.getWorld().equals(loc.getWorld()))
 				player.playEffect(loc, effect, data);
@@ -193,7 +195,7 @@ public class Util
 				if (jar != null)
 					line.append(" [").append(jar).append("]");
 
-				joiner.append(line.toString());
+				joiner.add(line.toString());
 			}
 		}
 	}
@@ -211,16 +213,16 @@ public class Util
 
 		StringJoiner joiner = new StringJoiner("\n");
 		circumstance = circumstance != null ? FormatUtil.format(" while " + circumstance, args) : "";
-		joiner.append("Encountered an exception" + circumstance + ": " + ex.toString());
-		joiner.append("Affected classes:");
+		joiner.add("Encountered an exception" + circumstance + ": " + ex);
+		joiner.add("Affected classes:");
 
 		appendStackTrace(ex, joiner);
 
 		while (ex.getCause() != null)
 		{
 			ex = ex.getCause();
-			joiner.append("Caused by: " + ex.toString());
-			joiner.append("Affected classes:");
+			joiner.add("Caused by: " + ex);
+			joiner.add("Affected classes:");
 			appendStackTrace(ex, joiner);
 		}
 

@@ -23,9 +23,11 @@ import net.dmulloy2.swornapi.util.Validate;
  * StringJoiner is used to construct a sequence of characters separated by a
  * delimiter.
  *
+ * @deprecated Added to the Java standard lib, use {@link java.util.StringJoiner} instead
+ *
  * @author dmulloy2
  */
-
+@Deprecated
 public class StringJoiner
 {
 	private static final String DEFAULT_DELIMITER = " ";

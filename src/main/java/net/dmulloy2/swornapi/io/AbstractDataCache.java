@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import net.dmulloy2.swornapi.SwornPlugin;
 import net.dmulloy2.swornapi.util.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -88,7 +89,7 @@ public abstract class AbstractDataCache<T extends AbstractPlayerData> implements
 	public void purgeCache()
 	{
 		List<UUID> online = new ArrayList<>();
-		for (Player player : Util.getOnlinePlayers())
+		for (Player player : Bukkit.getOnlinePlayers())
 			online.add(player.getUniqueId());
 
 		cache.keySet().removeIf(key -> !online.contains(key));
