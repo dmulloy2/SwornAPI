@@ -17,10 +17,11 @@
  */
 package net.dmulloy2.swornapi.handlers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
+
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,7 +41,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * @author dmulloy2
  */
 
-public class CommandHandler implements CommandExecutor
+public class CommandHandler implements CommandExecutor, BasicCommand
 {
 	private String commandPrefix;
 	private List<Command> registeredPrefixedCommands;
@@ -61,15 +62,23 @@ public class CommandHandler implements CommandExecutor
 	public void registerCommand(Command command)
 	{
 		Validate.notNull(command, "command cannot be null!");
-		PluginCommand pluginCommand = plugin.getCommand(command.getName());
-		if (pluginCommand != null)
+
+		if (plugin.isPaperPlugin())
 		{
-			pluginCommand.setExecutor(command);
-			registeredCommands.add(command);
+			plugin.registerCommand(command.getName(), command.getDescription(), command.getAliases(), command);
 		}
 		else
 		{
-			plugin.getLogHandler().log(Level.WARNING, "Entry for command {0} is missing in plugin.yml", command.getName());
+			PluginCommand pluginCommand = plugin.getCommand(command.getName());
+			if (pluginCommand != null)
+			{
+				pluginCommand.setExecutor(command);
+				registeredCommands.add(command);
+			}
+			else
+			{
+				plugin.getLogHandler().log(Level.WARNING, "Entry for command {0} is missing in plugin.yml", command.getName());
+			}
 		}
 	}
 
@@ -84,6 +93,46 @@ public class CommandHandler implements CommandExecutor
 		Validate.notNull(command, "command cannot be null!");
 		if (commandPrefix != null)
 			registeredPrefixedCommands.add(command);
+	}
+
+	@Override
+	public Collection<String> suggest(CommandSourceStack sourceStack, String[] args)
+	{
+		if (args.length == 1)
+		{
+			List<String> suggestions = new ArrayList<>();
+			String partial = args[0].toLowerCase();
+
+			for (Command command : registeredPrefixedCommands)
+			{
+				if (command.getName().toLowerCase().startsWith(partial) || command.getAliases().stream().anyMatch(alias -> alias.toLowerCase().startsWith(partial)))
+				{
+					suggestions.add(command.getName());
+				}
+			}
+
+			for (Command command : registeredCommands)
+			{
+				if (command.getName().toLowerCase().startsWith(partial) || command.getAliases().stream().anyMatch(alias -> alias.toLowerCase().startsWith(partial)))
+				{
+					suggestions.add(command.getName());
+				}
+			}
+
+			return suggestions;
+		}
+
+		if (args.length > 1)
+		{
+			String name = args[0];
+			Command command = getCommand(name);
+			if (command != null)
+			{
+				return command.suggest(sourceStack, Arrays.copyOfRange(args, 1, args.length));
+			}
+		}
+
+		return Collections.emptyList();
 	}
 
 	/**
@@ -120,15 +169,22 @@ public class CommandHandler implements CommandExecutor
 	 * Sets the command prefix. This method must be called before any prefixed
 	 * commands are registered.
 	 *
-	 * @param commandPrefix Command prefix
+	 * @param prefix Command prefix
 	 */
-	public void setCommandPrefix(String commandPrefix)
+	public void setCommandPrefix(String prefix, String... aliases)
 	{
-		Validate.notEmpty(commandPrefix, "prefix cannot be null or empty!");
-		this.commandPrefix = commandPrefix;
+		Validate.notEmpty(prefix, "prefix cannot be null or empty!");
+		this.commandPrefix = prefix;
 		this.registeredPrefixedCommands = new ArrayList<>();
 
-		plugin.getCommand(commandPrefix).setExecutor(this);
+		if (plugin.isPaperPlugin())
+		{
+			plugin.registerCommand(prefix, List.of(aliases), this);
+		}
+		else
+		{
+			plugin.getCommand(prefix).setExecutor(this);
+		}
 	}
 
 	/**
@@ -166,7 +222,19 @@ public class CommandHandler implements CommandExecutor
 	}
 
 	@Override
+	public void execute(CommandSourceStack sourceStack, String[] args)
+	{
+		execute(sourceStack.getSender(), args);
+	}
+
+	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args)
+	{
+		execute(sender, args);
+		return true;
+	}
+
+	private void execute(CommandSender sender, String[] args)
 	{
 		if (args.length > 0)
 		{
@@ -178,14 +246,14 @@ public class CommandHandler implements CommandExecutor
 			if (command != null)
 			{
 				command.execute(sender, args);
-				return true;
+				return;
 			}
 
 			Command def = plugin.getDefaultCommand();
 			if (def != null)
 			{
 				def.execute(sender, originalArgs);
-				return true;
+				return;
 			}
 
 			if (sender instanceof Player player)
@@ -210,8 +278,6 @@ public class CommandHandler implements CommandExecutor
 		{
 			getHelpCommand().execute(sender, args);
 		}
-
-		return true;
 	}
 
 	public final Command getHelpCommand()

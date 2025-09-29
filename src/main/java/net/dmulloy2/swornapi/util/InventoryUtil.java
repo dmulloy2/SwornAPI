@@ -20,7 +20,6 @@ package net.dmulloy2.swornapi.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.dmulloy2.swornapi.util.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -119,10 +118,9 @@ public class InventoryUtil
 	 *
 	 * @param inventory Inventory containing the items
 	 * @param type Material of the item
-	 * @param dat Item data
 	 * @return The amount of items
 	 */
-	public static int amount(Inventory inventory, Material type, short dat)
+	public static int amount(Inventory inventory, Material type)
 	{
 		Validate.notNull(inventory, "inventory cannot be null!");
 		Validate.notNull(type, "type cannot be null!");
@@ -134,14 +132,10 @@ public class InventoryUtil
 			if (item != null && item.getType() != Material.AIR)
 			{
 				Material mat = item.getType();
-				short duration = item.getDurability();
 				int amt = item.getAmount();
 				if (mat == type)
 				{
-					if (dat == -1 || dat == duration)
-					{
-						ret += amt;
-					}
+					ret += amt;
 				}
 			}
 		}
@@ -154,11 +148,10 @@ public class InventoryUtil
 	 *
 	 * @param inventory Inventory to remove items from
 	 * @param type Type of the items
-	 * @param dat Data of the items
 	 * @param amt Amount to remove
 	 * @throws IllegalArgumentException if {@code amt} is less than 0
 	 */
-	public static void remove(Inventory inventory, Material type, short dat, int amt)
+	public static void remove(Inventory inventory, Material type, int amt)
 	{
 		Validate.notNull(inventory, "inventory cannot be null!");
 		Validate.notNull(type, "type cannot be null!");
@@ -171,9 +164,8 @@ public class InventoryUtil
 			if (items[slot] != null)
 			{
 				Material mat = items[slot].getType();
-				short duration = items[slot].getDurability();
 				int itmAmt = items[slot].getAmount();
-				if ((mat == type) && ((dat == duration) || (dat == -1)))
+				if (mat == type)
 				{
 					if (itmAmt >= amt)
 					{
@@ -185,6 +177,7 @@ public class InventoryUtil
 						amt = start - itmAmt;
 						itmAmt = 0;
 					}
+
 					if (itmAmt > 0)
 					{
 						inventory.getItem(slot).setAmount(itmAmt);

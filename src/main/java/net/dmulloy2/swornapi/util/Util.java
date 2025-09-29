@@ -22,11 +22,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import net.kyori.adventure.key.Key;
 
 /**
  * General utility class.
@@ -323,12 +325,25 @@ public class Util
 	{
 		Validate.notNull(object, "object cannot be null!");
 
-		if (object instanceof Boolean)
+		if (object instanceof Boolean b)
 		{
-			return ((Boolean) object);
+			return b;
 		}
 
 		String str = object.toString();
 		return str.startsWith("y") || str.startsWith("t") || str.startsWith("on") || str.startsWith("+") || str.startsWith("1");
+	}
+
+	public static <T extends Keyed> T getRegistryEntry(RegistryKey<T> registryKey, String keyStr)
+	{
+		Registry<T> registry = RegistryAccess.registryAccess().getRegistry(registryKey);
+
+		try
+		{
+			Key key = Key.key(keyStr.toLowerCase().replace(' ', '_'));
+			return registry.get(key);
+		} catch (Exception ignored) { }
+
+		return null;
 	}
 }

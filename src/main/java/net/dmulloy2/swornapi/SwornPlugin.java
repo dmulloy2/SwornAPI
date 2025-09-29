@@ -17,8 +17,14 @@
  */
 package net.dmulloy2.swornapi;
 
+import lombok.Getter;
+
 import java.util.List;
 import java.util.logging.Level;
+
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import net.dmulloy2.swornapi.commands.Command;
 import net.dmulloy2.swornapi.commands.CommandProps;
@@ -28,12 +34,6 @@ import net.dmulloy2.swornapi.handlers.PermissionHandler;
 import net.dmulloy2.swornapi.types.Reloadable;
 import net.dmulloy2.swornapi.types.Versioning;
 import net.dmulloy2.swornapi.types.Versioning.Version;
-
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import lombok.Getter;
 
 /**
  * Main SwornAPI class. Plugins utilizing this API should extend this class.
@@ -51,6 +51,11 @@ public abstract class SwornPlugin extends JavaPlugin implements Reloadable
 	protected LogHandler logHandler;
 
 	protected final CommandProps commandProps = new CommandProps();
+
+	public boolean isPaperPlugin()
+	{
+		return false;
+	}
 
 	/**
 	 * Allows the modification of basic command properties like the color scheme.

@@ -22,8 +22,10 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.logging.Level;
+
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -56,7 +58,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
  * @author dmulloy2
  */
 
-public abstract class Command implements CommandExecutor
+public abstract class Command implements CommandExecutor, BasicCommand
 {
 	protected final SwornPlugin plugin;
 
@@ -97,6 +99,18 @@ public abstract class Command implements CommandExecutor
 	{
 		execute(sender, args);
 		return true;
+	}
+
+	@Override
+	public final void execute(CommandSourceStack sourceStack, String[] args)
+	{
+		execute(sourceStack.getSender(), args);
+	}
+
+	@Override
+	public final String permission()
+	{
+		return permission != null ? getPermissionString() : null;
 	}
 
 	/**
@@ -602,10 +616,7 @@ public abstract class Command implements CommandExecutor
 					hoverTextBuilder.append(Component.text("\n"));
 			}
 
-			StringJoiner description = new StringJoiner("\n");
-			for (String s : getDescription())
-				description.add("{b}" + s);
-			hoverTextBuilder.append(Component.text(format(capitalizeFirst(description.toString()))));
+			hoverTextBuilder.append(Component.text(format(capitalizeFirst(description))));
 
 			if (permission != null)
 			{
@@ -624,17 +635,13 @@ public abstract class Command implements CommandExecutor
 		return ret;
 	}
 
-	private List<String> descriptionList;
-
 	/**
 	 * Gets the description for this command
 	 * @return The description
 	 */
-	public List<String> getDescription()
+	public String getDescription()
 	{
-		if (descriptionList == null)
-			descriptionList = List.of(description);
-		return descriptionList;
+		return description;
 	}
 
 	// ---- Sub Commands

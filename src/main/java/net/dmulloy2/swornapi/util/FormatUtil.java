@@ -24,6 +24,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 
 import net.dmulloy2.swornapi.types.StringJoiner;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 
 /**
  * Util used for general formatting.
@@ -272,5 +274,45 @@ public class FormatUtil
 		Validate.noNullElements(args, "args cannot have null elements!");
 
 		return String.join(" ", args);
+	}
+
+	public static boolean componentContains(Component component, String str)
+	{
+		Validate.notNull(component, "component cannot be null!");
+		Validate.notNull(str, "str cannot be null!");
+
+		if (component instanceof TextComponent textComponent)
+		{
+			if (textComponent.content().contains(str))
+				return true;
+		}
+
+		for (Component child : component.children())
+		{
+			if (componentContains(child, str))
+				return true;
+		}
+
+		return false;
+	}
+
+	public static boolean componentContainsIgnoreCase(Component component, String str)
+	{
+		Validate.notNull(component, "component cannot be null!");
+		Validate.notNull(str, "str cannot be null!");
+
+		if (component instanceof TextComponent textComponent)
+		{
+			if (textComponent.content().toLowerCase().contains(str))
+				return true;
+		}
+
+		for (Component child : component.children())
+		{
+			if (componentContainsIgnoreCase(child, str))
+				return true;
+		}
+
+		return false;
 	}
 }
